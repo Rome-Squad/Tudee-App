@@ -51,7 +51,10 @@ fun Slider(
                 top = 12.dp
             )
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = title,
                     style = Theme.textStyle.title.small,
@@ -68,7 +71,7 @@ fun Slider(
                 text = subtitle,
                 style = Theme.textStyle.body.small,
                 color = Theme.color.body,
-                maxLines = 2
+                maxLines = 2,
             )
         }
         Image(
