@@ -33,9 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.design_system.component.themeswitch.components.Clouds
 import com.giraffe.tudeeapp.design_system.component.themeswitch.components.Moon
 import com.giraffe.tudeeapp.design_system.component.themeswitch.components.NightSkyBackground
-import com.thechance.weatherapp.core.ui.themeswitch.components.Clouds
 
 @Composable
 fun ThemeSwitch(

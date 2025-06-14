@@ -1,4 +1,4 @@
-package com.thechance.weatherapp.core.ui.themeswitch.components
+package com.giraffe.tudeeapp.design_system.component.themeswitch.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
