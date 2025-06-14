@@ -1,0 +1,117 @@
+package com.giraffe.tudeeapp.design_system.component
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
+import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+
+@Composable
+fun CategoryItem(
+    icon: Painter,
+    categoryName: String,
+    count: Int = 0,
+    isSelected: Boolean = false
+    ) {
+
+    Column(
+        Modifier.size(width = 104.dp, height = 102.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(Modifier.size(78.dp)) {
+            Box(
+                Modifier
+                    .size(78.dp)
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(LocalTudeeColors.current.surfaceHigh),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = icon,
+                    contentDescription = stringResource(R.string.category_icon)
+                )
+            }
+            if (count > 0) {
+                Box(
+                    Modifier
+                        .size(width = 36.dp, height = 20.dp)
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(LocalTudeeColors.current.surfaceLow)
+                        .align(Alignment.TopEnd),
+                ) {
+                    Text(
+                        text = count.toString(),
+                        style = defaultTextStyle.label.small,
+                        color = LocalTudeeColors.current.hint,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+            if (isSelected) {
+                Box(
+                    Modifier
+                        .size(20.dp)
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(LocalTudeeColors.current.greenAccent)
+                        .align(Alignment.TopEnd)
+                        .padding(top = 2.dp, end = 2.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.tick_double_02),
+                        contentDescription = stringResource(R.string.checkmark_container)
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = categoryName,
+            style = defaultTextStyle.label.small,
+            color = LocalTudeeColors.current.body,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryItemPreview() {
+    Column {
+        CategoryItem(
+            icon = painterResource(R.drawable.book_open_icon),
+            categoryName = "Education",
+        )
+        Spacer(Modifier.height(10.dp))
+        CategoryItem(
+            icon = painterResource(R.drawable.book_open_icon),
+            categoryName = "Education",
+            isSelected = true
+        )
+        Spacer(Modifier.height(10.dp))
+        CategoryItem(
+            icon = painterResource(R.drawable.book_open_icon),
+            categoryName = "Education",
+            count = 16
+        )
+
+    }
+
+}
