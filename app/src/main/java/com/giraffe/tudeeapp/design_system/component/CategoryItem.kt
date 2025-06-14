@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
-import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
 fun CategoryItem(
@@ -79,7 +79,7 @@ fun CategoryItem(
                 ) {
                     Text(
                         text = count.toString(),
-                        style = defaultTextStyle.label.small,
+                        style = Theme.textStyle.label.small,
                         color = LocalTudeeColors.current.hint,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -89,7 +89,7 @@ fun CategoryItem(
 
         Text(
             text = categoryName,
-            style = defaultTextStyle.label.small,
+            style = Theme.textStyle.label.small,
             color = LocalTudeeColors.current.body,
             modifier = Modifier.padding(top = 8.dp)
         )

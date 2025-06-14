@@ -6,12 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,12 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
-import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
 fun TaskCard(
@@ -36,18 +33,23 @@ fun TaskCard(
     priority: PriorityType,
     taskTitle: String,
     taskDescription: String,
-    date: String?,
+    taskCardType: TaskCardType,
+    date: String? = null,
     modifier: Modifier = Modifier,
 ) {
+    val bottomPadding = if (taskCardType == TaskCardType.TASK) 24 else 12
     Column(
         modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(LocalTudeeColors.current.surfaceHigh)
+            .background(Theme.color.surfaceHigh)
+            .padding(
+                top = 4.dp, start = 4.dp, end = 12.dp, bottom = bottomPadding.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp, start = 4.dp, end = 12.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
@@ -62,26 +64,37 @@ fun TaskCard(
             ) {
                 Image(
                     painter = taskIcon,
-                    contentDescription = "Task Icon",
+                    contentDescription = stringResource(R.string.task_icon),
                     Modifier.align(Alignment.Center)
                 )
             }
             Row(
                 Modifier.align(Alignment.CenterVertically),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (date != null) {
                     LabelIconBox(
-                        backgroundColor = LocalTudeeColors.current.surface,
-                        contentColor = LocalTudeeColors.current.body,
+                        backgroundColor = Theme.color.surface,
+                        contentColor = Theme.color.body,
                         icon = painterResource(R.drawable.calendar_icon),
                         label = date
                     )
-                    Spacer(Modifier.width(4.dp))
                 }
                 when (priority) {
-                    PriorityType.HIGH -> HighPriority(isSelected = true)
-                    PriorityType.MEDIUM -> MediumPriority(isSelected = true)
-                    PriorityType.LOW -> LowPriority(isSelected = true)
+                    PriorityType.HIGH -> Priority(
+                        priorityType = PriorityType.HIGH,
+                        isSelected = true
+                    )
+
+                    PriorityType.MEDIUM -> Priority(
+                        priorityType = PriorityType.MEDIUM,
+                        isSelected = true
+                    )
+
+                    PriorityType.LOW -> Priority(
+                        priorityType = PriorityType.HIGH,
+                        isSelected = true
+                    )
                 }
             }
 
@@ -89,19 +102,19 @@ fun TaskCard(
         }
         Text(
             text = taskTitle,
-            style = defaultTextStyle.label.large,
-            color = LocalTudeeColors.current.body,
+            style = Theme.textStyle.label.large,
+            color = Theme.color.body,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(start = 8.dp, end = 12.dp, top = 2.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 12.dp)
         )
         Text(
             text = taskDescription,
-            style = defaultTextStyle.label.small,
-            color = LocalTudeeColors.current.hint,
+            style = Theme.textStyle.label.small,
+            color = Theme.color.hint,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 2.dp, start = 8.dp, end = 12.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 12.dp)
         )
     }
 }
@@ -113,14 +126,17 @@ fun TaskCardPreview() {
     Column() {
         TaskCard(
             taskIcon = painterResource(R.drawable.birthday_cake_icon),
-            blurColor = LocalTudeeColors.current.pinkAccent.copy(alpha = .08f),
+            blurColor = Theme.color.pinkAccent.copy(alpha = .08f),
             priority = PriorityType.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",
             date = "12-03-2025",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(123.dp)
+            taskCardType = TaskCardType.CATEGORY
         )
     }
+}
+
+enum class TaskCardType {
+    TASK,
+    CATEGORY
 }
