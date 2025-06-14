@@ -38,8 +38,10 @@ fun CategoryItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(Modifier
-            .clickable(onClick = onClick)) {
+        Box(
+            Modifier
+                .clickable(onClick = onClick)
+        ) {
             Box(
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
@@ -51,22 +53,6 @@ fun CategoryItem(
                     contentDescription = stringResource(R.string.category_icon),
                     modifier = Modifier.padding(23.dp)
                 )
-            }
-            if (count > 0) {
-                Box(
-                    Modifier
-                        .size(width = 36.dp, height = 20.dp)
-                        .clip(RoundedCornerShape(100.dp))
-                        .background(LocalTudeeColors.current.surfaceLow)
-                        .align(Alignment.TopEnd),
-                ) {
-                    Text(
-                        text = count.toString(),
-                        style = defaultTextStyle.label.small,
-                        color = LocalTudeeColors.current.hint,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
             }
             if (isSelected) {
                 Box(
@@ -81,6 +67,21 @@ fun CategoryItem(
                     Image(
                         painter = painterResource(R.drawable.tick_double_02),
                         contentDescription = stringResource(R.string.checkmark_container)
+                    )
+                }
+            } else {
+                Box(
+                    Modifier
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(LocalTudeeColors.current.surfaceLow)
+                        .padding(vertical = 2.dp, horizontal = 10.5.dp)
+                        .align(Alignment.TopEnd),
+                ) {
+                    Text(
+                        text = count.toString(),
+                        style = defaultTextStyle.label.small,
+                        color = LocalTudeeColors.current.hint,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
@@ -99,11 +100,6 @@ fun CategoryItem(
 @Composable
 fun CategoryItemPreview() {
     Column {
-        CategoryItem(
-            icon = painterResource(R.drawable.book_open_icon),
-            categoryName = "Education",
-        )
-        Spacer(Modifier.height(10.dp))
         CategoryItem(
             icon = painterResource(R.drawable.book_open_icon),
             categoryName = "Education",
