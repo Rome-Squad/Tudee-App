@@ -1,8 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,37 +20,32 @@ import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
 import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
 
 @Composable
-fun BaseBox(
+fun LabelIconBox(
     backgroundColor: Color = LocalTudeeColors.current.surfaceLow,
     contentColor: Color = LocalTudeeColors.current.hint,
     icon: Painter,
     label: String,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Row(
         modifier
             .clip(RoundedCornerShape(100.dp))
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row {
-            Icon(
-                painter = icon,
-                contentDescription = stringResource(R.string.priority_icon),
-                tint = contentColor,
-                modifier = Modifier
-                    .size(12.dp)
-                    .align(Alignment.CenterVertically)
-            )
-            Text(
-                text = label,
-                style = defaultTextStyle.label.small,
-                color = contentColor,
-                modifier = Modifier.padding(start = 2.dp)
-            )
-        }
+        Icon(
+            painter = icon,
+            contentDescription = stringResource(R.string.priority_icon),
+            tint = contentColor,
+            modifier = Modifier
+                .size(12.dp)
+        )
+        Text(
+            text = label,
+            style = defaultTextStyle.label.small,
+            color = contentColor,
+            modifier = Modifier.padding(start = 2.dp)
+        )
     }
 }

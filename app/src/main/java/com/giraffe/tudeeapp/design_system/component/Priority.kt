@@ -16,42 +16,42 @@ import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
 @Composable
 fun HighPriority(
     isSelected: Boolean,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
-    BaseBox(
+    LabelIconBox(
         icon = painterResource(R.drawable.flag_icon),
         label = stringResource(R.string.high),
         backgroundColor = if (isSelected) LocalTudeeColors.current.pinkAccent else LocalTudeeColors.current.surfaceLow,
         contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
-        onClick = onClick
-    )
+        modifier = modifier
+        )
 }
 
 @Composable
 fun MediumPriority(
     isSelected: Boolean,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
-    BaseBox(
+    LabelIconBox(
         icon = painterResource(R.drawable.alert_icon),
         label = stringResource(R.string.medium),
         backgroundColor = if (isSelected) LocalTudeeColors.current.yellowAccent else LocalTudeeColors.current.surfaceLow,
         contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
-        onClick = onClick
+        modifier = modifier
     )
 }
 
 @Composable
 fun LowPriority(
     isSelected: Boolean,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
-    BaseBox(
+    LabelIconBox(
         icon = painterResource(R.drawable.trade_down_icon),
         label = stringResource(R.string.low),
         backgroundColor = if (isSelected) LocalTudeeColors.current.greenAccent else LocalTudeeColors.current.surfaceLow,
         contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
-        onClick = onClick
+        modifier = modifier
     )
 }
 

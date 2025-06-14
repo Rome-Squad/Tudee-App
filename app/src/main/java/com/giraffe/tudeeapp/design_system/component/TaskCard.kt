@@ -70,7 +70,7 @@ fun TaskCard(
                 Modifier.align(Alignment.CenterVertically),
             ) {
                 if (date != null) {
-                    BaseBox(
+                    LabelIconBox(
                         backgroundColor = LocalTudeeColors.current.surface,
                         contentColor = LocalTudeeColors.current.body,
                         icon = painterResource(R.drawable.calendar_icon),
