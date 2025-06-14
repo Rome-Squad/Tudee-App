@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,72 +36,68 @@ fun TaskCard(
     priority: PriorityType,
     taskTitle: String,
     taskDescription: String,
-    date: String = "12-03-2025",
-    withDate: Boolean = false
-) {
-    Box(Modifier.clip(RoundedCornerShape(16.dp))) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(top = 4.dp, start = 4.dp, end = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-
+    date: String?,
+    modifier: Modifier = Modifier,
+    ) {
+    Column(modifier.clip(RoundedCornerShape(16.dp)).background(LocalTudeeColors.current.surfaceHigh)) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 4.dp, start = 4.dp, end = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                Modifier
+                    .size(56.dp)
+                    .graphicsLayer {
+                        spotShadowColor = blurColor
+                        ambientShadowColor = blurColor
+                        shadowElevation = with(density) { 50.dp.toPx() }
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    Modifier
-                        .size(56.dp)
-                        .graphicsLayer {
-                            spotShadowColor = blurColor
-                            ambientShadowColor = blurColor
-                            shadowElevation = with(density) { 50.dp.toPx() }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = taskIcon,
-                        contentDescription = "Task Icon",
-                        Modifier.align(Alignment.Center)
-                    )
-                }
-                Row {
-                    if (withDate) {
-                        BaseBox(
-                            backgroundColor = LocalTudeeColors.current.surface,
-                            contentColor = LocalTudeeColors.current.body,
-                            icon = painterResource(R.drawable.calendar_icon),
-                            label = date
-                        )
-                        Spacer(Modifier.width(4.dp))
-                    }
-                    when (priority) {
-                        PriorityType.HIGH -> HighPriority(isSelected = true)
-                        PriorityType.MEDIUM -> MediumPriority(isSelected = true)
-                        PriorityType.LOW -> LowPriority(isSelected = true)
-                    }
-                }
-
-
+                Image(
+                    painter = taskIcon,
+                    contentDescription = "Task Icon",
+                    Modifier.align(Alignment.Center)
+                )
             }
-            Text(
-                text = taskTitle,
-                style = defaultTextStyle.label.large,
-                color = LocalTudeeColors.current.body,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(start = 8.dp, end = 12.dp)
-            )
-            Text(
-                text = taskDescription,
-                style = defaultTextStyle.label.small,
-                color = LocalTudeeColors.current.hint,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 2.dp, start = 8.dp, bottom = 12.dp, end = 12.dp)
-            )
+            Row(
+                Modifier.align(Alignment.CenterVertically),
+            ) {
+                if (date != null) {
+                    BaseBox(
+                        backgroundColor = LocalTudeeColors.current.surface,
+                        contentColor = LocalTudeeColors.current.body,
+                        icon = painterResource(R.drawable.calendar_icon),
+                        label = date
+                    )
+                    Spacer(Modifier.width(4.dp))
+                }
+                when (priority) {
+                    PriorityType.HIGH -> HighPriority(isSelected = true)
+                    PriorityType.MEDIUM -> MediumPriority(isSelected = true)
+                    PriorityType.LOW -> LowPriority(isSelected = true)
+                }
+            }
+
+
         }
+        Text(
+            text = taskTitle,
+            style = defaultTextStyle.label.large,
+            color = LocalTudeeColors.current.body,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 8.dp, end = 12.dp, top = 2.dp)
+        )
+        Text(
+            text = taskDescription,
+            style = defaultTextStyle.label.small,
+            color = LocalTudeeColors.current.hint,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 2.dp, start = 8.dp, end = 12.dp)
+        )
     }
 }
 
@@ -111,6 +108,8 @@ fun TaskCardWithoutDate(
     priority: PriorityType,
     taskTitle: String,
     taskDescription: String,
+    modifier: Modifier = Modifier
+
 ) {
     TaskCard(
         taskIcon = taskIcon,
@@ -118,6 +117,8 @@ fun TaskCardWithoutDate(
         priority = priority,
         taskTitle = taskTitle,
         taskDescription = taskDescription,
+        date = null,
+                modifier = modifier
     )
 }
 
@@ -128,7 +129,8 @@ fun TaskCardWithDate(
     priority: PriorityType,
     taskTitle: String,
     taskDescription: String,
-    date: String
+    date: String,
+    modifier: Modifier = Modifier
 ) {
     TaskCard(
         taskIcon = taskIcon,
@@ -136,8 +138,8 @@ fun TaskCardWithDate(
         priority = priority,
         taskTitle = taskTitle,
         taskDescription = taskDescription,
-        withDate = true,
-        date = date
+        date = date,
+        modifier = modifier
     )
 }
 
@@ -145,14 +147,15 @@ fun TaskCardWithDate(
 @Preview(showBackground = true)
 @Composable
 fun TaskCardPreview() {
-    Column {
+   Column() {
         TaskCardWithDate(
             taskIcon = painterResource(R.drawable.birthday_cake_icon),
             blurColor = LocalTudeeColors.current.pinkAccent.copy(alpha = .08f),
             priority = PriorityType.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",
-            date = "12-03-2025"
+            date = "12-03-2025",
+            modifier = Modifier.fillMaxWidth().height(123.dp)
         )
         Spacer(Modifier.height(20.dp))
         TaskCardWithoutDate(
@@ -161,6 +164,8 @@ fun TaskCardPreview() {
             priority = PriorityType.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",
+            modifier = Modifier.fillMaxWidth().height(123.dp)
         )
-    }
+
+   }
 }

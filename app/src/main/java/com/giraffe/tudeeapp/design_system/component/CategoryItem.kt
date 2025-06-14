@@ -2,6 +2,7 @@ package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,25 +28,28 @@ import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
 fun CategoryItem(
     icon: Painter,
     categoryName: String,
+    modifier: Modifier = Modifier,
     count: Int = 0,
-    isSelected: Boolean = false
-    ) {
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {}
+) {
 
     Column(
-        Modifier.size(width = 104.dp, height = 102.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(Modifier.size(78.dp)) {
+        Box(Modifier
+            .clickable(onClick = onClick)) {
             Box(
                 Modifier
-                    .size(78.dp)
                     .clip(RoundedCornerShape(100.dp))
                     .background(LocalTudeeColors.current.surfaceHigh),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = icon,
-                    contentDescription = stringResource(R.string.category_icon)
+                    contentDescription = stringResource(R.string.category_icon),
+                    modifier = Modifier.padding(23.dp)
                 )
             }
             if (count > 0) {

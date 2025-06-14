@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -26,12 +27,15 @@ fun BaseBox(
     contentColor: Color = LocalTudeeColors.current.hint,
     icon: Painter,
     label: String,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        Modifier
+        modifier
             .clip(RoundedCornerShape(100.dp))
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Row {
