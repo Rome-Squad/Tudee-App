@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Tudee App</string>
+    <string name="tudee_slider_subtitle">You\'ve completed 3 out of 10 \ntasks Keep going!</string>
+    <string name="tudee_slider_title">Stay working!</string>
 </resources>
