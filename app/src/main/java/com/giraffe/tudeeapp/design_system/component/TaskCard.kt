@@ -38,10 +38,15 @@ fun TaskCard(
     taskDescription: String,
     date: String?,
     modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(LocalTudeeColors.current.surfaceHigh)
     ) {
-    Column(modifier.clip(RoundedCornerShape(16.dp)).background(LocalTudeeColors.current.surfaceHigh)) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 4.dp, start = 4.dp, end = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -101,71 +106,21 @@ fun TaskCard(
     }
 }
 
-@Composable
-fun TaskCardWithoutDate(
-    taskIcon: Painter,
-    blurColor: Color,
-    priority: PriorityType,
-    taskTitle: String,
-    taskDescription: String,
-    modifier: Modifier = Modifier
-
-) {
-    TaskCard(
-        taskIcon = taskIcon,
-        blurColor = blurColor,
-        priority = priority,
-        taskTitle = taskTitle,
-        taskDescription = taskDescription,
-        date = null,
-                modifier = modifier
-    )
-}
-
-@Composable
-fun TaskCardWithDate(
-    taskIcon: Painter,
-    blurColor: Color,
-    priority: PriorityType,
-    taskTitle: String,
-    taskDescription: String,
-    date: String,
-    modifier: Modifier = Modifier
-) {
-    TaskCard(
-        taskIcon = taskIcon,
-        blurColor = blurColor,
-        priority = priority,
-        taskTitle = taskTitle,
-        taskDescription = taskDescription,
-        date = date,
-        modifier = modifier
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable
 fun TaskCardPreview() {
-   Column() {
-        TaskCardWithDate(
+    Column() {
+        TaskCard(
             taskIcon = painterResource(R.drawable.birthday_cake_icon),
             blurColor = LocalTudeeColors.current.pinkAccent.copy(alpha = .08f),
             priority = PriorityType.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",
             date = "12-03-2025",
-            modifier = Modifier.fillMaxWidth().height(123.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(123.dp)
         )
-        Spacer(Modifier.height(20.dp))
-        TaskCardWithoutDate(
-            taskIcon = painterResource(R.drawable.birthday_cake_icon),
-            blurColor = LocalTudeeColors.current.pinkAccent.copy(alpha = .08f),
-            priority = PriorityType.HIGH,
-            taskTitle = "Organize Study Desk",
-            taskDescription = "Review cell structure and functions for tomorrow...",
-            modifier = Modifier.fillMaxWidth().height(123.dp)
-        )
-
-   }
+    }
 }

@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.design_system.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -25,7 +24,7 @@ fun HighPriority(
         backgroundColor = if (isSelected) LocalTudeeColors.current.pinkAccent else LocalTudeeColors.current.surfaceLow,
         contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
         onClick = onClick
-        )
+    )
 }
 
 @Composable
