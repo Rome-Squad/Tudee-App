@@ -10,4 +10,5 @@
     <string name="tudee_slider_title">Stay working!</string>
     <string name="tudee">Tudee</string>
     <string name="app_tagline">Your cute Helper for Every Task</string>
+    <string name="task_icon">Task Icon</string>
 </resources>
