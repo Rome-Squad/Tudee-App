@@ -34,13 +34,15 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 fun TudeeAppBar(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit
+    onThemeSwitchToggle: () -> Unit,
+    background: Color = Theme.color.primary,
+    contentColor: Color = Theme.color.onPrimary
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-            .background(Theme.color.primary),
+            .background(background),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -77,13 +79,13 @@ fun TudeeAppBar(
                     style = Theme.textStyle.body.large.copy(fontFamily = FontFamily(
                         Font(R.font.cherry_bomb)
                     )),
-                    color = Theme.color.onPrimary
+                    color = contentColor
                 )
 
                 Text(
                     text = stringResource(R.string.app_tagline),
                     style = Theme.textStyle.label.small,
-                    color = Theme.color.onPrimary
+                    color = contentColor
                 )
             }
 
