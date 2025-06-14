@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.design_system.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
@@ -19,6 +18,6 @@ fun TudeeTheme(
         LocalTudeeColors provides theme,
         LocalTudeeTextStyle provides defaultTextStyle
     ) {
-        content
+        content()
     }
 }
