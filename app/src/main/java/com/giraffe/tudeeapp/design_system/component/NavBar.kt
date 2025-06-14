@@ -27,7 +27,7 @@ import com.giraffe.tudeeapp.Screen
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
-fun NavBar(navController: NavController) {
+fun NavBar(modifier: Modifier = Modifier, navController: NavController) {
     val selectedItem = rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -48,7 +48,7 @@ fun NavBar(navController: NavController) {
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(74.dp)
             .background(Theme.color.surfaceHigh),
