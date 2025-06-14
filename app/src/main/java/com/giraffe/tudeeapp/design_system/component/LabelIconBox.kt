@@ -17,13 +17,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
-import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
 fun LabelIconBox(
-    backgroundColor: Color = LocalTudeeColors.current.surfaceLow,
-    contentColor: Color = LocalTudeeColors.current.hint,
+    backgroundColor: Color = Theme.color.surfaceLow,
+    contentColor: Color = Theme.color.hint,
     icon: Painter,
     label: String,
     modifier: Modifier = Modifier,
@@ -45,7 +44,7 @@ fun LabelIconBox(
         )
         Text(
             text = label,
-            style = defaultTextStyle.label.small,
+            style = Theme.textStyle.label.small,
             color = contentColor,
         )
     }

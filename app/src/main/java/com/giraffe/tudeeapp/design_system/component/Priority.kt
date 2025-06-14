@@ -1,56 +1,41 @@
 package com.giraffe.tudeeapp.design_system.component
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
+import com.giraffe.tudeeapp.design_system.theme.Theme
 
 
 @Composable
-fun HighPriority(
+fun Priority(
+    priorityType: PriorityType,
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    LabelIconBox(
-        icon = painterResource(R.drawable.flag_icon),
-        label = stringResource(R.string.high),
-        backgroundColor = if (isSelected) LocalTudeeColors.current.pinkAccent else LocalTudeeColors.current.surfaceLow,
-        contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
-        modifier = modifier
-        )
-}
+    var icon: Int
+    var label: String
+    when (priorityType) {
+        PriorityType.HIGH -> {
+            icon = R.drawable.flag_icon; label = stringResource(R.string.high)
+        }
 
-@Composable
-fun MediumPriority(
-    isSelected: Boolean,
-    modifier: Modifier = Modifier
-) {
-    LabelIconBox(
-        icon = painterResource(R.drawable.alert_icon),
-        label = stringResource(R.string.medium),
-        backgroundColor = if (isSelected) LocalTudeeColors.current.yellowAccent else LocalTudeeColors.current.surfaceLow,
-        contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
-        modifier = modifier
-    )
-}
+        PriorityType.MEDIUM -> {
+            icon = R.drawable.alert_icon; label = stringResource(R.string.medium)
+        }
 
-@Composable
-fun LowPriority(
-    isSelected: Boolean,
-    modifier: Modifier = Modifier
-) {
+        PriorityType.LOW -> {
+            icon = R.drawable.trade_down_icon; label = stringResource(R.string.low)
+        }
+    }
+
     LabelIconBox(
-        icon = painterResource(R.drawable.trade_down_icon),
-        label = stringResource(R.string.low),
-        backgroundColor = if (isSelected) LocalTudeeColors.current.greenAccent else LocalTudeeColors.current.surfaceLow,
-        contentColor = if (isSelected) LocalTudeeColors.current.onPrimary else LocalTudeeColors.current.hint,
+        icon = painterResource(icon),
+        label = label,
+        backgroundColor = if (isSelected) Theme.color.pinkAccent else Theme.color.surfaceLow,
+        contentColor = if (isSelected) Theme.color.onPrimary else Theme.color.hint,
         modifier = modifier
     )
 }
@@ -59,17 +44,14 @@ fun LowPriority(
 @Preview(showBackground = true)
 @Composable
 fun PriorityPreview() {
-    Column {
-        HighPriority(isSelected = true)
-        Spacer(Modifier.height(10.dp))
-        HighPriority(isSelected = false)
-        Spacer(Modifier.height(10.dp))
-        MediumPriority(isSelected = true)
-        Spacer(Modifier.height(10.dp))
-        MediumPriority(isSelected = false)
-        Spacer(Modifier.height(10.dp))
-        LowPriority(isSelected = true)
-        Spacer(Modifier.height(10.dp))
-        LowPriority(isSelected = false)
-    }
+    Priority(
+        priorityType = PriorityType.HIGH,
+        isSelected = true
+    )
+}
+
+enum class PriorityType {
+    HIGH,
+    MEDIUM,
+    LOW
 }
