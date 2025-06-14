@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,7 +33,8 @@ fun LabelIconBox(
             .clip(RoundedCornerShape(100.dp))
             .background(backgroundColor)
             .padding(horizontal = 8.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Icon(
             painter = icon,
@@ -45,7 +47,6 @@ fun LabelIconBox(
             text = label,
             style = defaultTextStyle.label.small,
             color = contentColor,
-            modifier = Modifier.padding(start = 2.dp)
         )
     }
 }
