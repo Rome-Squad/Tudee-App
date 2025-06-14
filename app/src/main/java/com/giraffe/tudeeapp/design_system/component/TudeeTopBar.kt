@@ -36,7 +36,8 @@ fun TudeeTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(64.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
