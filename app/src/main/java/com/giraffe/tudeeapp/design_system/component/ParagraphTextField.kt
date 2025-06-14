@@ -24,6 +24,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 fun ParagraphTextField(
     modifier: Modifier = Modifier,
     textValue: String = "",
+    onValueChange: (String) -> Unit = {},
     hint: String = "Full name",
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -41,7 +42,7 @@ fun ParagraphTextField(
         TextField(
             modifier = Modifier.fillMaxSize(),
             value = textValue,
-            onValueChange = {},
+            onValueChange = onValueChange,
             placeholder = {
                 Text(
                     text = hint,

@@ -33,6 +33,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 fun DefaultTextField(
     modifier: Modifier = Modifier,
     textValue: String = "hello",
+    onValueChange: (String) -> Unit = {},
     hint: String = "Full name",
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -66,7 +67,7 @@ fun DefaultTextField(
         TextField(
             modifier = Modifier.weight(1f),
             value = textValue,
-            onValueChange = {},
+            onValueChange = onValueChange,
             maxLines = 1,
             placeholder = {
                 Text(
