@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Tudee App</string>
+    <string name="priority_icon">Priority icon</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
+    <string name="category_icon">Category icon</string>
+    <string name="checkmark_container">Checkmark Container</string>
 </resources>
