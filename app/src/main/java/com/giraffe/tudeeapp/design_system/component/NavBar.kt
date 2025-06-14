@@ -34,16 +34,19 @@ fun NavBar(modifier: Modifier = Modifier, navController: NavController) {
 
     val navigationItems = listOf(
         NavigationItem(
-            icon = R.drawable.home,
-            route = Screen.HomeScreen.route
+            route = Screen.HomeScreen.route,
+            iconSelected = R.drawable.home_selected,
+            iconUnSelected = R.drawable.home_unselected
         ),
         NavigationItem(
-            icon = R.drawable.tasks,
-            route = Screen.TaskScreen.route
+            route = Screen.TaskScreen.route,
+            iconSelected = R.drawable.task_selected,
+            iconUnSelected = R.drawable.tasks_unselected
         ),
         NavigationItem(
-            icon = R.drawable.categories,
-            route = Screen.CategoriesScreen.route
+            route = Screen.CategoriesScreen.route,
+            iconSelected = R.drawable.categories_selected,
+            iconUnSelected = R.drawable.categories_unselected
         )
     )
 
@@ -84,13 +87,18 @@ fun NavigationIconItem(
     Box(
         modifier = Modifier
             .size(42.dp)
-            .clickable { onClick() }
+            .clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = null
+            )
             .clip(RoundedCornerShape(16.dp))
             .background(if (isSelected) Theme.color.primaryVariant else Theme.color.surfaceHigh),
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            painter = painterResource(navigationItem.icon),
+            painter = painterResource(if (isSelected) navigationItem.iconSelected else navigationItem.iconUnSelected),
+            tint = if (isSelected) Theme.color.primary else Theme.color.hint,
             contentDescription = "navigation icon",
             modifier = Modifier.size(24.dp)
         )
@@ -98,7 +106,8 @@ fun NavigationIconItem(
 }
 
 data class NavigationItem(
-    val icon: Int,
+    val iconSelected: Int,
+    val iconUnSelected: Int,
     val route: String
 )
 
