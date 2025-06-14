@@ -6,4 +6,8 @@
     <string name="low">Low</string>
     <string name="category_icon">Category icon</string>
     <string name="checkmark_container">Checkmark Container</string>
+    <string name="tudee_slider_subtitle">You\'ve completed 3 out of 10 \ntasks Keep going!</string>
+    <string name="tudee_slider_title">Stay working!</string>
+    <string name="tudee">Tudee</string>
+    <string name="app_tagline">Your cute Helper for Every Task</string>
 </resources>
