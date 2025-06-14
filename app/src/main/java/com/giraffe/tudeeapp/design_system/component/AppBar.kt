@@ -41,8 +41,9 @@ fun TudeeAppBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .background(background),
+            .height(72.dp)
+            .background(background)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -76,9 +77,11 @@ fun TudeeAppBar(
             ) {
                 Text(
                     text = stringResource(id = R.string.tudee),
-                    style = Theme.textStyle.body.large.copy(fontFamily = FontFamily(
-                        Font(R.font.cherry_bomb)
-                    )),
+                    style = Theme.textStyle.body.large.copy(
+                        fontFamily = FontFamily(
+                            Font(R.font.cherry_bomb)
+                        )
+                    ),
                     color = contentColor
                 )
 
@@ -108,10 +111,21 @@ fun TudeeAppBar(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TudeeAppBarPreview() {
-    TudeeAppBar(
+    Column(
         modifier = Modifier
-            .systemBarsPadding(),
-        onThemeSwitchToggle = {},
-        isDarkTheme = true
-    )
+            .fillMaxWidth(),
+    ) {
+        TudeeAppBar(
+            modifier = Modifier
+                .systemBarsPadding(),
+            onThemeSwitchToggle = {},
+            isDarkTheme = false
+        )
+
+        TudeeAppBar(
+            modifier = Modifier,
+            onThemeSwitchToggle = {},
+            isDarkTheme = true
+        )
+    }
 }
