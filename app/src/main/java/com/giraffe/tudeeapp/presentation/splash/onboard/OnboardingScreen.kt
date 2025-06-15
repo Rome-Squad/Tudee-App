@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -46,18 +47,18 @@ fun OnboardingScreen(
     val pages = listOf(
         OnboardingData(
             imageRes = R.drawable.image_container_1,
-            title = "Overwhelmed with tasks?",
-            description = "Let’s bring some order to the chaos.\nTudee is here to help you sort, plan, and breathe easier."
+            title = stringResource(R.string.overwhelmed_with_tasks),
+            description = stringResource(R.string.let_s_bring_some_order_to_the_chaos_tudee_is_here_to_help_you_sort_plan_and_breathe_easier)
         ),
         OnboardingData(
             imageRes = R.drawable.image_container_2,
-            title = "Uh-oh! Procrastinating again",
-            description = "Tudee not mad... just a little disappointed."
+            title = stringResource(R.string.uh_oh_procrastinating_again),
+            description = stringResource(R.string.tudee_not_mad_just_a_little_disappointed)
         ),
         OnboardingData(
             imageRes = R.drawable.image_container_3,
-            title = "Let’s complete tasks and celebrate together",
-            description = "Tudee will celebrate you on every win!"
+            title = stringResource(R.string.let_s_complete_tasks_and_celebrate_together),
+            description = stringResource(R.string.tudee_will_celebrate_you_on_every_win)
         )
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -75,7 +76,7 @@ fun OnboardingScreen(
     ) {
         Image(
             painter = painterResource(id = Theme.resources.bacgroundImage),
-            contentDescription = "Splash Background",
+            contentDescription = stringResource(R.string.splash_background),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
@@ -92,7 +93,7 @@ fun OnboardingScreen(
                             onFinish()
                         }
                     },
-                text = "Skip",
+                text = stringResource(R.string.skip),
                 style = Theme.textStyle.label.large,
                 color = Theme.color.primary
             )
