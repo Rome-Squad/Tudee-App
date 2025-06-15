@@ -78,11 +78,10 @@ fun ThemeSwitch(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Color(0xFF04B4EC)
+                        Color(0xFF548EFE)
                     )
             )
         }
-
 
         Box(
             modifier = Modifier
@@ -93,8 +92,8 @@ fun ThemeSwitch(
                 .shadow(
                     elevation = switchSize,
                     shape = CircleShape,
-                    spotColor = Color(0xFFFC9601),
-                    ambientColor = Color(0xFFFC9601)
+                    spotColor = Color(0xFFF2C849),
+                    ambientColor = Color(0xFFF49061)
                 )
                 .background(
                     Brush.linearGradient(
