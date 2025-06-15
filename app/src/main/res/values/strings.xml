@@ -11,4 +11,5 @@
     <string name="tudee">Tudee</string>
     <string name="app_tagline">Your cute Helper for Every Task</string>
     <string name="task_icon">Task Icon</string>
+    <string name="task_details">Task Details</string>
 </resources>
