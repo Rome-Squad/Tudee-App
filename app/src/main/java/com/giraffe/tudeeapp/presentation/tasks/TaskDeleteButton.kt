@@ -1,20 +1,21 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.compose.foundation.background
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
 fun TaskDeleteButton(
     onClick: () -> Unit,
-    icon: ImageVector = Icons.Default.Delete,
+    icon: Painter = painterResource(R.drawable.trash),
     tint: Color = Theme.color.error,
     contentDescription: String? = "Delete Task",
     backgroundColor: Color = Theme.color.errorVariant,
@@ -25,7 +26,7 @@ fun TaskDeleteButton(
         modifier = modifier.background(backgroundColor)
     ) {
         Icon(
-            imageVector = icon,
+            painter = icon,
             contentDescription = contentDescription,
             tint = tint
         )
