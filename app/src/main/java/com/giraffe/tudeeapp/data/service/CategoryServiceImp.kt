@@ -3,7 +3,7 @@ package com.giraffe.tudeeapp.data.service
 import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.mapper.toCategory
 import com.giraffe.tudeeapp.data.mapper.toCategoryEntity
-import com.giraffe.tudeeapp.data.model.CategoryEntity
+import com.giraffe.tudeeapp.data.model.CategoryTaskCount
 import com.giraffe.tudeeapp.data.util.safeCall
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
@@ -51,4 +51,10 @@ class CategoryServiceImp(   private val categoryDao: CategoryDao
         return safeCall {
             categoryDao.deleteCategory(id)
         }    }
+
+    override suspend fun getTaskCountByCategories(categoryIds: List<Long>): Result<List<CategoryTaskCount>, DomainError> {
+        return safeCall {
+            categoryDao.getTaskCountByCategories(categoryIds)
+        }
+    }
 }
