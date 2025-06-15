@@ -3,7 +3,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.giraffe.tudeeapp.data.Task
+import com.giraffe.tudeeapp.data.model.Task
 import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.coroutines.flow.Flow
