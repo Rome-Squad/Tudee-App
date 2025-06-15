@@ -57,7 +57,7 @@ fun SwipableTask(
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = isRevealed, cardWidth) {
         if (isRevealed) {
-            offset.animateTo(-cardWidth)
+            offset.animateTo(cardWidth)
         } else {
             offset.animateTo(0f)
         }
@@ -66,7 +66,7 @@ fun SwipableTask(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)
+//            .height(IntrinsicSize.Min)
     ) {
         Row(
             horizontalArrangement = Arrangement.End,
@@ -90,16 +90,15 @@ fun SwipableTask(
                     detectHorizontalDragGestures(
                         onHorizontalDrag = { _, dragAmount ->
                             scope.launch {
-                                val newOffset = (offset.value + dragAmount).coerceIn(0f, cardWidth)
-//                                offset.animateTo(newOffset)
+                                val newOffset = (offset.value + dragAmount).coerceIn(-cardWidth, 0f)
                                 offset.snapTo(newOffset)
                             }
                         },
                         onDragEnd = {
                             when {
-                                offset.value > cardWidth / 2f -> {
+                                offset.value > 10f -> {
                                     scope.launch {
-                                        offset.animateTo(cardWidth) {
+                                        offset.animateTo(-cardWidth) {
                                             onExpanded()
                                         }
                                     }

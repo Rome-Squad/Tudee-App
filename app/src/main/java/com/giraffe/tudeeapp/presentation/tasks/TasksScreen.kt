@@ -20,6 +20,10 @@ import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.button_type.TudeeFabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import kotlinx.datetime.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,11 +59,25 @@ fun TaskScreen() {
             TabsBar()
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
             ) {
-
+                items(10) { index ->
+                    SwipableTask(
+                        task = Task(
+                            id = 1L,
+                            title = "Sample Task",
+                            description = "This is a sample task description.",
+                            taskPriority = TaskPriority.HIGH,
+                            status = TaskStatus.DONE,
+                            categoryId = 1L,
+                            dueDate = LocalDateTime(2025, 3, 12, 0, 0),
+                            createdAt = LocalDateTime(2025, 3, 1, 0, 0),
+                            updatedAt = LocalDateTime(2025, 3, 2, 0, 0)
+                        )
+                    )
+                }
             }
         }
     }
