@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import kotlin.random.Random
 
 @Composable
@@ -163,7 +164,11 @@ fun ThemeSwitch(
 }
 
 @Composable
-fun Clouds(modifier: Modifier = Modifier) {
+fun Clouds(
+    color: Color = Theme.color.surfaceHigh,
+    strokeColor: Color = Theme.color.surfaceLow,
+    modifier: Modifier = Modifier
+) {
     Canvas(modifier = modifier.size(250.dp, 300.dp)) {
         val radius = size.minDimension / 4f
         val center1 = Offset(size.width / 2f - radius / 2, size.height / 1.05f)
@@ -182,18 +187,18 @@ fun Clouds(modifier: Modifier = Modifier) {
             addOval(Rect(center3 - Offset(radius, radius), Size(radius * 3, radius * 3)))
         }
 
-        drawPath(path1, color = Color.White)
-        drawPath(path2, color = Color.White)
+        drawPath(path1, color = color)
+        drawPath(path2, color = color)
 
         drawPath(
             path = path1,
-            color = Color(0xFFE0E0E0),
+            color = strokeColor,
             style = Stroke(width = 24f)
         )
 
         drawPath(
             path = path2,
-            color = Color(0xFFE0E0E0),
+            color = strokeColor,
             style = Stroke(width = 24f)
         )
 
