@@ -8,7 +8,7 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
 @Entity(tableName = Constants.TASK_TABLE_NAME)
-data class Task (
+data class TaskEntity (
     @PrimaryKey val uid: Long,
     val title: String,
     val description: String,
