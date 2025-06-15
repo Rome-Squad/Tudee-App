@@ -28,7 +28,7 @@ fun TudeeSnackBar(
     message: String,
     iconRes: Int,
     backgroundColor: Color = Theme.color.surfaceHigh,
-    textColor: Color = Color(0xFF1F1F1F),
+    textColor: Color = Theme.color.body,
     iconTintColor: Color = Theme.color.error,
     iconBackgroundColor: Color = Theme.color.errorVariant
 ) {

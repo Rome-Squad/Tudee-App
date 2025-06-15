@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.themeswitch.ThemeSwitch
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
