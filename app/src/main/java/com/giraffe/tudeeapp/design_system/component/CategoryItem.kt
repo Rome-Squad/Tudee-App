@@ -38,14 +38,12 @@ fun CategoryItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            Modifier
-                .clickable(onClick = onClick)
-        ) {
+        Box {
             Box(
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
-                    .background(LocalTudeeColors.current.surfaceHigh),
+                    .background(LocalTudeeColors.current.surfaceHigh)
+                    .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
