@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+//    implementation(libs.androidx.navigation.safe.args.generator)
     ksp(libs.room.compiler)
     annotationProcessor(libs.room.compiler)
 
@@ -76,4 +77,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.navigation.compose)
 }
