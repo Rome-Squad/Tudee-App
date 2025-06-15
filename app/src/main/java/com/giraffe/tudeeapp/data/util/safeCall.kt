@@ -4,7 +4,6 @@ import com.giraffe.tudeeapp.domain.util.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlin.collections.map
 
 suspend fun <T> safeCall(
     block: suspend () -> T
