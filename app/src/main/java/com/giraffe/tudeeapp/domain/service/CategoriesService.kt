@@ -1,6 +1,6 @@
 package com.giraffe.tudeeapp.domain.service
 
-import com.giraffe.tudeeapp.domain.model.category.Category
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow

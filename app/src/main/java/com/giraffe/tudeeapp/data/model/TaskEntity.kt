@@ -1,14 +1,14 @@
-package com.giraffe.tudeeapp.data
+package com.giraffe.tudeeapp.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
+import com.giraffe.tudeeapp.data.util.Constants
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
-@Entity(tableName = TASK_TABLE_NAME)
-data class Task (
+@Entity(tableName = Constants.TASK_TABLE_NAME)
+data class TaskEntity (
     @PrimaryKey val uid: Long,
     val title: String,
     val description: String,

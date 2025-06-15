@@ -5,11 +5,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.giraffe.tudeeapp.data.Task
+import com.giraffe.tudeeapp.data.model.TaskEntity
 import com.giraffe.tudeeapp.data.util.Constants.TASK_DATABASE_NAME
 
 
-@Database(entities = [Task::class], version = 1)
+@Database(entities = [TaskEntity::class], version = 1)
 abstract class TaskDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 
