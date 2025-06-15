@@ -2,11 +2,12 @@ package com.giraffe.tudeeapp.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
-@Entity
+@Entity(tableName = TASK_TABLE_NAME)
 data class Task (
     @PrimaryKey val uid: Long,
     val title: String,

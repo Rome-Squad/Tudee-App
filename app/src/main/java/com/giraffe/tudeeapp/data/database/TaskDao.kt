@@ -4,6 +4,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.giraffe.tudeeapp.data.Task
+import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDateTime
@@ -11,13 +12,13 @@ import kotlinx.datetime.LocalDateTime
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM task WHERE dueDate = :date")
+    @Query("SELECT * FROM $TASK_TABLE_NAME WHERE dueDate = :date")
     fun getTasksByDate(date: LocalDateTime): Flow<List<Task>>
 
-    @Query("SELECT * FROM task WHERE categoryId = :categoryId")
+    @Query("SELECT * FROM $TASK_TABLE_NAME WHERE categoryId = :categoryId")
     fun getTasksByCategory(categoryId: Long): Flow<List<Task>>
 
-    @Query("SELECT * FROM task WHERE uid = :id")
+    @Query("SELECT * FROM $TASK_TABLE_NAME WHERE uid = :id")
     suspend fun getTaskById(id: Long): Task
 
     @Insert
@@ -29,6 +30,6 @@ interface TaskDao {
     @Delete
     suspend fun deleteTask(id: Long): Long
 
-    @Query("UPDATE task SET status = :newStatus WHERE uid = :id")
+    @Query("UPDATE $TASK_TABLE_NAME SET status = :newStatus WHERE uid = :id")
     suspend fun changeStatus(id: Long, newStatus: TaskStatus): Unit
 }
