@@ -1,10 +1,11 @@
 package com.giraffe.tudeeapp.data.mapper
 
-import com.giraffe.tudeeapp.domain.model.task.Task as DomainTask
-import com.giraffe.tudeeapp.data.Task as DataTask
+import com.giraffe.tudeeapp.data.model.TaskEntity
+import com.giraffe.tudeeapp.domain.model.task.Task
 
-fun DomainTask.toData(): DataTask {
-    return DataTask(
+
+fun Task.toData(): TaskEntity {
+    return TaskEntity(
         uid = this.id,
         title = this.title,
         description = this.description,
@@ -17,8 +18,8 @@ fun DomainTask.toData(): DataTask {
     )
 }
 
-fun DataTask.toDomain(): DomainTask {
-    return DomainTask(
+fun TaskEntity.toDomain(): Task {
+    return Task(
         id = this.uid,
         title = this.title,
         description = this.description,
