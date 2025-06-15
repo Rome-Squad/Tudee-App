@@ -33,7 +33,8 @@ class TaskDetailsViewModel(
                 categoryService.getCategoryById(task.categoryId)
                     .onSuccess { category ->
                         taskDetailsState = taskDetailsState.copy(
-                            taskCategory = category
+                            task = task.toTaskUi(category),
+                            isLoading = false
                         )
                     }
                     .onError {
@@ -41,10 +42,6 @@ class TaskDetailsViewModel(
                             error = errorToMessage(it)
                         )
                     }
-                taskDetailsState = taskDetailsState.copy(
-                    task = task,
-                    isLoading = false
-                )
             }
             .onError {
                 taskDetailsState = taskDetailsState.copy(
