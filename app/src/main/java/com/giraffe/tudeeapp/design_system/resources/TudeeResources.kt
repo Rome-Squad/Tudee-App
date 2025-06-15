@@ -15,7 +15,7 @@ val lightResources = TudeeResources(
 
 val darkResources = TudeeResources(
     logoImageResId = R.drawable.logo_dark,
-    bacgroundImage = R.drawable.logo_dark
+    bacgroundImage = R.drawable.background_dark
 
 )
 

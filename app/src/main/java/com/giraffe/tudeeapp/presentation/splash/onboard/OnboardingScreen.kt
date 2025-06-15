@@ -1,0 +1,258 @@
+package com.giraffe.tudeeapp.presentation.splash.onboard
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.button_type.TudeeFabButton
+import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun OnboardingScreen(
+    viewModel: SplashViewModel  = koinViewModel(),
+    onFinish: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val pages = listOf(
+        OnboardingData(
+            imageRes = R.drawable.image_container_1,
+            title = "Overwhelmed with tasks?",
+            description = "Let’s bring some order to the chaos.\nTudee is here to help you sort, plan, and breathe easier."
+        ),
+        OnboardingData(
+            imageRes = R.drawable.image_container_2,
+            title = "Uh-oh! Procrastinating again",
+            description = "Tudee not mad... just a little disappointed."
+        ),
+        OnboardingData(
+            imageRes = R.drawable.image_container_3,
+            title = "Let’s complete tasks and celebrate together",
+            description = "Tudee will celebrate you on every win!"
+        )
+    )
+    val pagerState = rememberPagerState(pageCount = { pages.size })
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(Theme.color.overlay, Theme.color.surface),
+                    start = Offset(0f, 0f),
+                    end = Offset.Infinite
+                )
+            )
+    ) {
+        Image(
+            painter = painterResource(id = Theme.resources.bacgroundImage),
+            contentDescription = "Splash Background",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+        )
+
+        if (pagerState.currentPage < pages.lastIndex) {
+            Text(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 56.dp)
+                    .align(Alignment.TopStart)
+                    .clickable {
+                        scope.launch {
+                            viewModel.setOnboardingShown(true)
+                            onFinish()
+                        }
+                    },
+                text = "Skip",
+                style = Theme.textStyle.label.large,
+                color = Theme.color.primary
+            )
+        }
+
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                OnboardingPage(
+                    imageRes = pages[page].imageRes,
+                    title = pages[page].title,
+                    description = pages[page].description,
+                    onNextClick = {
+                        scope.launch {
+                            if (pagerState.currentPage < pages.lastIndex) {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            } else {
+                                viewModel.setOnboardingShown(true)
+                                onFinish()
+                            }
+                        }
+                    },
+                    totalDots = pages.size,
+                    selectedIndex = pagerState.currentPage
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingPage(
+    imageRes: Int,
+    title: String,
+    description: String,
+    onNextClick: () -> Unit,
+    totalDots: Int,
+    selectedIndex: Int
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier
+                .padding(bottom = 32.dp),
+            painter = painterResource(imageRes),
+            contentDescription = null
+        )
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(192.dp)
+                    .background(
+                        color = Theme.color.onPrimaryCard,
+                        shape = RoundedCornerShape(32.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Theme.color.onPrimaryStroke,
+                        shape = RoundedCornerShape(32.dp)
+                    )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 24.dp),
+                        text = title,
+                        style = Theme.textStyle.title.medium,
+                        textAlign = TextAlign.Center,
+                        color = Theme.color.title
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = description,
+                        style = Theme.textStyle.body.medium,
+                        textAlign = TextAlign.Center,
+                        color = Theme.color.body
+                    )
+                }
+            }
+
+            TudeeFabButton(
+                modifier = Modifier
+                    .offset(y = 35.dp)
+                    .align(Alignment.BottomCenter),
+                isLoading = false,
+                isDisable = false,
+                icon = painterResource(R.drawable.arrow_right_double),
+                onClick = onNextClick
+            )
+        }
+
+        DotsIndicator(
+            totalDots = totalDots,
+            selectedIndex = selectedIndex,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 59.dp, bottom = 24.dp)
+        )
+    }
+
+}
+
+data class OnboardingData(
+    val imageRes: Int,
+    val title: String,
+    val description: String
+)
+
+@Composable
+fun DotsIndicator(
+    totalDots: Int,
+    selectedIndex: Int,
+    modifier: Modifier = Modifier,
+    dotSpacing: Dp = 10.dp,
+    dotHeight: Dp = 5.dp
+) {
+    val selectedColor = Theme.color.primary
+    val unSelectedColor = Theme.color.onPrimaryStroke
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(dotSpacing),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(totalDots) { index ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(dotHeight)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(if (index == selectedIndex) selectedColor else unSelectedColor)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OnboardingScreenPreview() {
+    OnboardingScreen(
+        onFinish = {}
+    )
+}

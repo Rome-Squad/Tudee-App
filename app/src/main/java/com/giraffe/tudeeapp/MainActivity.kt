@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +17,8 @@ import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
-import com.giraffe.tudeeapp.presentation.splash.SplashScreen
+import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
+import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
 
 class MainActivity : ComponentActivity() {
@@ -24,12 +26,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TudeeTheme {
+            TudeeTheme(false) {
                 val navController = rememberNavController()
-                val currentBackStackEntry = navController.currentBackStackEntryAsState()
-                val currentRoute = currentBackStackEntry.value?.destination?.route
+                val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = currentBackStackEntry?.destination?.route
 
-                val showBottomBar = currentRoute != Screen.SplashScreen.route
+                val noBottomBarRoutes = listOf(
+                    Screen.SplashScreen.route,
+                    Screen.OnboardingScreen.route
+                )
+
+                val showBottomBar = currentRoute !in noBottomBarRoutes
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -40,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
 
-                    val paddingModifier = if (currentRoute == Screen.SplashScreen.route) {
+                    val paddingModifier = if (currentRoute in noBottomBarRoutes) {
                         Modifier.fillMaxSize()
                     } else {
                         Modifier
@@ -54,19 +61,38 @@ class MainActivity : ComponentActivity() {
                         modifier = paddingModifier
                     ) {
                         composable(Screen.SplashScreen.route) {
-                            SplashScreen(onTimeout = {
-                                navController.navigate(Screen.HomeScreen.route) {
-                                    popUpTo(Screen.SplashScreen.route) { inclusive = true }
+                            SplashScreen(
+                                onOnboardingShown = {
+                                    navController.navigate(Screen.HomeScreen.route) {
+                                        popUpTo(Screen.SplashScreen.route) { inclusive = true }
+                                    }
+                                },
+                                onOnboardingNotShown = {
+                                    navController.navigate(Screen.OnboardingScreen.route) {
+                                        popUpTo(Screen.SplashScreen.route) { inclusive = true }
+                                    }
                                 }
-                            })
+                            )
+                        }
+
+                        composable(Screen.OnboardingScreen.route) {
+                            OnboardingScreen(
+                                onFinish = {
+                                    navController.navigate(Screen.HomeScreen.route) {
+                                        popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
+                                    }
+                                }
+                            )
                         }
 
                         composable(Screen.HomeScreen.route) {
                             HomeScreen()
                         }
+
                         composable(Screen.TaskScreen.route) {
                             TaskScreen()
                         }
+
                         composable(Screen.CategoriesScreen.route) {
                             CategoriesScreen()
                         }
