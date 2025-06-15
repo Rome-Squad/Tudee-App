@@ -19,6 +19,6 @@ fun TudeeTheme(
         LocalTudeeColors provides theme,
         LocalTudeeTextStyle provides defaultTextStyle
     ) {
-        content
+        content()
     }
 }
