@@ -1,21 +1,54 @@
 package com.giraffe.tudeeapp.data.service
 
 import com.giraffe.tudeeapp.data.database.CategoryDao
-import com.giraffe.tudeeapp.data.model.Category
+import com.giraffe.tudeeapp.data.mapper.toCategory
+import com.giraffe.tudeeapp.data.mapper.toCategoryEntity
+import com.giraffe.tudeeapp.data.model.CategoryEntity
+import com.giraffe.tudeeapp.data.util.safeCall
+import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.service.CategoriesService
+import com.giraffe.tudeeapp.domain.util.DomainError
+import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
-class CategoryServiceImp(private val categoryDao: CategoryDao){
+class CategoryServiceImp(   private val categoryDao: CategoryDao
+) : CategoriesService {
+    override fun getAllCategories(): Flow<Result<List<Category>, DomainError>> {
+        return flow {
+            try {
+                categoryDao.getAllCategories()
+                    .collect { list ->
+                        val tasks = list.map { it.toCategory()}
+                        emit(Result.Success(tasks))
+                    }
+                     //   emit(Result.Success(list))
 
+            } catch (e: Throwable) {
+                emit(Result.Error(error(e)))
+            }
+        }
+    }
 
-    fun getAllCategories(): Flow<List<Category>> =categoryDao.getAllCategories()
+    override suspend fun getCategoryById(id: Long): Result<Category, DomainError> {
+        return safeCall {
+            categoryDao.getCategoryById(id).toCategory()
+        }    }
 
-    suspend fun getCategoryById(id: Long): Category = categoryDao.getCategoryById(id)
+    override suspend fun createCategory(category: Category): Result<Long, DomainError> {
+        return safeCall {
+            val categoryEntity=category.toCategoryEntity()
+            categoryDao.createCategory(categoryEntity)
+        }    }
 
-    suspend fun createCategory(category: Category): Long = categoryDao.createCategory(category)
+    override suspend fun updateCategory(category: Category): Result<Unit, DomainError> {
+        return safeCall {
+            val categoryEntity=category.toCategoryEntity()
+             categoryDao.updateCategory(categoryEntity)
+        }}
 
-    suspend fun updateCategory(category: Category) = categoryDao.updateCategory(category)
-
-    suspend fun deleteCategory(id: Long) = categoryDao.deleteCategory(id)
-
-
+    override suspend fun deleteCategory(id: Long): Result<Unit, DomainError> {
+        return safeCall {
+            categoryDao.deleteCategory(id)
+        }    }
 }
