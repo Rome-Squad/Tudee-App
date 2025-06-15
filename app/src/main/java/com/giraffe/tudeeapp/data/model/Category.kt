@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.giraffe.tudeeapp.data.util.Constants
 
 @Entity(tableName = Constants.CATEGORY_TABLE_NAME)
-data class category(
+data class Category(
     @PrimaryKey val uid: Long,
     val name:String,
     val imageUri: String?
