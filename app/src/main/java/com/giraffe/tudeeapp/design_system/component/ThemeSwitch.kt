@@ -80,7 +80,8 @@ fun ThemeSwitch(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()                    .background(
+                    .fillMaxSize()
+                    .background(
                         Color(0xFF04B4EC)
                     )
             )
@@ -202,16 +203,18 @@ fun Clouds(modifier: Modifier = Modifier) {
 
 @Composable
 fun Moon(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier
-        .fillMaxSize()
-        .background(
-            Brush.linearGradient(
-                colors = listOf(
-                    Color(0xFFE0E9FE),
-                    Color(0xFFE9F0FF),
-                ),
+    Canvas(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFFE0E9FE),
+                        Color(0xFFE9F0FF),
+                    ),
+                )
             )
-        )) {
+    ) {
 
         drawCircle(
             brush = Brush.radialGradient(
