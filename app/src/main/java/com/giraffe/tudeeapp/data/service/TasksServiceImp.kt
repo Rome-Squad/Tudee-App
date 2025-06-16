@@ -4,13 +4,14 @@ import TaskDao
 import com.giraffe.tudeeapp.data.mapper.toData
 import com.giraffe.tudeeapp.data.mapper.toDomain
 import com.giraffe.tudeeapp.data.util.safeCall
+import com.giraffe.tudeeapp.data.util.safeFlowCall
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
 
 public class TasksServiceImp(
@@ -18,30 +19,16 @@ public class TasksServiceImp(
 
     ) : TasksService {
     override fun getTasksByDate(date: LocalDateTime): Flow<Result<List<Task>, DomainError>> {
-        return flow {
-            try {
-                taskDao.getTasksByDate(date)
-                    .collect { entityList ->
-                        val tasks = entityList.map { it.toDomain() }
-                        emit(Result.Success(tasks))
-                    }
-            } catch (e: Throwable) {
-                emit(Result.Error(error(e)))
-            }
+        return safeFlowCall {
+            taskDao.getTasksByDate(date)
+                .map { list -> list.map { it.toDomain() } }
         }
     }
 
     override fun getTasksByCategory(categoryId: Long): Flow<Result<List<Task>, DomainError>> {
-        return flow {
-            try {
-                taskDao.getTasksByCategory(categoryId)
-                    .collect { entityList ->
-                        val tasks = entityList.map { it.toDomain() }
-                        emit(Result.Success(tasks))
-                    }
-            } catch (e: Throwable) {
-                emit(Result.Error(error(e)))
-            }
+        return safeFlowCall {
+            taskDao.getTasksByCategory(categoryId)
+                .map { list -> list.map { it.toDomain() } }
         }
     }
 
