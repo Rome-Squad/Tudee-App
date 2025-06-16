@@ -6,31 +6,48 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
-fun categoriesIcon(categoryName: String): CategoryResource {
+fun categoriesIconBlurColor(categoryName: String): Color {
     return when (categoryName) {
-        "Education" -> CategoryResource(R.drawable.book_open_icon, Theme.color.purpleAccent)
-        "Adoration" -> CategoryResource(R.drawable.quran_icon, Theme.color.primary)
-        "Family & friend" -> CategoryResource(R.drawable.user_multiple_icon, Theme.color.secondary)
-        "Cooking" -> CategoryResource(R.drawable.chef, Theme.color.pinkAccent)
-        "Traveling" -> CategoryResource(R.drawable.airplane_01, Theme.color.yellowAccent)
-        "Coding" -> CategoryResource(R.drawable.developer, Theme.color.purpleAccent)
-        "Fixing bugs" -> CategoryResource(R.drawable.bug_01, Theme.color.pinkAccent)
-        "Medical" -> CategoryResource(R.drawable.hospital_location, Theme.color.primary)
-        "Shopping" -> CategoryResource(R.drawable.shopping_cart_02, Theme.color.secondary)
-        "Agriculture" -> CategoryResource(R.drawable.plant_02, Theme.color.greenAccent)
-        "Entertainment" -> CategoryResource(R.drawable.baseball, Theme.color.yellowAccent)
-        "Gym" -> CategoryResource(R.drawable.body_part_muscle, Theme.color.primary)
-        "Cleaning" -> CategoryResource(R.drawable.blush_brush_02, Theme.color.greenAccent)
-        "Work" -> CategoryResource(R.drawable.briefcase_05, Theme.color.secondary)
-        "Event" -> CategoryResource(R.drawable.birthday_cake_icon, Theme.color.pinkAccent)
-        "Budgeting" -> CategoryResource(R.drawable.money_bag_01, Theme.color.purpleAccent)
-        "Self-care" -> CategoryResource(R.drawable.in_love, Theme.color.yellowAccent)
-        else -> CategoryResource(R.drawable.book_open_icon, Theme.color.purpleAccent)
+        "Education" -> Theme.color.purpleAccent
+        "Adoration" -> Theme.color.primary
+        "Family & friend" -> Theme.color.secondary
+        "Cooking" -> Theme.color.pinkAccent
+        "Traveling" -> Theme.color.yellowAccent
+        "Coding" -> Theme.color.purpleAccent
+        "Fixing bugs" -> Theme.color.pinkAccent
+        "Medical" -> Theme.color.primary
+        "Shopping" -> Theme.color.secondary
+        "Agriculture" -> Theme.color.greenAccent
+        "Entertainment" -> Theme.color.yellowAccent
+        "Gym" -> Theme.color.primary
+        "Cleaning" -> Theme.color.greenAccent
+        "Work" -> Theme.color.secondary
+        "Event" -> Theme.color.pinkAccent
+        "Budgeting" -> Theme.color.purpleAccent
+        "Self-care" -> Theme.color.yellowAccent
+        else -> Theme.color.purpleAccent
     }
 }
 
-
-data class CategoryResource(
-    val categoryImage: Int,
-    val blurColor: Color
-)
+fun categoriesIcon(categoryName: String): Int {
+    return when (categoryName) {
+        "Education" -> R.drawable.book_open_icon
+        "Adoration" -> R.drawable.quran_icon
+        "Family & friend" -> R.drawable.user_multiple_icon
+        "Cooking" -> R.drawable.chef
+        "Traveling" -> R.drawable.airplane_01
+        "Coding" -> R.drawable.developer
+        "Fixing bugs" -> R.drawable.bug_01
+        "Medical" -> R.drawable.hospital_location
+        "Shopping" -> R.drawable.shopping_cart_02
+        "Agriculture" -> R.drawable.plant_02
+        "Entertainment" -> R.drawable.baseball
+        "Gym" -> R.drawable.body_part_muscle
+        "Cleaning" -> R.drawable.blush_brush_02
+        "Work" -> R.drawable.briefcase_05
+        "Event" -> R.drawable.birthday_cake_icon
+        "Budgeting" -> R.drawable.money_bag_01
+        "Self-care" -> R.drawable.in_love
+        else -> R.drawable.book_open_icon
+    }
+}

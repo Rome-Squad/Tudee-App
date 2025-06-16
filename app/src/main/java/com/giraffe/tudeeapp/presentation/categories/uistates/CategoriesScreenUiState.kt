@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.categories.uistates
 
-import androidx.compose.runtime.Composable
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.domain.model.category.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
@@ -23,13 +22,13 @@ data class CategoryUi(
     val icon: Int = R.drawable.airplane_01,
 )
 
-@Composable
+
 fun Category.toUiState(countTasks: Int): CategoryUi {
     return CategoryUi(
         id = id,
         name = name,
         taskCount = countTasks,
         imageUri = imageUri,
-        icon = categoriesIcon(name).categoryImage,
+        icon = categoriesIcon(name),
     )
 }
