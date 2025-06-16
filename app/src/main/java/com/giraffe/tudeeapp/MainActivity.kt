@@ -13,7 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
+import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
 
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                             TaskScreen()
                         }
                         composable(Screen.CategoriesScreen.route) {
-                            CategoriesScreen()
+                            CategoriesScreen(navController = navController)
                         }
                     }
                 }
