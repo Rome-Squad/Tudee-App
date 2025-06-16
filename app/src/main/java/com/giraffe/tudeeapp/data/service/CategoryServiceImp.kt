@@ -5,30 +5,22 @@ import com.giraffe.tudeeapp.data.mapper.toCategory
 import com.giraffe.tudeeapp.data.mapper.toCategoryEntity
 import com.giraffe.tudeeapp.data.model.CategoryTaskCount
 import com.giraffe.tudeeapp.data.util.safeCall
+import com.giraffe.tudeeapp.data.util.safeFlowCall
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class CategoryServiceImp(   private val categoryDao: CategoryDao
 ) : CategoriesService {
     override fun getAllCategories(): Flow<Result<List<Category>, DomainError>> {
-        return flow {
-            try {
-                categoryDao.getAllCategories()
-                    .collect { list ->
-                        val tasks = list.map { it.toCategory()}
-                        emit(Result.Success(tasks))
-                    }
-                     //   emit(Result.Success(list))
-
-            } catch (e: Throwable) {
-                emit(Result.Error(error(e)))
+        return safeFlowCall {
+            categoryDao.getAllCategories().map { list ->
+                list.map { it.toCategory() }
             }
-        }
-    }
+    }}
 
     override suspend fun getCategoryById(id: Long): Result<Category, DomainError> {
         return safeCall {
