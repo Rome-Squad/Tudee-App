@@ -1,0 +1,234 @@
+package com.giraffe.tudeeapp.presentation.categories
+
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.DefaultTextField
+import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
+import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
+import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryBottomSheet(
+    modifier: Modifier = Modifier,
+    title: String = "Add new category",
+    isVisible: Boolean = true,
+    onVisibilityChange: (Boolean) -> Unit = {},
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var categoryTitle by remember { mutableStateOf("") }
+    var photoUri: Uri? by remember { mutableStateOf(null) }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            photoUri = uri
+        }
+    if (isVisible) {
+        ModalBottomSheet(
+            modifier = modifier,
+            containerColor = Theme.color.surface,
+            onDismissRequest = {
+                onVisibilityChange(false)
+            },
+            sheetState = sheetState
+        ) {
+
+            Column {
+                Text(
+                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+                    text = title,
+                    style = Theme.textStyle.title.large,
+                    color = Theme.color.title
+                )
+                DefaultTextField(
+                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+                    textValue = title,
+                    onValueChange = { categoryTitle = it },
+                    hint = "Category title",
+                    iconRes = R.drawable.categories_unselected,
+                )
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
+                    text = "Category image",
+                    style = Theme.textStyle.title.large,
+                    color = Theme.color.title
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .width(112.dp)
+                        .height(113.dp)
+                        .background(
+                            color = if (photoUri == null) Theme.color.surface else Color.Black.copy(
+                                .1f
+                            ),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .dashedBorder(
+                            color = Theme.color.stroke,
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (photoUri == null) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(22.dp)
+                                    .clickable(
+                                        interactionSource = null,
+                                        indication = null
+                                    ) {
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
+                                    },
+                                painter = painterResource(R.drawable.ic_add_image),
+                                contentDescription = "add image",
+                                tint = Theme.color.hint
+                            )
+                            Text(
+                                text = "Upload",
+                                style = Theme.textStyle.label.medium,
+                                color = Theme.color.hint
+                            )
+                        }
+                    } else {
+                        Image(
+                            painter = rememberAsyncImagePainter(
+                                ImageRequest
+                                    .Builder(LocalContext.current)
+                                    .data(data = photoUri)
+                                    .build()
+                            ),
+                            contentDescription = "selected photo"
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    color = Theme.color.surfaceHigh,
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .clickable(
+                                        interactionSource = null,
+                                        indication = null
+                                    ) {
+                                        launcher.launch(
+                                            PickVisualMediaRequest(
+                                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
+                                    },
+                                painter = painterResource(R.drawable.ic_pen),
+                                contentDescription = "edit image",
+                                tint = Theme.color.secondary
+                            )
+
+                        }
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .background(color = Theme.color.surfaceHigh)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    PrimaryButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Add",
+                    ) {}
+                    SecondaryButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Cancel"
+                    ) {}
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    TudeeTheme {
+        CategoryBottomSheet()
+    }
+}
+
+fun Modifier.dashedBorder(
+    color: Color,
+    shape: Shape,
+    strokeWidth: Dp = 1.dp,
+    dashLength: Dp = 4.dp,
+    gapLength: Dp = 4.dp,
+    cap: StrokeCap = StrokeCap.Round
+) = this.drawWithContent {
+    val outline = shape.createOutline(size, layoutDirection, density = this)
+    val dashedStroke = Stroke(
+        cap = cap,
+        width = strokeWidth.toPx(),
+        pathEffect = PathEffect.dashPathEffect(
+            intervals = floatArrayOf(dashLength.toPx(), gapLength.toPx())
+        )
+    )
+    drawContent()
+    drawOutline(
+        outline = outline,
+        style = dashedStroke,
+        brush = SolidColor(color)
+    )
+}
