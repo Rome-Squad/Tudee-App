@@ -31,8 +31,8 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 fun TudeePrimaryButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading: Boolean,
-    isDisable: Boolean,
+    isLoading: Boolean=false,
+    isDisable: Boolean=false,
     onClick: () -> Unit,
 ) {
 
