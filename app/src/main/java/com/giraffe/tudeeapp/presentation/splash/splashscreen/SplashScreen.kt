@@ -10,8 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,15 +46,8 @@ fun SplashScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Theme.color.overlay,
-                        Theme.color.surface
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset.Infinite
+                Theme.color.overlay
                 )
-            )
     ) {
         Image(
             painter = painterResource(id = Theme.resources.bacgroundImage),
