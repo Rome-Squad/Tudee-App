@@ -1,6 +1,6 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import com.giraffe.tudeeapp.domain.model.category.Category
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.Clock
