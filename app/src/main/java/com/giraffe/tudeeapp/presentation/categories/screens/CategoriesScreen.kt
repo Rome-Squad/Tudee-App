@@ -83,7 +83,7 @@ fun CategoriesContent(
             ) {
                 items(state.categories.size) { index ->
                     CategoryItem(
-                        icon = painterResource(state.categories[index].image),
+                        icon = painterResource(state.categories[index].icon),
                         categoryName = state.categories[index].name,
                         count = state.categories[index].taskCount,
                         onClick = {

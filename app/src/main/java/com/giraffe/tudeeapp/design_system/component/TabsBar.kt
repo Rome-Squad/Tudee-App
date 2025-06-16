@@ -29,8 +29,11 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabsBar(modifier: Modifier = Modifier) {
-    val startTab = Tabs.IN_PROGRESS
+fun TabsBar(
+    modifier: Modifier = Modifier,
+    onTabSelected: (StatusTab) -> Unit = {},
+) {
+    val startTab = StatusTab.IN_PROGRESS
     var selectedTab by rememberSaveable { mutableIntStateOf(startTab.ordinal) }
     PrimaryTabRow(
         modifier = modifier,
@@ -44,11 +47,12 @@ fun TabsBar(modifier: Modifier = Modifier) {
             )
         }
     ) {
-        Tabs.entries.forEachIndexed { index, tab ->
+        StatusTab.entries.forEachIndexed { index, tab ->
             Tab(
                 selected = selectedTab == index,
                 onClick = {
                     selectedTab = index
+                    onTabSelected(tab)
                 },
                 selectedContentColor = Theme.color.title,
                 unselectedContentColor = Theme.color.hint,
@@ -89,7 +93,7 @@ fun TabsBar(modifier: Modifier = Modifier) {
     }
 }
 
-enum class Tabs(val text: String, val notificationsCount: Int = 0) {
+enum class StatusTab(val text: String, val notificationsCount: Int = 0) {
     IN_PROGRESS("In Progress", 14),
     TO_DO("To Do"),
     DONE("Done"),
