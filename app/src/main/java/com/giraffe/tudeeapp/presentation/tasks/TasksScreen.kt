@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreen() {
@@ -55,7 +58,8 @@ fun TaskScreen() {
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Add the date picker here
+            DatePicker()
+
             TabsBar()
 
             LazyColumn(
@@ -84,6 +88,7 @@ fun TaskScreen() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TaskScreenPreview() {

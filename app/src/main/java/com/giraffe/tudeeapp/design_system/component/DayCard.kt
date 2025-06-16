@@ -19,7 +19,8 @@ fun DayCard(
     modifier: Modifier = Modifier,
     dayNumber: Int = 15,
     dayName: String = "Mon",
-    isSelected: Boolean = true
+    isSelected: Boolean = true,
+    onClick: () -> Unit
 ) {
     val dayNumberColor = if (isSelected) Theme.color.onPrimary else Theme.color.body
     val dayNameColor = if (isSelected) Theme.color.onPrimaryCaption else Theme.color.hint
@@ -33,20 +34,20 @@ fun DayCard(
     Column(
         modifier = modifier
             .background(
-            brush = Brush.verticalGradient(backgroundColor),
-            shape = RoundedCornerShape(16.dp)
-        ).padding(horizontal = 14.dp, vertical = 12.dp),
+                brush = Brush.verticalGradient(backgroundColor),
+                shape = RoundedCornerShape(16.dp)
+            ),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier,
+            modifier = Modifier.padding(start = 17.dp, end = 17.dp, top = 12.dp),
             text = dayNumber.toString(),
             style = Theme.textStyle.title.medium,
             color = dayNumberColor
         )
         Text(
-            modifier = Modifier,
+            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 12.dp),
             text = dayName,
             style = Theme.textStyle.body.small,
             color = dayNameColor
@@ -57,5 +58,7 @@ fun DayCard(
 @Preview
 @Composable
 private fun Preview() {
-    DayCard()
+    DayCard(
+        onClick = {}
+    )
 }
