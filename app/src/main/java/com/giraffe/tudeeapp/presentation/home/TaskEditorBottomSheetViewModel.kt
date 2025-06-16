@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
@@ -16,51 +16,61 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-class AddEditTaskViewModel(
+class TaskEditorBottomSheetViewModel(
     private val tasksService: TasksService,
+    private val categoriesService: CategoriesService,
     private val taskId: Long? = null
 ) : ViewModel() {
 
-    private val _taskState = MutableStateFlow(AddEditTaskUiState())
-    val taskState: StateFlow<AddEditTaskUiState> = _taskState
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _isSuccess = MutableStateFlow(false)
-    val isSuccess: StateFlow<Boolean> = _isSuccess
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    private val _taskState = MutableStateFlow(TaskEditorBottomSheetUiState())
+    val taskState: StateFlow<TaskEditorBottomSheetUiState> = _taskState
 
     init {
-        if (taskId != null) {
-            loadTask(taskId)
+        loadCategories()
+        taskId?.let { loadTask(it) }
+    }
+
+    private fun loadCategories() {
+        viewModelScope.launch {
+            _taskState.value = _taskState.value.copy(isLoadingCategories = true, errorMessageCategories = null)
+
+            categoriesService.getAllCategories().collect { result ->
+                result.onSuccess { categories ->
+                    _taskState.value = _taskState.value.copy(
+                        categories = categories,
+                        isLoadingCategories = false
+                    )
+                }.onError { error ->
+                    _taskState.value = _taskState.value.copy(
+                        isLoadingCategories = false,
+                        errorMessageCategories = error.toString()
+                    )
+                }
+            }
         }
     }
 
-   private fun loadTask(id: Long) {
+    private fun loadTask(id: Long) {
         viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
+            _taskState.value = _taskState.value.copy(isLoadingTask = true, errorMessageTask = null)
 
-            tasksService.getTaskById(id)
-                .onSuccess { task ->
-                    _taskState.value = AddEditTaskUiState(
-                        id = task.id,
-                        title = task.title,
-                        description = task.description,
-                        dueDate = task.dueDate,
-                        taskPriority = task.taskPriority,
-                        taskStatus = task.status,
-                        categoryId = task.categoryId
-                    )
-                }
-                .onError {errorMassage ->
-                    _error.value = errorMassage.toString()
-                }
-
-            _isLoading.value = false
+            tasksService.getTaskById(id).onSuccess { task ->
+                _taskState.value = _taskState.value.copy(
+                    id = task.id,
+                    title = task.title,
+                    description = task.description,
+                    dueDate = task.dueDate,
+                    taskPriority = task.taskPriority,
+                    taskStatus = task.status,
+                    categoryId = task.categoryId,
+                    isLoadingTask = false
+                )
+            }.onError { error ->
+                _taskState.value = _taskState.value.copy(
+                    isLoadingTask = false,
+                    errorMessageTask = error.toString()
+                )
+            }
         }
     }
 
@@ -80,20 +90,16 @@ class AddEditTaskViewModel(
         _taskState.value = _taskState.value.copy(taskPriority = priority)
     }
 
-    fun onStatusChange(status: TaskStatus) {
-        _taskState.value = _taskState.value.copy(taskStatus = status)
-    }
-
     fun onCategoryChange(categoryId: Long) {
         _taskState.value = _taskState.value.copy(categoryId = categoryId)
     }
 
     fun saveTask() {
         viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
+            _taskState.value = _taskState.value.copy(isLoadingSave = true, errorMessageSave = null)
 
             val currentState = _taskState.value
+
             val task = Task(
                 id = currentState.id ?: 0L,
                 title = currentState.title,
@@ -112,19 +118,15 @@ class AddEditTaskViewModel(
                 tasksService.updateTask(task)
             }
 
-            result
-                .onSuccess {
-                    _isSuccess.value = true
-                }
-                .onError { errorMassage ->
-                    _error.value = errorMassage.toString()
-                }
-
-            _isLoading.value = false
+            result.onSuccess {
+                _taskState.value = _taskState.value.copy(isSuccessSave = true, isLoadingSave = false)
+            }.onError { error ->
+                _taskState.value = _taskState.value.copy(isLoadingSave = false, errorMessageSave = error.toString())
+            }
         }
     }
-    fun resetSuccess() {
-        _isSuccess.value = false
-    }
 
+    fun resetSuccess() {
+        _taskState.value = _taskState.value.copy(isSuccessSave = false)
+    }
 }
