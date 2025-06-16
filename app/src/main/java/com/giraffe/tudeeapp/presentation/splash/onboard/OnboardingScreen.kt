@@ -101,7 +101,7 @@ fun OnboardingScreen(
                 HorizontalPager(
                     state = pagerState, modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.55f)
+                        .height(500.dp)
                 ) { page ->
                     Column(
                         modifier = Modifier
@@ -113,7 +113,7 @@ fun OnboardingScreen(
                         Image(
                             painter = painterResource(id = pages[page].imageRes),
                             contentDescription = null,
-                            modifier = Modifier.padding(top = 32.dp)
+                            modifier = Modifier.padding(top = 36.dp)
                         )
 
                         Text(
