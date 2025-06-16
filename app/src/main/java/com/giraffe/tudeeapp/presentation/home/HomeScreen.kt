@@ -25,11 +25,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.Slider
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
+import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
@@ -117,7 +117,7 @@ fun HomeContent(state: TasksUiState) {
                                 .fillMaxSize()
                         ) {
                             TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                            Slider()
+                            SliderStatus(state)
                             OverViewSection(tasksState = state)
                         }
                     }

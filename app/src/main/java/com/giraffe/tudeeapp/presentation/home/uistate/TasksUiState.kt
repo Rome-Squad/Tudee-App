@@ -10,6 +10,7 @@ data class TasksUiState(
     val todoTasks: List<TaskUi> = emptyList(),
     val inProgressTasks: List<TaskUi> = emptyList(),
     val doneTasks: List<TaskUi> = emptyList(),
+    val allTasksCount: Int = 0,
     val toDoTasksCount: Int = 0,
     val inProgressTasksCount: Int = 0,
     val doneTasksCount: Int = 0,

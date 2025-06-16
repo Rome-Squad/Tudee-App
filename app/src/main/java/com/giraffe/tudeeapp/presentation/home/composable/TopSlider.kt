@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.color.lightThemeColor
-import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.util.getTodayDate
 
 @Composable
@@ -24,15 +23,15 @@ fun TopSlider(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.calendar_icon),
-            tint = lightThemeColor.body,
+            tint = Theme.color.body,
             contentDescription = "calendar_icon",
         )
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             text = getTodayDate(),
-            color = lightThemeColor.body,
-            fontFamily = defaultTextStyle.label.medium.fontFamily
+            color = Theme.color.body,
+            style = Theme.textStyle.label.medium
         )
     }
 }

@@ -53,16 +53,21 @@ class HomeViewModel(
                         val todoTasks =
                             tasksUiList.filter { it.taskStatusUi == TaskStatus.TODO }.take(2)
 
-                        val doneTasks = tasksUiList.filter { it.taskStatusUi == TaskStatus.DONE }
+                        val doneTasks =
+                            tasksUiList.filter { it.taskStatusUi == TaskStatus.DONE }.take(2)
 
                         val iProgressTasks =
-                            tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }
+                            tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }.take(2)
 
                         currentState.copy(
                             allTasks = tasksUiList,
                             todoTasks = todoTasks,
                             inProgressTasks = iProgressTasks,
                             doneTasks = doneTasks,
+                            allTasksCount = tasksUiList.size,
+                            toDoTasksCount = todoTasks.size,
+                            inProgressTasksCount = iProgressTasks.size,
+                            doneTasksCount = doneTasks.size,
                             isLoading = false,
                             errorMessage = null
                         )
