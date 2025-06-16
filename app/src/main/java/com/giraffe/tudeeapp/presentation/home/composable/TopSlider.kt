@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.color.lightThemeColor
 import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
+import com.giraffe.tudeeapp.presentation.util.getTodayDate
 
 @Composable
 fun TopSlider(modifier: Modifier = Modifier) {
@@ -29,7 +30,7 @@ fun TopSlider(modifier: Modifier = Modifier) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            text = "today, 22 Jun 2025",
+            text = getTodayDate(),
             color = lightThemeColor.body,
             fontFamily = defaultTextStyle.label.medium.fontFamily
         )
