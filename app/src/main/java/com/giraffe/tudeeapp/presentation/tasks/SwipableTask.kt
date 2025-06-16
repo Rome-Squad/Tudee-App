@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -50,14 +53,16 @@ fun SwipableTask(
     onExpanded: () -> Unit = {},
     onCollapsed: () -> Unit = {}
 ) {
-    var cardWidth by remember { mutableFloatStateOf(0f) }
+    val buttonWidth = 130f
     val offset = remember {
         Animatable(initialValue = 0f)
     }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(key1 = isRevealed, cardWidth) {
+
+    // Animate the initial offset based on the isRevealed state
+    LaunchedEffect(key1 = isRevealed, buttonWidth) {
         if (isRevealed) {
-            offset.animateTo(cardWidth)
+            offset.animateTo(-buttonWidth)
         } else {
             offset.animateTo(0f)
         }
@@ -66,19 +71,19 @@ fun SwipableTask(
     Box(
         modifier = modifier
             .fillMaxWidth()
-//            .height(IntrinsicSize.Min)
+            .height(125.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(16.dp))
                 .fillMaxWidth()
-                .fillMaxHeight()
-                .onSizeChanged { cardWidth = it.width.toFloat() }
+                .background(Theme.color.errorVariant)
         ) {
             TaskDeleteButton(
                 onClick = {},
                 modifier = Modifier
+                    .fillMaxHeight()
             )
         }
 
@@ -90,15 +95,15 @@ fun SwipableTask(
                     detectHorizontalDragGestures(
                         onHorizontalDrag = { _, dragAmount ->
                             scope.launch {
-                                val newOffset = (offset.value + dragAmount).coerceIn(-cardWidth, 0f)
+                                val newOffset = (offset.value + dragAmount).coerceIn(-buttonWidth, 0f)
                                 offset.snapTo(newOffset)
                             }
                         },
                         onDragEnd = {
                             when {
-                                offset.value > 10f -> {
+                                offset.value > -buttonWidth/2 -> {
                                     scope.launch {
-                                        offset.animateTo(-cardWidth) {
+                                        offset.animateTo(0f) {
                                             onExpanded()
                                         }
                                     }
@@ -106,7 +111,7 @@ fun SwipableTask(
 
                                 else -> {
                                     scope.launch {
-                                        offset.animateTo(0f) {
+                                        offset.animateTo(-buttonWidth) {
                                             onCollapsed()
                                         }
                                     }

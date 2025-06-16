@@ -33,6 +33,7 @@ import kotlinx.datetime.LocalDateTime
 @Composable
 fun TaskScreen() {
     Scaffold(
+        containerColor = Theme.color.surface,
         topBar = {
             TopAppBar(
                 modifier = Modifier.background(Theme.color.surface),
@@ -64,8 +65,7 @@ fun TaskScreen() {
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier,
             ) {
                 items(10) { index ->
                     SwipableTask(
