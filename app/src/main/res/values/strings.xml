@@ -11,4 +11,7 @@
     <string name="tudee">Tudee</string>
     <string name="app_tagline">Your cute Helper for Every Task</string>
     <string name="task_icon">Task Icon</string>
+    <string name="done_tasks">Done</string>
+    <string name="in_progress_tasks">In progress</string>
+    <string name="to_do_tasks">To-Do</string>
 </resources>

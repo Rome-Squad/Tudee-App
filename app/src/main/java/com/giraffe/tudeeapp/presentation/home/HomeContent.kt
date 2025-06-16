@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -31,10 +32,17 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
+import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(
-) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    val state by viewModel.tasksUiState.collectAsState()
+    HomeContent(state = state)
+}
+
+@Composable
+fun HomeContent(state: TasksUiState) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -78,9 +86,21 @@ fun HomeScreen(
                                 .background(Theme.color.surface)
                                 .padding(top = 250.dp)
                         ) {
-                            TaskSection()
-                            TaskSection(taskStatus = "To-Do", numberOfTasks = "9")
-                            TaskSection(taskStatus = "Done", numberOfTasks = "2")
+                            TaskSection(
+                                taskStatus = "In Progress",
+                                numberOfTasks = state.inProgressTasksCount.toString(),
+                                tasks = state.inProgressTasks
+                            )
+                            TaskSection(
+                                taskStatus = "To-Do",
+                                numberOfTasks = state.toDoTasksCount.toString(),
+                                tasks = state.todoTasks
+                            )
+                            TaskSection(
+                                taskStatus = "Done",
+                                numberOfTasks = state.doneTasksCount.toString(),
+                                tasks = state.doneTasks
+                            )
                         }
                     }
                     Box(
@@ -98,7 +118,7 @@ fun HomeScreen(
                         ) {
                             TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
                             Slider()
-                            OverViewSection()
+                            OverViewSection(tasksState = state)
                         }
                     }
                 }
@@ -114,10 +134,8 @@ fun HomeScreen(
     }
 }
 
-@Preview(
-    widthDp = 360,
-)
+@Preview(widthDp = 360)
 @Composable
 fun Preview() {
-    HomeScreen()
+    HomeContent(state = TasksUiState())
 }

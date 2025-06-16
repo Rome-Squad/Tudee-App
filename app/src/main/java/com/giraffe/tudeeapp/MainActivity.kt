@@ -14,7 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
-import com.giraffe.tudeeapp.presentation.home.HomeScreen
+import com.giraffe.tudeeapp.presentation.home.HomeContent
+import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
 
 class MainActivity : ComponentActivity() {
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.HomeScreen.route) {
-                            HomeScreen()
+                            HomeContent(state = TasksUiState())
                         }
                         composable(Screen.TaskScreen.route) {
                             TaskScreen()

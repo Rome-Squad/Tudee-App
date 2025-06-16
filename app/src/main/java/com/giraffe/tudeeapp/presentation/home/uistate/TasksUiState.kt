@@ -1,12 +1,12 @@
 package com.giraffe.tudeeapp.presentation.home.uistate
 
-import com.giraffe.tudeeapp.domain.model.category.Category
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.util.DomainError
 
 data class TasksUiState(
+    val allTasks: List<TaskUi> = emptyList(),
     val todoTasks: List<TaskUi> = emptyList(),
     val inProgressTasks: List<TaskUi> = emptyList(),
     val doneTasks: List<TaskUi> = emptyList(),
@@ -29,7 +29,6 @@ data class TaskUi(
 )
 
 
-// task counts
 fun Task.toUiState(categoryImage: String? = null): TaskUi {
     return TaskUi(
         id = id.toString(),
@@ -41,13 +40,3 @@ fun Task.toUiState(categoryImage: String? = null): TaskUi {
         categoryImage = categoryImage
     )
 }
-
-fun Category.toUiState(): CategoryImageUi {
-    return CategoryImageUi(
-        categoryImage = imageUri
-    )
-}
-
-data class CategoryImageUi(
-    val categoryImage: String?
-)

@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 
 @Composable
-fun OverViewSection(modifier: Modifier = Modifier) {
+fun OverViewSection(modifier: Modifier = Modifier, tasksState: TasksUiState) {
     TitleOverView()
     Row(
         modifier = modifier
@@ -24,22 +26,22 @@ fun OverViewSection(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f),
             color = Theme.color.greenAccent,
             icon = painterResource(R.drawable.done_task_card_icon),
-            taskCount = "2",
-            taskStatus = "Done"
+            taskCount = tasksState.doneTasksCount.toString(),
+            taskStatus = stringResource(R.string.done_tasks),
         )
         CardOverView(
             modifier = Modifier.weight(1f),
             color = Theme.color.yellowAccent,
             icon = painterResource(R.drawable.in_progress_task_card_icon),
-            taskCount = "16",
-            taskStatus = "In progress"
+            taskCount = tasksState.inProgressTasksCount.toString(),
+            taskStatus = stringResource(R.string.in_progress_tasks)
         )
         CardOverView(
             modifier = Modifier.weight(1f),
             color = Theme.color.purpleAccent,
             icon = painterResource(R.drawable.to_do_task_card_icon),
-            taskCount = "1",
-            taskStatus = "To-Do"
+            taskCount = tasksState.toDoTasksCount.toString(),
+            taskStatus = stringResource(R.string.to_do_tasks)
         )
     }
 }

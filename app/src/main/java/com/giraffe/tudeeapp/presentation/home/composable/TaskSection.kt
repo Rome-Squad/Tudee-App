@@ -22,12 +22,15 @@ import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.presentation.home.uistate.TaskUi
 
 @Composable
 fun TaskSection(
     modifier: Modifier = Modifier,
-    numberOfTasks: String = "12",
     taskStatus: String = "In Progress",
+    numberOfTasks: String = "0",
+    tasks: List<TaskUi> = emptyList(),
 ) {
     Column(modifier = modifier.padding(top = 24.dp)) {
         Row(
@@ -67,28 +70,32 @@ fun TaskSection(
 
         }
 
-        TaskCard(
-            taskIcon = painterResource(R.drawable.birthday_cake_icon),
-            blurColor = Theme.color.pinkAccent.copy(alpha = .08f),
-            priority = PriorityType.HIGH,
-            taskTitle = "Organize Study Desk",
-            taskDescription = "Review cell structure and functions for tomorrow...",
-            taskCardType = TaskCardType.TASK,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-        )
-
-//        TaskCard(
-//            taskIcon = painterResource(R.drawable.birthday_cake_icon),
-//            blurColor = Theme.color.pinkAccent.copy(alpha = .08f),
-//            priority = PriorityType.HIGH,
-//            taskTitle = "Organize Study Desk",
-//            taskDescription = "Review cell structure and functions for tomorrow...",
-//            taskCardType = TaskCardType.TASK,
-//            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-//
-//        )
+        tasks.forEach { task ->
+            TaskCard(
+                taskIcon = painterResource(task.categoryImage?.toInt() ?: R.drawable.ic_error),
+                blurColor = when (task.taskPriorityUi) {
+                    TaskPriority.HIGH -> Theme.color.pinkAccent
+                    TaskPriority.MEDIUM -> Theme.color.yellowAccent
+                    TaskPriority.LOW -> Theme.color.greenAccent
+                },
+                priority = task.taskPriorityUi.toPriorityType(),
+                taskTitle = task.taskTitle,
+                taskDescription = task.taskDescription,
+                taskCardType = TaskCardType.TASK,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+            )
+        }
     }
 }
+
+fun TaskPriority.toPriorityType(): PriorityType {
+    return when (this) {
+        TaskPriority.LOW -> PriorityType.LOW
+        TaskPriority.MEDIUM -> PriorityType.MEDIUM
+        TaskPriority.HIGH -> PriorityType.HIGH
+    }
+}
+
 
 @Preview
 @Composable

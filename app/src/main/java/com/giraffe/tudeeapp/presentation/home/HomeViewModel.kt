@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class HomeViewModel(
     private val tasksService: TasksService,
@@ -21,17 +24,17 @@ class HomeViewModel(
 ) : ViewModel() {
     private var _tasksUiState = MutableStateFlow(TasksUiState())
     val tasksUiState: StateFlow<TasksUiState> = _tasksUiState.asStateFlow()
+    private val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+    init {
+        getAllTasks()
+    }
 
 
-//    init {
-//        getAllTasks()
-//    }
-
-
-    private suspend fun getAllTasks() {
+    private fun getAllTasks() {
         _tasksUiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-        tasksService.getAllTasks().onEach { result ->
+        tasksService.getTasksByDate(currentDate).onEach { result ->
             _tasksUiState.update { currentState ->
                 when (result) {
                     is Result.Success -> {
@@ -56,6 +59,7 @@ class HomeViewModel(
                             tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }
 
                         currentState.copy(
+                            allTasks = tasksUiList,
                             todoTasks = todoTasks,
                             inProgressTasks = iProgressTasks,
                             doneTasks = doneTasks,
@@ -71,5 +75,4 @@ class HomeViewModel(
             }
         }.launchIn(viewModelScope)
     }
-
 }
