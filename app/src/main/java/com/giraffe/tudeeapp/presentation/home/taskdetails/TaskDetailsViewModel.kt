@@ -8,21 +8,23 @@ import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.domain.util.NotFoundError
-import com.giraffe.tudeeapp.domain.util.ValidationError
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.util.errorToMessage
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel(
     val taskService: TasksService,
     val categoryService: CategoriesService
-): ViewModel() {
+) : ViewModel() {
     var taskDetailsState by mutableStateOf<TaskDetailsState>(TaskDetailsState())
         private set
-    var showEditTaskSheet by mutableStateOf(false)
-        private set
+
+    fun setTask(task: TaskUi) {
+        taskDetailsState = taskDetailsState.copy(
+            task = task
+        )
+    }
 
     fun getTaskById(taskId: Long) = viewModelScope.launch {
         taskDetailsState = taskDetailsState.copy(
@@ -72,19 +74,5 @@ class TaskDetailsViewModel(
                     )
                 }
         }
-    }
-
-    fun showEditTaskSheet() {
-        showEditTaskSheet = true
-    }
-
-    fun hideEditTaskSheet() {
-        showEditTaskSheet = false
-    }
-
-    private fun errorToMessage(error: DomainError): String  = when (error) {
-        is NotFoundError -> "Task Not Found!"
-        is ValidationError -> "Sorry, Something Went Wrong"
-        else -> "Sorry, An Unknown Error"
     }
 }

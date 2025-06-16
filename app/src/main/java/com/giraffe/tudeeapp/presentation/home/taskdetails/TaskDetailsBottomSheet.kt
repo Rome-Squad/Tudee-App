@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.button_type.TudeeSecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
@@ -38,15 +37,14 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailsBottomSheet(
-    taskId: Long,
+    task: TaskUi,
     onnDismiss: () -> Unit,
     onEditTask: (TaskUi?) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     viewModel: TaskDetailsViewModel = koinViewModel()
 ) {
-    val task = viewModel.taskDetailsState.task
-    val status = viewModel.taskDetailsState.task?.status
+    viewModel.setTask(task)
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onnDismiss
@@ -71,19 +69,19 @@ fun TaskDetailsBottomSheet(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(task?.category?.imageUri),
-                    contentDescription = task?.title ?: "",
+                    painter = rememberAsyncImagePainter(task.category.imageUri),
+                    contentDescription = task.title,
                 )
             }
 
             Text(
-                text = task?.title ?: "",
+                text = task.title,
                 style = Theme.textStyle.title.medium,
                 color = Theme.color.title
             )
 
             Text(
-                text = task?.description ?: "",
+                text = task.description,
                 style = Theme.textStyle.body.small,
                 color = Theme.color.body
             )
@@ -112,19 +110,19 @@ fun TaskDetailsBottomSheet(
                     )
 
                     Text(
-                        text = (task?.status?.name ?: "").toLowerCase(),
+                        text = task.status.name.toLowerCase(),
                         style = Theme.textStyle.body.small,
                         color = Theme.color.body
                     )
                 }
 
                 Priority(
-                    priorityType = task?.priorityType ?: PriorityType.HIGH,
+                    priorityType = task.priorityType,
                     isSelected = true
                 )
             }
 
-            if (status != TaskStatus.DONE) {
+            if (task.status != TaskStatus.DONE) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -145,7 +143,7 @@ fun TaskDetailsBottomSheet(
                         text = "",
                         icon = null,
                     ) {
-                        viewModel.changeTaskStatus(if (status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
+                        viewModel.changeTaskStatus(if (task.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
                     }
                 }
             }
@@ -159,9 +157,4 @@ fun TaskDetailsBottomSheet(
 @Preview(showBackground = true)
 @Composable
 fun TaskDetailsBottomSheetPreview() {
-    TaskDetailsBottomSheet(
-        taskId = 1,
-        onnDismiss = {},
-        onEditTask = {}
-    )
 }
