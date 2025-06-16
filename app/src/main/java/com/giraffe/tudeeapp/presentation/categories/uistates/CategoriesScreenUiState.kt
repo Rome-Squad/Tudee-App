@@ -19,7 +19,7 @@ data class CategoryUi(
     val name: String = "",
     val taskCount: Int = 0,
     val imageUri: String? = null,
-    val image: Int,
+    val icon: Int = R.drawable.airplane_01,
 )
 
 fun Category.toUiState(countTasks: Int): CategoryUi {
@@ -28,6 +28,6 @@ fun Category.toUiState(countTasks: Int): CategoryUi {
         name = name,
         taskCount = countTasks,
         imageUri = imageUri,
-        image = categoriesIcon[name] ?: R.drawable.developer,
+        icon = categoriesIcon[name] ?: R.drawable.developer,
     )
 }

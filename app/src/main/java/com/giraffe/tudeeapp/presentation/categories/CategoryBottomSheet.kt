@@ -49,6 +49,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +57,7 @@ fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
     title: String = "Add new category",
     isVisible: Boolean = true,
+    categoryToEdit: CategoryUi? = null,
     onVisibilityChange: (Boolean) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -84,7 +86,7 @@ fun CategoryBottomSheet(
                 )
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    textValue = title,
+                    textValue = categoryToEdit?.name ?: categoryTitle,
                     onValueChange = { categoryTitle = it },
                     hint = "Category title",
                     iconRes = R.drawable.categories_unselected,
@@ -112,7 +114,7 @@ fun CategoryBottomSheet(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (photoUri == null) {
+                    if (photoUri == null && categoryToEdit?.imageUri == null) {
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -145,7 +147,7 @@ fun CategoryBottomSheet(
                             painter = rememberAsyncImagePainter(
                                 ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(data = photoUri)
+                                    .data(data = photoUri ?: categoryToEdit?.imageUri)
                                     .build()
                             ),
                             contentDescription = "selected photo"
