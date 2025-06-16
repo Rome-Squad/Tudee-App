@@ -17,19 +17,18 @@ class CategoryViewModel(
     private val categoriesService: CategoriesService,
 ) : ViewModel() {
 
-
-    private val _uiState = MutableStateFlow(CategoriesUiState())
-    val uiState: StateFlow<CategoriesUiState> = _uiState.asStateFlow()
+    private var _categoriesUiState = MutableStateFlow(CategoriesUiState())
+    val categoriesUiState: StateFlow<CategoriesUiState> = _categoriesUiState.asStateFlow()
 
     init {
         getAllCategories()
     }
 
     private fun getAllCategories() {
-        _uiState.update { it.copy(isLoading = true) }
+        _categoriesUiState.update { it.copy(isLoading = true) }
 
         categoriesService.getAllCategories().onEach { result ->
-            _uiState.update { currentState ->
+            _categoriesUiState.update { currentState ->
                 when (result) {
                     is Result.Success -> {
                         currentState.copy(
