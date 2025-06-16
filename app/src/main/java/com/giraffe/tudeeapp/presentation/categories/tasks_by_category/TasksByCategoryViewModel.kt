@@ -2,11 +2,13 @@ package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.design_system.component.StatusTab
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
+import com.giraffe.tudeeapp.presentation.utils.toEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,16 +32,17 @@ class TasksByCategoryViewModel(
                 result.onSuccess { tasks ->
                     _state.update {
                         it.copy(
-                            todoTasks = tasks.filter { it.status.name == StatusTab.TO_DO.name },
-                            inProgressTasks = tasks.filter { it.status.name == StatusTab.IN_PROGRESS.name },
-                            doneTasks = tasks.filter { it.status.name == StatusTab.DONE.name },
+                            tasks = mapOf(
+                                TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
+                                TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
+                                TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
+                            )
                         )
                     }
                 }.onError { error ->
                     _state.update { it.copy(error = error) }
                 }
             }
-
         }
     }
 
@@ -49,9 +52,20 @@ class TasksByCategoryViewModel(
         }
     }
 
-    override fun selectTab(tab: StatusTab) {
+    override fun selectTab(tab: TaskStatus) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedTab = tab) }
+        }
+    }
+
+    override fun editCategory(category: CategoryUi) {
+        viewModelScope.launch(Dispatchers.IO) {
+            categoriesService.updateCategory(category = category.toEntity())
+                .onSuccess {
+                    _state.update { it.copy() }
+                }.onError { error ->
+                    _state.update { it.copy(error = error) }
+                }
         }
     }
 }
