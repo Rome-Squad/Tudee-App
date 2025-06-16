@@ -31,21 +31,22 @@ fun DayCard(
         Theme.color.surface,
     )
     Column(
-        modifier = modifier.background(
+        modifier = modifier
+            .background(
             brush = Brush.verticalGradient(backgroundColor),
             shape = RoundedCornerShape(16.dp)
-        ),
+        ).padding(horizontal = 14.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(top = 12.dp, start = 17.dp, end = 17.dp),
+            modifier = Modifier,
             text = dayNumber.toString(),
             style = Theme.textStyle.title.medium,
             color = dayNumberColor
         )
         Text(
-            modifier = Modifier.padding(bottom = 12.dp, start = 14.dp, end = 14.dp),
+            modifier = Modifier,
             text = dayName,
             style = Theme.textStyle.body.small,
             color = dayNameColor
