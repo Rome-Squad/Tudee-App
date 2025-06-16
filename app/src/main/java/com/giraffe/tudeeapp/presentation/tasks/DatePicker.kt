@@ -100,6 +100,7 @@ fun DatePicker(
                             selectedDate = java.time.Instant.ofEpochMilli(millis)
                                 .atZone(java.time.ZoneId.systemDefault())
                                 .toLocalDate()
+                            setDate(convertToLocalDateTime(selectedDate))
                         }
                         isDialogVisible = false
                     }
@@ -114,6 +115,18 @@ fun DatePicker(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun convertToLocalDateTime(date: LocalDate): LocalDateTime {
+    return LocalDateTime(
+        year = date.year,
+        monthNumber = date.monthValue,
+        dayOfMonth = date.dayOfMonth,
+        hour = 0,
+        minute = 0,
+        second = 0,
+        nanosecond = 0
+    )
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
