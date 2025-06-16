@@ -27,14 +27,7 @@ class TasksViewModel(
     val state = _state.asStateFlow()
 
     init {
-        val currentDate = LocalDateTime(
-            year = 2025,
-            monthNumber = 6,
-            dayOfMonth = 25,
-            hour = 0,
-            minute = 0,
-        )
-        getTasks(currentDate)
+        getTasks(_state.value.pickedDate)
     }
 
     private fun getTasks(date: LocalDateTime) {
@@ -52,6 +45,13 @@ class TasksViewModel(
                     _state.update { it.copy(error = error) }
                 }
             }
+        }
+    }
+
+    fun setPickedDate(date: LocalDateTime) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(pickedDate = date) }
+            getTasks(date)
         }
     }
 

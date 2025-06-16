@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import kotlinx.datetime.LocalDateTime
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -37,10 +38,14 @@ data class DayData(
     val dayName: String,
     val dayNumber: Int
 )
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePicker(modifier: Modifier = Modifier) {
+fun DatePicker(
+    setDate: (LocalDateTime) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var isDialogVisible by remember { mutableStateOf(false) }
 
