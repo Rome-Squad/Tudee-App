@@ -80,7 +80,7 @@ fun Slider(
                 .align(Alignment.CenterEnd)
                 .width(72.61.dp)
                 .height(108.dp)
-                .offset(y = (-15).dp)
+                .offset(y = (-5).dp)
                 .padding(end = 8.39.dp)
         )
     }
