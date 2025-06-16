@@ -1,0 +1,22 @@
+package com.giraffe.tudeeapp.presentation.home
+
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+data class AddEditTaskUiState(
+    val id: Long? = null,
+    val title: String = "",
+    val description: String = "",
+    val dueDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+    val dueDateMillis: Long? = null,
+    val taskPriority: TaskPriority = TaskPriority.MEDIUM,
+    val taskStatus: TaskStatus = TaskStatus.TODO,
+    val categoryId: Long? = null,
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val errorMessage: String? = null
+)
