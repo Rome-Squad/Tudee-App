@@ -6,7 +6,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
-fun categoriesIconBlurColor(categoryName: String): Color {
+fun getColorForCategoryIcon(categoryName: String): Color {
     return when (categoryName) {
         "Education" -> Theme.color.purpleAccent
         "Adoration" -> Theme.color.primary
@@ -29,7 +29,7 @@ fun categoriesIconBlurColor(categoryName: String): Color {
     }
 }
 
-fun categoriesIcon(categoryName: String): Int {
+fun getCategoryIcon(categoryName: String): Int {
     return when (categoryName) {
         "Education" -> R.drawable.book_open_icon
         "Adoration" -> R.drawable.quran_icon
