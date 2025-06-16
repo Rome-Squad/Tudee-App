@@ -32,19 +32,13 @@ class TaskEditorBottomSheetViewModel(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            _taskState.value = _taskState.value.copy(isLoadingCategories = true, errorMessageCategories = null)
+            updateState { copy(isLoadingCategories = true, errorMessageCategories = null) }
 
             categoriesService.getAllCategories().collect { result ->
                 result.onSuccess { categories ->
-                    _taskState.value = _taskState.value.copy(
-                        categories = categories,
-                        isLoadingCategories = false
-                    )
+                    updateState { copy(categories = categories, isLoadingCategories = false) }
                 }.onError { error ->
-                    _taskState.value = _taskState.value.copy(
-                        isLoadingCategories = false,
-                        errorMessageCategories = error.toString()
-                    )
+                    updateState { copy(isLoadingCategories = false, errorMessageCategories = error.toString()) }
                 }
             }
         }
@@ -52,51 +46,50 @@ class TaskEditorBottomSheetViewModel(
 
     private fun loadTask(id: Long) {
         viewModelScope.launch {
-            _taskState.value = _taskState.value.copy(isLoadingTask = true, errorMessageTask = null)
+            updateState { copy(isLoadingTask = true, errorMessageTask = null) }
 
             tasksService.getTaskById(id).onSuccess { task ->
-                _taskState.value = _taskState.value.copy(
-                    id = task.id,
-                    title = task.title,
-                    description = task.description,
-                    dueDate = task.dueDate,
-                    taskPriority = task.taskPriority,
-                    taskStatus = task.status,
-                    categoryId = task.categoryId,
-                    isLoadingTask = false
-                )
+                updateState {
+                    copy(
+                        id = task.id,
+                        title = task.title,
+                        description = task.description,
+                        dueDate = task.dueDate,
+                        taskPriority = task.taskPriority,
+                        taskStatus = task.status,
+                        categoryId = task.categoryId,
+                        isLoadingTask = false
+                    )
+                }
             }.onError { error ->
-                _taskState.value = _taskState.value.copy(
-                    isLoadingTask = false,
-                    errorMessageTask = error.toString()
-                )
+                updateState { copy(isLoadingTask = false, errorMessageTask = error.toString()) }
             }
         }
     }
 
     fun onTitleChange(newTitle: String) {
-        _taskState.value = _taskState.value.copy(title = newTitle)
+        updateState { copy(title = newTitle) }
     }
 
     fun onDescriptionChange(newDescription: String) {
-        _taskState.value = _taskState.value.copy(description = newDescription)
+        updateState { copy(description = newDescription) }
     }
 
     fun onDueDateChange(newDueDate: LocalDateTime) {
-        _taskState.value = _taskState.value.copy(dueDate = newDueDate)
+        updateState { copy(dueDate = newDueDate) }
     }
 
     fun onPriorityChange(priority: TaskPriority) {
-        _taskState.value = _taskState.value.copy(taskPriority = priority)
+        updateState { copy(taskPriority = priority) }
     }
 
     fun onCategoryChange(categoryId: Long) {
-        _taskState.value = _taskState.value.copy(categoryId = categoryId)
+        updateState { copy(categoryId = categoryId) }
     }
 
     fun saveTask() {
         viewModelScope.launch {
-            _taskState.value = _taskState.value.copy(isLoadingSave = true, errorMessageSave = null)
+            updateState { copy(isLoadingSave = true, errorMessageSave = null) }
 
             val currentState = _taskState.value
 
@@ -119,14 +112,25 @@ class TaskEditorBottomSheetViewModel(
             }
 
             result.onSuccess {
-                _taskState.value = _taskState.value.copy(isSuccessSave = true, isLoadingSave = false)
+                updateState { copy(isSuccessSave = true, isLoadingSave = false) }
             }.onError { error ->
-                _taskState.value = _taskState.value.copy(isLoadingSave = false, errorMessageSave = error.toString())
+                updateState { copy(isLoadingSave = false, errorMessageSave = error.toString()) }
             }
         }
     }
 
-    fun resetSuccess() {
-        _taskState.value = _taskState.value.copy(isSuccessSave = false)
+
+    private fun updateState(update: TaskEditorBottomSheetUiState.() -> TaskEditorBottomSheetUiState) {
+        val updated = _taskState.value.update()
+        val validated = updated.copy(isValidInput = validateInputs(updated))
+        _taskState.value = validated
+    }
+
+    private fun validateInputs(state: TaskEditorBottomSheetUiState): Boolean {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val isValidDueDate = state.dueDate.date >= now.date
+        return state.title.isNotBlank() &&
+                state.description.isNotBlank() &&
+                state.categoryId != null && isValidDueDate
     }
 }

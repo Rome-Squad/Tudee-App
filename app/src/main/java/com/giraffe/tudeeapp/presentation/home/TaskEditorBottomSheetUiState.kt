@@ -28,6 +28,9 @@ data class TaskEditorBottomSheetUiState(
 
     val isLoadingSave: Boolean = false,
     val isSuccessSave: Boolean = false,
-    val errorMessageSave: String? = null
+    val errorMessageSave: String? = null,
+
+    val isValidInput: Boolean = false
+
 )
 

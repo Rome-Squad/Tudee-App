@@ -1,5 +1,5 @@
 package com.giraffe.tudeeapp.presentation.home.componant
-
+import kotlinx.datetime.minus
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +46,10 @@ import com.giraffe.tudeeapp.domain.model.category.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.TaskEditorBottomSheetUiState
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -203,7 +207,7 @@ fun TaskEditorBottomSheetContent(
                 PrimaryButton(
                     text = saveButtonText,
                     isLoading = taskState.isLoadingSave,
-                    isDisable = false,
+                    isDisable = !taskState.isValidInput,
                     onClick = onSaveClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -228,18 +232,8 @@ fun TaskEditorBottomSheetContent(
 @Preview(showBackground = true, widthDp = 360, heightDp = 690)
 @Composable
 fun TaskEditorBottomSheetContentPreview() {
+
     TudeeTheme(isDarkTheme = false) {
-        val fakeState = TaskEditorBottomSheetUiState(
-            title = "Study desk task",
-            description = "Solve all exercises.",
-            taskPriority = TaskPriority.HIGH,
-            taskStatus = TaskStatus.TODO,
-            categoryId = 1,
-            dueDateMillis = null,
-            isLoadingTask = false,
-            isLoadingSave = false,
-            isLoadingCategories = false
-        )
         val fakeCategories = listOf(
             Category(id = 1, name = "Study", imageUri = ""),
             Category(id = 2, name = "Shopping", imageUri = ""),
@@ -249,21 +243,91 @@ fun TaskEditorBottomSheetContentPreview() {
             Category(id = 6, name = "Other", imageUri = "")
         )
 
+        fun validateInputs(state: TaskEditorBottomSheetUiState): Boolean {
+            val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            return state.title.isNotBlank() &&
+                    state.description.isNotBlank() &&
+                    state.categoryId != null && state.dueDate.date >= now.date
+        }
+//        var state by remember {
+//            mutableStateOf(
+//                TaskEditorBottomSheetUiState(
+//                    title = "Read a book",
+//                    description = "Read at least 20 pages.",
+//                    taskPriority = TaskPriority.HIGH,
+//                    taskStatus = TaskStatus.TODO,
+//                    categoryId = 1,
+//                    dueDate = Clock.System.now()
+//                        .minus(2, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+//                        .toLocalDateTime(TimeZone.currentSystemDefault()),
+//                    dueDateMillis = Clock.System.now()
+//                        .minus(2, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+//                        .toEpochMilliseconds(),
+//                    categories = fakeCategories,
+//                    isLoadingTask = false,
+//                    isLoadingSave = false,
+//                    isLoadingCategories = false,
+//                ).let { initial ->
+//                    initial.copy(isValidInput = validateInputs(initial))
+//                }
+//            )
+//        }
+
+        var state by remember {
+            mutableStateOf(
+                TaskEditorBottomSheetUiState(
+                    title = "Read a book",
+                    description = "Read at least 20 pages.",
+                    taskPriority = TaskPriority.HIGH,
+                    taskStatus = TaskStatus.TODO,
+                    categoryId = 1,
+                    dueDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                    dueDateMillis = Clock.System.now().toEpochMilliseconds(),
+                    categories = fakeCategories,
+                    isLoadingTask = false,
+                    isLoadingSave = false,
+                    isLoadingCategories = false,
+                ).let { initial ->
+                    initial.copy(isValidInput = validateInputs(initial))
+                }
+            )
+        }
+
         TaskEditorBottomSheetContent(
             headerTitle = "Add Task",
             saveButtonText = "Save",
-            taskState = fakeState,
+            taskState = state,
             categories = fakeCategories,
             isLoading = false,
             categoriesLoading = false,
-            onTitleChange = {},
-            onDescriptionChange = {},
-            onPriorityChange = {},
-            onCategoryChange = {},
-            onDueDateChange = {},
+            onTitleChange = {
+                state = state.copy(title = it).let { updated ->
+                    updated.copy(isValidInput = validateInputs(updated))
+                }
+            },
+            onDescriptionChange = {
+                state = state.copy(description = it).let { updated ->
+                    updated.copy(isValidInput = validateInputs(updated))
+                }
+            },
+            onPriorityChange = {
+                state = state.copy(taskPriority = it).let { updated ->
+                    updated.copy(isValidInput = validateInputs(updated))
+                }
+            },
+            onCategoryChange = {
+                state = state.copy(categoryId = it).let { updated ->
+                    updated.copy(isValidInput = validateInputs(updated))
+                }
+            },
+            onDueDateChange = { newDueDateMillis ->
+                state = state.copy(dueDateMillis = newDueDateMillis).let { updated ->
+                    updated.copy(isValidInput = validateInputs(updated))
+                }
+            },
+
             onSaveClick = {},
             onCancelClick = {}
         )
     }
 }
-
