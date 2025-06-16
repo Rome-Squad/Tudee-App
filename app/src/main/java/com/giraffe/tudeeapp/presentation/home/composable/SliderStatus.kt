@@ -10,6 +10,7 @@ import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 @Composable
 fun SliderStatus(state: TasksUiState) {
     when {
+
         state.allTasksCount == 0 -> {
             Slider(
                 image = painterResource(R.drawable.tudee_slider_image),
@@ -17,6 +18,7 @@ fun SliderStatus(state: TasksUiState) {
                 subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
                 status = painterResource(R.drawable.tudde_emoji_empty_tasks),
             )
+            return
         }
 
         state.inProgressTasksCount == 0 -> {
@@ -26,6 +28,7 @@ fun SliderStatus(state: TasksUiState) {
                 subtitle = stringResource(R.string.subtitle_zero_progress),
                 status = painterResource(R.drawable.tudee_emoji_zero_progress),
             )
+            return
         }
 
         state.doneTasksCount == state.allTasksCount -> {
@@ -35,6 +38,7 @@ fun SliderStatus(state: TasksUiState) {
                 subtitle = stringResource(R.string.subtitle_great_work),
                 status = painterResource(R.drawable.tudee_emoji_great_work),
             )
+            return
         }
 
         (state.doneTasksCount > 0) && (state.toDoTasksCount > state.doneTasksCount) -> {
@@ -48,6 +52,7 @@ fun SliderStatus(state: TasksUiState) {
                 ),
                 status = painterResource(R.drawable.tudee_status_partially_completed),
             )
+            return
         }
     }
 }

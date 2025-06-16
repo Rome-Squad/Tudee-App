@@ -134,7 +134,7 @@ fun HomeContent(state: TasksUiState) {
     }
 }
 
-@Preview(widthDp = 360)
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
     HomeContent(state = TasksUiState())
