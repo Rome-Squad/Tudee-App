@@ -39,30 +39,28 @@ import com.giraffe.tudeeapp.design_system.component.DefaultTextField
 import com.giraffe.tudeeapp.design_system.component.ParagraphTextField
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.PriorityType
-import com.giraffe.tudeeapp.design_system.component.button_type.TudeePrimaryButton
-import com.giraffe.tudeeapp.design_system.component.button_type.TudeeSecondaryButton
+import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.category.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.home.AddEditTaskUiState
+import com.giraffe.tudeeapp.presentation.home.TaskEditorBottomSheetUiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun AddEditTaskContent(
+fun TaskEditorBottomSheetContent(
     headerTitle: String,
     saveButtonText: String,
-    taskState: AddEditTaskUiState,
+    taskState: TaskEditorBottomSheetUiState,
     categories: List<Category>,
     isLoading: Boolean,
     categoriesLoading: Boolean,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onPriorityChange: (TaskPriority) -> Unit,
-    onStatusChange: (TaskStatus) -> Unit,
     onCategoryChange: (Long) -> Unit,
     onDueDateChange: (Long?) -> Unit,
     onSaveClick: () -> Unit,
@@ -70,7 +68,7 @@ fun AddEditTaskContent(
 ) {
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
-    TudeeDatePickerDialog(
+    DatePickerDialog(
         showDialog = showDatePickerDialog,
         onDismissRequest = { showDatePickerDialog = false },
         onDateSelected = { selectedDateMillis ->
@@ -81,8 +79,7 @@ fun AddEditTaskContent(
 
     if (isLoading || categoriesLoading) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .background(Theme.color.surface),
+            modifier = Modifier.fillMaxSize().background(Theme.color.surface),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -97,7 +94,6 @@ fun AddEditTaskContent(
                     .padding(horizontal = 24.dp, vertical = 16.dp)
                     .align(Alignment.TopCenter)
             ) {
-                // Header Title
                 Text(
                     text = headerTitle,
                     color = Theme.color.title,
@@ -105,17 +101,15 @@ fun AddEditTaskContent(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Title Input
                 DefaultTextField(
                     textValue = taskState.title,
                     onValueChange = onTitleChange,
                     hint = "Task Title",
-                    icon = painterResource(R.drawable.addeditfield)
+                    iconRes = R.drawable.addeditfield
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Description Input
                 ParagraphTextField(
                     textValue = taskState.description,
                     onValueChange = onDescriptionChange,
@@ -133,7 +127,7 @@ fun AddEditTaskContent(
                         } ?: stringResource(R.string.date_picker_placeholder),
                         onValueChange = { },
                         hint = stringResource(R.string.due_date_hint),
-                        icon = painterResource(R.drawable.calendar)
+                        iconRes = R.drawable.calendar
                     )
                 }
 
@@ -150,7 +144,7 @@ fun AddEditTaskContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TaskPriority.values().forEach { priority ->
+                    TaskPriority.entries.forEach { priority ->
                         val priorityType = when (priority) {
                             TaskPriority.HIGH -> PriorityType.HIGH
                             TaskPriority.MEDIUM -> PriorityType.MEDIUM
@@ -170,9 +164,6 @@ fun AddEditTaskContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-
-                Spacer(modifier = Modifier.height(16.dp))
-                // Category Section
                 Text(
                     text = "Category:",
                     color = Theme.color.title,
@@ -202,7 +193,6 @@ fun AddEditTaskContent(
                 }
             }
 
-            // Bottom Buttons (Save, Cancel)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,11 +200,10 @@ fun AddEditTaskContent(
                     .background(Theme.color.surfaceHigh)
                     .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
             ) {
-                TudeePrimaryButton(
+                PrimaryButton(
                     text = saveButtonText,
-                    isLoading = false,
+                    isLoading = taskState.isLoadingSave,
                     isDisable = false,
-                    hasError = false,
                     onClick = onSaveClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -224,7 +213,7 @@ fun AddEditTaskContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                TudeeSecondaryButton(
+                PrimaryButton(
                     text = "Cancel",
                     isLoading = false,
                     isDisable = false,
@@ -238,16 +227,18 @@ fun AddEditTaskContent(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 690)
 @Composable
-fun AddEditTaskModalBottomSheetPreview() {
+fun TaskEditorBottomSheetContentPreview() {
     TudeeTheme(isDarkTheme = false) {
-        val fakeState = AddEditTaskUiState(
+        val fakeState = TaskEditorBottomSheetUiState(
             title = "Study desk task",
             description = "Solve all exercises.",
             taskPriority = TaskPriority.HIGH,
             taskStatus = TaskStatus.TODO,
             categoryId = 1,
             dueDateMillis = null,
-            isLoading = false
+            isLoadingTask = false,
+            isLoadingSave = false,
+            isLoadingCategories = false
         )
         val fakeCategories = listOf(
             Category(id = 1, name = "Study", imageUri = ""),
@@ -258,7 +249,7 @@ fun AddEditTaskModalBottomSheetPreview() {
             Category(id = 6, name = "Other", imageUri = "")
         )
 
-        AddEditTaskContent(
+        TaskEditorBottomSheetContent(
             headerTitle = "Add Task",
             saveButtonText = "Save",
             taskState = fakeState,
@@ -268,7 +259,6 @@ fun AddEditTaskModalBottomSheetPreview() {
             onTitleChange = {},
             onDescriptionChange = {},
             onPriorityChange = {},
-            onStatusChange = {},
             onCategoryChange = {},
             onDueDateChange = {},
             onSaveClick = {},
@@ -276,3 +266,4 @@ fun AddEditTaskModalBottomSheetPreview() {
         )
     }
 }
+

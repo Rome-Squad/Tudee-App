@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -23,13 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.button_type.TudeeTextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TudeeDatePickerDialog(
+fun DatePickerDialog(
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
     onDateSelected: (Long?) -> Unit
@@ -69,26 +69,26 @@ fun TudeeDatePickerDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TudeeTextButton(
+
+                        TextButton(
                             onClick = { onDismissRequest() },
                             text = stringResource(R.string.close_button),
                             isLoading = false,
                             isDisable = false,
-                            hasError = false,
+
                         )
 
-                        TudeeTextButton(
+
+                        TextButton(
                             onClick = { onDismissRequest() },
                             text = stringResource(R.string.cancel_button),
                             isLoading = false,
                             isDisable = false,
-                            hasError = false,
                         )
 
-                        TudeeTextButton(
+                        TextButton(
                             onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
                                 onDateSelected(selectedDate)
@@ -97,7 +97,6 @@ fun TudeeDatePickerDialog(
                             text = stringResource(R.string.ok_button),
                             isLoading = false,
                             isDisable = false,
-                            hasError = false,
                         )
                     }
                 }
@@ -112,7 +111,7 @@ fun TudeeDatePickerDialogPreview() {
     TudeeTheme(false) {
         var showDialog by remember { mutableStateOf(true) }
 
-        TudeeDatePickerDialog(
+        DatePickerDialog(
             showDialog = showDialog,
             onDismissRequest = { showDialog = false },
             onDateSelected = {
