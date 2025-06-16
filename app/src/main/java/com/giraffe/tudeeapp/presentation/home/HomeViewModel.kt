@@ -1,0 +1,83 @@
+package com.giraffe.tudeeapp.presentation.home
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.service.CategoriesService
+import com.giraffe.tudeeapp.domain.service.TasksService
+import com.giraffe.tudeeapp.domain.util.Result
+import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
+import com.giraffe.tudeeapp.presentation.home.uistate.toUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+class HomeViewModel(
+    private val tasksService: TasksService,
+    private val categoryService: CategoriesService
+) : ViewModel() {
+    private var _tasksUiState = MutableStateFlow(TasksUiState())
+    val tasksUiState: StateFlow<TasksUiState> = _tasksUiState.asStateFlow()
+    private val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+    init {
+        getAllTasks()
+    }
+
+
+    private fun getAllTasks() {
+        _tasksUiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+        tasksService.getTasksByDate(currentDate).onEach { result ->
+            _tasksUiState.update { currentState ->
+                when (result) {
+                    is Result.Success -> {
+                        val tasks = result.data
+                        val tasksUiList = tasks.map { task ->
+                            val categoryResult = categoryService.getCategoryById(task.categoryId)
+                            val category = if (categoryResult is Result.Success) {
+                                categoryResult.data
+                            } else null
+
+                            task.toUiState(
+                                categoryImage = category?.imageUri
+                            )
+                        }
+
+                        val todoTasks =
+                            tasksUiList.filter { it.taskStatusUi == TaskStatus.TODO }.take(2)
+
+                        val doneTasks =
+                            tasksUiList.filter { it.taskStatusUi == TaskStatus.DONE }.take(2)
+
+                        val iProgressTasks =
+                            tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }.take(2)
+
+                        currentState.copy(
+                            allTasks = tasksUiList,
+                            todoTasks = todoTasks,
+                            inProgressTasks = iProgressTasks,
+                            doneTasks = doneTasks,
+                            allTasksCount = tasksUiList.size,
+                            toDoTasksCount = todoTasks.size,
+                            inProgressTasksCount = iProgressTasks.size,
+                            doneTasksCount = doneTasks.size,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+
+                    is Result.Error -> {
+                        currentState.copy(isLoading = false, errorMessage = result.error)
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+}
