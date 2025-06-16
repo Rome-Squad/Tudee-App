@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -41,11 +42,11 @@ fun TaskDetailsBottomSheet(
     onnDismiss: () -> Unit,
     onEditTask: (TaskUi?) -> Unit,
     modifier: Modifier = Modifier,
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     viewModel: TaskDetailsViewModel = koinViewModel()
 ) {
     val task = viewModel.taskDetailsState.task
     val status = viewModel.taskDetailsState.task?.status
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onnDismiss
@@ -154,6 +155,7 @@ fun TaskDetailsBottomSheet(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun TaskDetailsBottomSheetPreview() {
