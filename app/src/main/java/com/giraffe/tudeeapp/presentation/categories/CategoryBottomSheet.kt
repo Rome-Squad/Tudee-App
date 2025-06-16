@@ -59,6 +59,8 @@ fun CategoryBottomSheet(
     isVisible: Boolean = true,
     categoryToEdit: CategoryUi? = null,
     onVisibilityChange: (Boolean) -> Unit = {},
+    onAddClick: (CategoryUi) -> Unit = {},
+    onEditClick: (CategoryUi) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var categoryTitle by remember { mutableStateOf("") }
@@ -192,11 +194,29 @@ fun CategoryBottomSheet(
                     PrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
                         text = "Add",
-                    ) {}
+                    ) {
+                        if (categoryToEdit != null) {
+                            onEditClick(
+                                categoryToEdit.copy(
+                                    name = categoryTitle,
+                                    imageUri = photoUri?.toString(),
+                                )
+                            )
+                        } else {
+                            onAddClick(
+                                CategoryUi(
+                                    name = categoryTitle,
+                                    imageUri = photoUri?.toString(),
+                                )
+                            )
+                        }
+                    }
                     SecondaryButton(
                         modifier = Modifier.fillMaxWidth(),
                         text = "Cancel"
-                    ) {}
+                    ) {
+                        onVisibilityChange(false)
+                    }
                 }
             }
         }
