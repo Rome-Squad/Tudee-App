@@ -19,6 +19,7 @@ import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
+import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
 
 class MainActivity : ComponentActivity() {

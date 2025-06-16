@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp
 
 import android.app.Application
+import com.giraffe.tudeeapp.di.dataModule
 import com.giraffe.tudeeapp.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -11,7 +12,7 @@ class TudeeApp : Application() {
 
         startKoin {
             androidContext(this@TudeeApp)
-            modules(appModule)
+            modules(dataModule,appModule)
         }
     }
 }
