@@ -21,8 +21,8 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 @Composable
 fun TudeeFabButton(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
-    isDisable: Boolean,
+    isLoading: Boolean=false,
+    isDisable: Boolean=false,
     icon: Painter,
     onClick: () -> Unit,
 

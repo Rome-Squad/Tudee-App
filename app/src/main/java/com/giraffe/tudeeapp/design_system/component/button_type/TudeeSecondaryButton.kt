@@ -32,8 +32,8 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 fun TudeeSecondaryButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading: Boolean,
-    isDisable: Boolean,
+    isLoading: Boolean=false,
+    isDisable: Boolean=false,
     icon: Painter? = null,
     onClick: () -> Unit,
 
