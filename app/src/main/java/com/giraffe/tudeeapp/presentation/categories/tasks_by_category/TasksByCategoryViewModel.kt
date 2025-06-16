@@ -2,7 +2,7 @@ package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.design_system.component.StatusTab
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
@@ -30,9 +30,9 @@ class TasksByCategoryViewModel(
                 result.onSuccess { tasks ->
                     _state.update {
                         it.copy(
-                            todoTasks = tasks.filter { it.status.name == StatusTab.TO_DO.name },
-                            inProgressTasks = tasks.filter { it.status.name == StatusTab.IN_PROGRESS.name },
-                            doneTasks = tasks.filter { it.status.name == StatusTab.DONE.name },
+                            todoTasks = tasks.filter { it.status.name == TaskStatus.TODO.name },
+                            inProgressTasks = tasks.filter { it.status.name == TaskStatus.IN_PROGRESS.name },
+                            doneTasks = tasks.filter { it.status.name == TaskStatus.DONE.name },
                         )
                     }
                 }.onError { error ->
@@ -49,7 +49,7 @@ class TasksByCategoryViewModel(
         }
     }
 
-    override fun selectTab(tab: StatusTab) {
+    override fun selectTab(tab: TaskStatus) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedTab = tab) }
         }
