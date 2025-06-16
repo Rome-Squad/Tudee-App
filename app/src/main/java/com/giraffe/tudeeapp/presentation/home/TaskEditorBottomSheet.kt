@@ -39,7 +39,6 @@ fun TaskEditorBottomSheet(
     onDismissRequest: () -> Unit,
     headerTitle: String,
     saveButtonText: String,
-    isEditMode: Boolean,
     viewModel: TaskEditorBottomSheetViewModel = koinViewModel{ parametersOf(taskId) },
 ) {
 
@@ -48,29 +47,6 @@ fun TaskEditorBottomSheet(
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    var snackbarMessage by remember { mutableStateOf<String?>(null) }
-    var snackbarType by remember { mutableStateOf<SnackbarType?>(null) }
-
-    // handle success save
-    LaunchedEffect(taskState.isSuccessSave) {
-        if (taskState.isSuccessSave) {
-            snackbarMessage = if (isEditMode) "Edited task successfully." else "Added task successfully."
-            snackbarType = SnackbarType.SUCCESS
-
-            kotlinx.coroutines.delay(500)
-            scope.launch { bottomSheetState.hide() }
-            onDismissRequest()
-            viewModel.resetSuccess()
-        }
-    }
-
-    // handle error save
-    LaunchedEffect(taskState.errorMessageSave) {
-        taskState.errorMessageSave?.let {
-            snackbarMessage = "Some error happened"
-            snackbarType = SnackbarType.ERROR
-        }
-    }
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -108,32 +84,6 @@ fun TaskEditorBottomSheet(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        snackbarMessage?.let { message ->
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 32.dp)
-            ) {
-                TudeeSnackBar(
-                    message = message,
-                    iconRes = when (snackbarType) {
-                        SnackbarType.SUCCESS -> R.drawable.ic_success
-                        SnackbarType.ERROR -> R.drawable.ic_error
-                        else -> R.drawable.ic_error
-                    },
-                )
-            }
 
-            LaunchedEffect(message) {
-                kotlinx.coroutines.delay(3000)
-                snackbarMessage = null
-                snackbarType = null
-            }
-        }
-    }
 }
 
-enum class SnackbarType {
-    SUCCESS, ERROR
-}
