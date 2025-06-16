@@ -4,9 +4,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -15,33 +15,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import com.giraffe.tudeeapp.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeePrimaryButton(
+fun NegativeButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading: Boolean,
-    isDisable: Boolean,
-    hasError: Boolean,
-    icon: Painter? = null,
+    isLoading: Boolean=false,
+    isDisable: Boolean=false,
     onClick: () -> Unit,
 ) {
 
     val background =
-        if (hasError) Theme.color.errorVariant else if (isDisable) Theme.color.disable else Theme.color.primary
-    val content =
-        if (hasError) Theme.color.error else Theme.color.onPrimary
+         if (isDisable) Theme.color.disable else Theme.color.errorVariant
+    val content =Theme.color.error
 
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
@@ -56,7 +52,7 @@ fun TudeePrimaryButton(
         modifier = modifier
             .height(56.dp)
             .widthIn(min = animatedWidth)
-            .width(130.dp),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = background,
             contentColor = content,
@@ -70,7 +66,7 @@ fun TudeePrimaryButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading && icon != null)
+            if (isLoading )
                 Icon(
                     painterResource(R.drawable.loading),
                     "contentDescription",
@@ -84,13 +80,13 @@ fun TudeePrimaryButton(
 
 @Preview
 @Composable
-fun TudeePrimaryButtonsPreview() {
+fun TudeeNegativeButtonsPreview() {
     TudeeTheme {
-        TudeePrimaryButton(
+        NegativeButton(
             text = "Submit",
             onClick = {},
-            isLoading = true, isDisable = false,
-            hasError = false
+            isLoading = false,
+            isDisable = true,
 
         )
 
