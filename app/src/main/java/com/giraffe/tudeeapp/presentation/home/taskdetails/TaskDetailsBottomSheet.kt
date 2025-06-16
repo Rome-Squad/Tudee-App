@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.button_type.TudeeSecondaryButton
+import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
+import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import org.koin.androidx.compose.koinViewModel
@@ -110,7 +111,7 @@ fun TaskDetailsBottomSheet(
                     )
 
                     Text(
-                        text = task.status.name.toLowerCase(),
+                        text = task.status.name.lowercase(),
                         style = Theme.textStyle.body.small,
                         color = Theme.color.body
                     )
@@ -128,20 +129,15 @@ fun TaskDetailsBottomSheet(
                         .fillMaxWidth()
                         .height(56.dp),
                 ) {
-                    TudeeSecondaryButton(
-                        isLoading = false,
-                        isDisable = false,
+                    SecondaryButton(
                         text = "",
                         icon = painterResource(R.drawable.ic_pencil_edit),
                     ) {
                         onEditTask(task)
                     }
 
-                    TudeeSecondaryButton(
-                        isLoading = false,
-                        isDisable = false,
-                        text = "",
-                        icon = null,
+                    NegativeTextButton(
+                        text = if (task.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
                     ) {
                         viewModel.changeTaskStatus(if (task.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
                     }
