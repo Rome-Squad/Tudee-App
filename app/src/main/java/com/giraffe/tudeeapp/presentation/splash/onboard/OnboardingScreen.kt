@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,7 +39,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OnboardingScreen(
-    viewModel: SplashViewModel  = koinViewModel(),
+    viewModel: SplashViewModel = koinViewModel(),
     onFinish: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -67,10 +66,11 @@ fun OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Theme.color.overlay, Theme.color.surface),
-                    start = Offset(0f, 0f),
-                    end = Offset.Infinite
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Theme.color.surface,
+                        Theme.color.overlay,
+                    )
                 )
             )
     ) {
@@ -99,20 +99,72 @@ fun OnboardingScreen(
             )
         }
 
+        Image(
+            painter = painterResource(id = pages[pagerState.currentPage].imageRes),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(bottom = 32.dp)
+        )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.weight(1f)
-            ) { page ->
-                OnboardingPage(
-                    imageRes = pages[page].imageRes,
-                    title = pages[page].title,
-                    description = pages[page].description,
-                    onNextClick = {
+            Box {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(192.dp)
+                        .background(
+                            color = Theme.color.onPrimaryCard,
+                            shape = RoundedCornerShape(32.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Theme.color.onPrimaryStroke,
+                            shape = RoundedCornerShape(32.dp)
+                        )
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(top = 24.dp),
+                                text = pages[page].title,
+                                style = Theme.textStyle.title.medium,
+                                textAlign = TextAlign.Center,
+                                color = Theme.color.title
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = pages[page].description,
+                                style = Theme.textStyle.body.medium,
+                                textAlign = TextAlign.Center,
+                                color = Theme.color.body
+                            )
+                        }
+                    }
+                }
+                TudeeFabButton(
+                    modifier = Modifier
+                        .offset(y = 35.dp)
+                        .align(Alignment.BottomCenter),
+                    isLoading = false,
+                    isDisable = false,
+                    icon = painterResource(R.drawable.arrow_right_double),
+                    onClick = {
                         scope.launch {
                             if (pagerState.currentPage < pages.lastIndex) {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -121,97 +173,20 @@ fun OnboardingScreen(
                                 onFinish()
                             }
                         }
-                    },
-                    totalDots = pages.size,
-                    selectedIndex = pagerState.currentPage
+                    }
                 )
             }
-        }
-    }
-}
 
-@Composable
-fun OnboardingPage(
-    imageRes: Int,
-    title: String,
-    description: String,
-    onNextClick: () -> Unit,
-    totalDots: Int,
-    selectedIndex: Int
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = Modifier
-                .padding(bottom = 32.dp),
-            painter = painterResource(imageRes),
-            contentDescription = null
-        )
 
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Box(
+            DotsIndicator(
+                totalDots = pages.size,
+                selectedIndex = pagerState.currentPage,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(192.dp)
-                    .background(
-                        color = Theme.color.onPrimaryCard,
-                        shape = RoundedCornerShape(32.dp)
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = Theme.color.onPrimaryStroke,
-                        shape = RoundedCornerShape(32.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 24.dp),
-                        text = title,
-                        style = Theme.textStyle.title.medium,
-                        textAlign = TextAlign.Center,
-                        color = Theme.color.title
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = description,
-                        style = Theme.textStyle.body.medium,
-                        textAlign = TextAlign.Center,
-                        color = Theme.color.body
-                    )
-                }
-            }
-
-            TudeeFabButton(
-                modifier = Modifier
-                    .offset(y = 35.dp)
-                    .align(Alignment.BottomCenter),
-                isLoading = false,
-                isDisable = false,
-                icon = painterResource(R.drawable.arrow_right_double),
-                onClick = onNextClick
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 59.dp, bottom = 24.dp)
             )
         }
-
-        DotsIndicator(
-            totalDots = totalDots,
-            selectedIndex = selectedIndex,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 59.dp, bottom = 24.dp)
-        )
     }
-
 }
 
 data class OnboardingData(
