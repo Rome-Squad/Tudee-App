@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,14 +28,18 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeeTextButton(
+fun TudeeNegativeButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading:Boolean,
-    isDisable:Boolean,
+    isLoading: Boolean,
+    isDisable: Boolean,
     onClick: () -> Unit,
 ) {
-    val content =  Theme.color.primary
+
+    val background =
+         if (isDisable) Theme.color.disable else Theme.color.errorVariant
+    val content =Theme.color.error
+
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
         if (isLoading) 140.dp else Dp.Unspecified,
@@ -52,7 +55,7 @@ fun TudeeTextButton(
             .widthIn(min = animatedWidth)
             .width(130.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
+            containerColor = background,
             contentColor = content,
             disabledContainerColor = Theme.color.disable,
             disabledContentColor = Theme.color.stroke
@@ -64,9 +67,13 @@ fun TudeeTextButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading) {
-                Icon(painterResource(R.drawable.loading), "contentDescription", Modifier.size(24.dp))
-            }
+            if (isLoading )
+                Icon(
+                    painterResource(R.drawable.loading),
+                    "contentDescription",
+                    Modifier.size(24.dp)
+                )
+
         }
     }
 }
@@ -74,15 +81,15 @@ fun TudeeTextButton(
 
 @Preview
 @Composable
-fun TudeeTextButtonsPreview() {
-    TudeeTheme   {
-         TudeeTextButton(
-               text = "Submit",
-               onClick = {},
-               isLoading = true,
-             isDisable = false,
-           )
+fun TudeeNegativeButtonsPreview() {
+    TudeeTheme {
+        TudeeNegativeButton(
+            text = "Submit",
+            onClick = {},
+            isLoading = false,
+            isDisable = true,
 
+        )
 
 
     }

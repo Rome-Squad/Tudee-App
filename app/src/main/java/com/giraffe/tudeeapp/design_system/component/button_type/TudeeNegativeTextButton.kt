@@ -29,14 +29,14 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeeTextButton(
+fun TudeeNegativeTextButton(
     modifier: Modifier = Modifier,
     text: String,
     isLoading:Boolean,
     isDisable:Boolean,
     onClick: () -> Unit,
 ) {
-    val content =  Theme.color.primary
+    val content =Theme.color.error
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
         if (isLoading) 140.dp else Dp.Unspecified,
@@ -54,7 +54,7 @@ fun TudeeTextButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = content,
-            disabledContainerColor = Theme.color.disable,
+            disabledContainerColor = Color.Transparent,
             disabledContentColor = Theme.color.stroke
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
@@ -64,7 +64,7 @@ fun TudeeTextButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading) {
+            if (isLoading ) {
                 Icon(painterResource(R.drawable.loading), "contentDescription", Modifier.size(24.dp))
             }
         }
@@ -74,14 +74,14 @@ fun TudeeTextButton(
 
 @Preview
 @Composable
-fun TudeeTextButtonsPreview() {
+fun TudeeNegativeTextButtonsPreview() {
     TudeeTheme   {
-         TudeeTextButton(
-               text = "Submit",
-               onClick = {},
-               isLoading = true,
-             isDisable = false,
-           )
+        TudeeNegativeTextButton(
+            text = "Submit",
+            onClick = {},
+            isLoading = false,
+            isDisable = true,
+        )
 
 
 

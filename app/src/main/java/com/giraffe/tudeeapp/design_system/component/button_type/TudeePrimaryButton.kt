@@ -33,15 +33,11 @@ fun TudeePrimaryButton(
     text: String,
     isLoading: Boolean,
     isDisable: Boolean,
-    hasError: Boolean,
-    icon: Painter? = null,
     onClick: () -> Unit,
 ) {
 
-    val background =
-        if (hasError) Theme.color.errorVariant else if (isDisable) Theme.color.disable else Theme.color.primary
-    val content =
-        if (hasError) Theme.color.error else Theme.color.onPrimary
+    val background = if (isDisable) Theme.color.disable else Theme.color.primary
+    val content = Theme.color.onPrimary
 
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
@@ -70,7 +66,7 @@ fun TudeePrimaryButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading && icon != null)
+            if (isLoading )
                 Icon(
                     painterResource(R.drawable.loading),
                     "contentDescription",
@@ -89,8 +85,8 @@ fun TudeePrimaryButtonsPreview() {
         TudeePrimaryButton(
             text = "Submit",
             onClick = {},
-            isLoading = true, isDisable = false,
-            hasError = false
+            isLoading = false, isDisable = false,
+
 
         )
 
