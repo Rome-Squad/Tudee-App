@@ -4,9 +4,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -29,16 +28,14 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeeTextButton(
+fun TextButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading:Boolean,
-    isDisable:Boolean,
-    hasError:Boolean,
-    icon: Painter? = null,
+    isLoading:Boolean=false,
+    isDisable:Boolean=false,
     onClick: () -> Unit,
 ) {
-    val content = if (hasError) Theme.color.error else Theme.color.primary
+    val content =  Theme.color.primary
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
         if (isLoading) 140.dp else Dp.Unspecified,
@@ -52,7 +49,7 @@ fun TudeeTextButton(
         modifier = modifier
             .height(56.dp)
             .widthIn(min = animatedWidth)
-            .width(130.dp),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = content,
@@ -66,7 +63,7 @@ fun TudeeTextButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading && icon != null) {
+            if (isLoading) {
                 Icon(painterResource(R.drawable.loading), "contentDescription", Modifier.size(24.dp))
             }
         }
@@ -78,12 +75,11 @@ fun TudeeTextButton(
 @Composable
 fun TudeeTextButtonsPreview() {
     TudeeTheme   {
-         TudeeTextButton(
+         TextButton(
                text = "Submit",
                onClick = {},
                isLoading = true,
              isDisable = false,
-             hasError = false,
            )
 
 

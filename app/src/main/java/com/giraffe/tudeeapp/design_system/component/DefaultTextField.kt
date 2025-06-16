@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,7 @@ fun DefaultTextField(
     textValue: String = "hello",
     onValueChange: (String) -> Unit = {},
     hint: String = "Full name",
-    icon : Painter = painterResource(R.drawable.ic_user),
+    iconRes: Int = R.drawable.ic_user
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -55,7 +54,7 @@ fun DefaultTextField(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(24.dp),
-            painter = icon,
+            painter = painterResource(iconRes),
             contentDescription = "user icon",
             tint = if (textValue.isBlank()) Theme.color.hint else Theme.color.body
         )
