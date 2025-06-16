@@ -11,4 +11,9 @@
     <string name="tudee">Tudee</string>
     <string name="app_tagline">Your cute Helper for Every Task</string>
     <string name="task_icon">Task Icon</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="close_button">Close</string>
+    <string name="date_picker_placeholder">Select a due date</string>
+    <string name="due_date_hint">Due Date</string>
 </resources>
