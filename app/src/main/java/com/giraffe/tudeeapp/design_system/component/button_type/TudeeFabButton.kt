@@ -19,7 +19,7 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @JvmOverloads
 @Composable
-fun TudeeFabButton(
+fun FabButton(
     modifier: Modifier = Modifier,
     isLoading: Boolean=false,
     isDisable: Boolean=false,
@@ -65,7 +65,7 @@ fun TudeeFabButton(
 fun TudeeButtonsPreview() {
     TudeeTheme {
 
-        TudeeFabButton(
+        FabButton(
             onClick = {},
             isLoading = true,
             isDisable = false,

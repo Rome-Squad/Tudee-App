@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -29,7 +29,7 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeeTextButton(
+fun TextButton(
     modifier: Modifier = Modifier,
     text: String,
     isLoading:Boolean=false,
@@ -50,7 +50,7 @@ fun TudeeTextButton(
         modifier = modifier
             .height(56.dp)
             .widthIn(min = animatedWidth)
-            .width(130.dp),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = content,
@@ -76,7 +76,7 @@ fun TudeeTextButton(
 @Composable
 fun TudeeTextButtonsPreview() {
     TudeeTheme   {
-         TudeeTextButton(
+         TextButton(
                text = "Submit",
                onClick = {},
                isLoading = true,

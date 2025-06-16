@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,7 +30,7 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
-fun TudeeSecondaryButton(
+fun SecondaryButton(
     modifier: Modifier = Modifier,
     text: String,
     isLoading: Boolean=false,
@@ -51,7 +52,7 @@ fun TudeeSecondaryButton(
         modifier = modifier
             .height(56.dp)
             .widthIn(min = animatedWidth)
-            .width(130.dp)
+            .fillMaxWidth()
             .border(1.dp, Theme.color.stroke, shape),
         colors = ButtonDefaults.buttonColors(
             containerColor = Theme.color.surface,
@@ -82,7 +83,7 @@ fun TudeeSecondaryButton(
 @Composable
 fun TudeeSecondryButtonsPreview() {
     TudeeTheme {
-        TudeeSecondaryButton(
+        SecondaryButton(
             text = "Submit",
             onClick = {},
             isLoading = true,
