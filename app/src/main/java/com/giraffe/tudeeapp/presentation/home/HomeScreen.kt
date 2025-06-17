@@ -29,6 +29,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
@@ -60,7 +61,8 @@ fun HomeContent(state: TasksUiState) {
                     }
                     .height(heightInDp),
                 isDarkTheme = false,
-                onThemeSwitchToggle = {})
+                onThemeSwitchToggle = {}
+            )
 
             Column(
                 modifier = Modifier
@@ -85,23 +87,30 @@ fun HomeContent(state: TasksUiState) {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(Theme.color.surface)
-                                .padding(top = 250.dp)
+                                .padding(top = 230.dp)
                         ) {
-                            TaskSection(
-                                taskStatus = stringResource(R.string.in_progress),
-                                numberOfTasks = state.inProgressTasksCount.toString(),
-                                tasks = state.inProgressTasks
-                            )
-                            TaskSection(
-                                taskStatus = stringResource(R.string.to_do),
-                                numberOfTasks = state.toDoTasksCount.toString(),
-                                tasks = state.todoTasks
-                            )
-                            TaskSection(
-                                taskStatus = stringResource(R.string.done),
-                                numberOfTasks = state.doneTasksCount.toString(),
-                                tasks = state.doneTasks
-                            )
+                            if (state.allTasksCount == 0) {
+                                NoTask(
+                                    modifier = Modifier
+                                        .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                                )
+                            } else {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.in_progress_tasks),
+                                    numberOfTasks = state.inProgressTasksCount.toString(),
+                                    tasks = state.inProgressTasks
+                                )
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.to_do_tasks),
+                                    numberOfTasks = state.toDoTasksCount.toString(),
+                                    tasks = state.todoTasks
+                                )
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.done_tasks),
+                                    numberOfTasks = state.doneTasksCount.toString(),
+                                    tasks = state.doneTasks
+                                )
+                            }
                         }
                     }
                     Box(
@@ -118,7 +127,10 @@ fun HomeContent(state: TasksUiState) {
                                 .fillMaxSize()
                         ) {
                             TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                            SliderStatus(state)
+                            SliderStatus(
+                                state,
+                                modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                            )
                             OverViewSection(tasksState = state)
                         }
                     }
