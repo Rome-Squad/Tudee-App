@@ -9,7 +9,9 @@ fun Category.toEntity(): CategoryEntity {
     return CategoryEntity(
         uid = this.id,
         name = this.name,
-        imageUri = this.imageUri)
+        imageUri = this.imageUri,
+        isEditable = this.isEditable
+    )
 
 }
 
@@ -17,5 +19,6 @@ fun CategoryEntity.toCategory():Category{
     return Category(
         id = this.uid,
         name=this.name,
-        imageUri=this.imageUri)
+        imageUri=this.imageUri,
+        isEditable = this.isEditable)
 }
