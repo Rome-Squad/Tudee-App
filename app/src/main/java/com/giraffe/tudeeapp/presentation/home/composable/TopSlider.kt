@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -24,7 +25,7 @@ fun TopSlider(modifier: Modifier = Modifier) {
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.calendar_icon),
             tint = Theme.color.body,
-            contentDescription = "calendar_icon",
+            contentDescription = stringResource(R.string.calendar_icon),
         )
         Text(
             modifier = Modifier

@@ -20,6 +20,13 @@
     <string name="subtitle_great_work">You’re doing amazing!!!\nTudee is proud of you.</string>
     <string name="partially_completed_subtitle">You\\\'ve completed %1$s out of %2$s \\ntasks Keep going!</string>
     <string name="partially_completed_title">Stay working!</string>
+    <string name="text_value">hello</string>
+    <string name="hint">Full name</string>
+    <string name="calendar_icon">Calendar Icon</string>
+    <string name="negative_text_button">Submit</string>
+    <string name="no_tasks">No tasks for today!</string>
+    <string name="add_your_first_task">Tap the + button to add your first one.</string>
+    <string name="task_card_image_background_description">task card image background</string>
     <string name="overwhelmed_with_tasks">Overwhelmed with tasks?</string>
     <string name="let_s_bring_some_order_to_the_chaos_tudee_is_here_to_help_you_sort_plan_and_breathe_easier">Let’s bring some order to the chaos.\nTudee is here to help you sort, plan, and breathe easier.</string>
     <string name="uh_oh_procrastinating_again">Uh-oh! Procrastinating again</string>
