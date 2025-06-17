@@ -10,7 +10,9 @@ import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 import com.giraffe.tudeeapp.presentation.utils.toCategory
+import com.giraffe.tudeeapp.presentation.utils.toUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,18 +25,34 @@ class TasksByCategoryViewModel(
 ) : ViewModel(), TasksByCategoryScreenActions {
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
-    /*val category = Gson().fromJson(
-        savedStateHandle.get<String>("category") ?: "",
-        CategoryUi::class.java
-    )*/
+
+
+    val categoryId: Long = savedStateHandle.get<Long>("categoryId") ?: 0L
 
     init {
         _state.update {
             it.copy(
-                selectedCategoryStr = savedStateHandle.get<String>("categoryId") ?: ""
+                selectedCategoryId = categoryId,
             )
         }
+        getCategoryById(categoryId)
         getTasks()
+    }
+
+    private fun getCategoryById(categoryId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            categoriesService.getCategoryById(categoryId)
+                .onSuccess { category ->
+                    _state.update { state ->
+                        state.copy(
+                            selectedCategory = category.toUiState(),
+                        )
+                    }
+                }
+                .onError { error ->
+                    _state.update { it.copy(error = error) }
+                }
+        }
     }
 
     private fun getTasks() {
@@ -75,7 +93,14 @@ class TasksByCategoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             categoriesService.updateCategory(category = category.toCategory())
                 .onSuccess {
-                    _state.update { it.copy() }
+                    _state.update {
+                        it.copy(
+                            showSuccessSnackBar = true,
+                            isBottomSheetVisible = false
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(showSuccessSnackBar = false) }
                 }.onError { error ->
                     _state.update { it.copy(error = error) }
                 }

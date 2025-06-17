@@ -37,15 +37,10 @@ import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
 import com.giraffe.tudeeapp.presentation.categories.CategoryViewModel
 import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoriesScreenUiState
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 import com.giraffe.tudeeapp.presentation.navigation.Screen
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import org.koin.androidx.compose.koinViewModel
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navController: NavController) {
@@ -57,17 +52,13 @@ fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navControll
                 viewModel.events.collect { event ->
                     when (event) {
                         is CategoriesUiEvent.NavigateToTasksByCategoryScreen -> {
-                            val strCategory = Gson().toJson(event.category)
-                            navController.navigate("${Screen.TasksByCategoryScreen.route}/hello sponge")
-                            //navController.navigate("${Screen.TasksByCategoryScreen.route}/${event.category.id}")
-                            //navController.navigate("${Screen.TasksByCategoryScreen.route}/${strCategory}")
+                            navController.navigate("${Screen.TasksByCategoryScreen.route}/${event.categoryId}")
                         }
                     }
                 }
             }
         }
     }
-
     CategoriesContent(state, viewModel)
 }
 
@@ -103,7 +94,7 @@ fun CategoriesContent(
                         categoryName = state.categories[index].name,
                         count = state.categories[index].taskCount,
                         onClick = {
-                            actions.selectCategory(state.categories[index])
+                            actions.selectCategory(state.categories[index].id)
                         }
                     )
                 }

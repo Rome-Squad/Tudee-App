@@ -56,9 +56,9 @@ class CategoryViewModel(
         }
     }
 
-    override fun selectCategory(category: CategoryUi) {
+    override fun selectCategory(categoryId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(category))
+            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(categoryId))
         }
     }
 

@@ -12,6 +12,7 @@ data class TasksByCategoryScreenState(
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
     val tasks: Map<TaskStatus, List<Task>> = mapOf(),
     val isBottomSheetVisible: Boolean = false,
-    val error: DomainError? = null
+    val error: DomainError? = null,
+    val showSuccessSnackBar: Boolean = false
 )
 
