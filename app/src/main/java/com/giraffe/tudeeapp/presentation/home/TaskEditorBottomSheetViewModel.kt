@@ -34,11 +34,21 @@ class TaskEditorBottomSheetViewModel(
         viewModelScope.launch {
             updateState { copy(isLoadingCategories = true, errorMessageCategories = null) }
 
-            categoriesService.getAllCategories().collect { result ->
-                result.onSuccess { categories ->
-                    updateState { copy(categories = categories, isLoadingCategories = false) }
-                }.onError { error ->
-                    updateState { copy(isLoadingCategories = false, errorMessageCategories = error.toString()) }
+            categoriesService.getAllCategories().onSuccess { flow ->
+                flow.collect { categories ->
+                    updateState {
+                        copy(
+                            categories = categories,
+                            isLoadingCategories = false
+                        )
+                    }
+                }
+            }.onError { error ->
+                updateState {
+                    copy(
+                        isLoadingCategories = false,
+                        errorMessageCategories = error.toString()
+                    )
                 }
             }
         }
