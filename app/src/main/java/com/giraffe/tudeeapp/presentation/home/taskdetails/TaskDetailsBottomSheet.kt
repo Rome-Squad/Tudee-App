@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
