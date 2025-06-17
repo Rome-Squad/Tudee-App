@@ -14,7 +14,7 @@
     <string name="in_progress_tasks">In progress</string>
     <string name="to_do_tasks">To-Do</string>
     <string name="nothing_on_your_list">Nothing on your list …</string>
-    <string name="subtitle_zero_progress">You just scrolling, not working. Tudee is watching.\n back to work!!!</string>
+    <string name="subtitle_zero_progress">You just scrolling, not working.\nTudee is watching.back to work!!!</string>
     <string name="title_zero_progress">Zero progress?!</string>
     <string name="title_great_work">Tadaa!</string>
     <string name="subtitle_great_work">You’re doing amazing!!!\nTudee is proud of you.</string>
