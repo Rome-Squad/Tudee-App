@@ -1,18 +1,22 @@
 package com.giraffe.tudeeapp.presentation.home.composable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Slider
+import com.giraffe.tudeeapp.presentation.home.HomeContent
 import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 
 @Composable
-fun SliderStatus(state: TasksUiState) {
+fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
     when {
 
         state.allTasksCount == 0 -> {
             Slider(
+                modifier = modifier,
                 image = painterResource(R.drawable.tudee_slider_image),
                 title = stringResource(R.string.nothing_on_your_list),
                 subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
@@ -23,6 +27,7 @@ fun SliderStatus(state: TasksUiState) {
 
         state.inProgressTasksCount == 0 -> {
             Slider(
+                modifier = modifier,
                 image = painterResource(R.drawable.tudee_zero_progress),
                 title = stringResource(R.string.title_zero_progress),
                 subtitle = stringResource(R.string.subtitle_zero_progress),
@@ -33,6 +38,7 @@ fun SliderStatus(state: TasksUiState) {
 
         state.doneTasksCount == state.allTasksCount -> {
             Slider(
+                modifier = modifier,
                 image = painterResource(R.drawable.tudee_image_great_work),
                 title = stringResource(R.string.title_great_work),
                 subtitle = stringResource(R.string.subtitle_great_work),
@@ -43,6 +49,7 @@ fun SliderStatus(state: TasksUiState) {
 
         (state.doneTasksCount > 0) && (state.toDoTasksCount > state.doneTasksCount) -> {
             Slider(
+                modifier = modifier,
                 image = painterResource(R.drawable.tudee_slider_image),
                 title = stringResource(R.string.partially_completed_title),
                 subtitle = stringResource(
@@ -55,4 +62,10 @@ fun SliderStatus(state: TasksUiState) {
             return
         }
     }
+}
+
+@Preview(widthDp = 360)
+@Composable
+fun Preview() {
+    HomeContent(state = TasksUiState())
 }
