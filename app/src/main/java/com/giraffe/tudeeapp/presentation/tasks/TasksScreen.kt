@@ -99,14 +99,7 @@ fun TaskScreenContent(
                 }
                 if (selectedTasks.isEmpty()) {
                     item {
-                        Text(
-                            text = "No tasks available",
-                            style = Theme.textStyle.body.medium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .background(Theme.color.surfaceLow)
-                        )
+                       NoTasksSection()
                     }
                     return@LazyColumn
                 }
