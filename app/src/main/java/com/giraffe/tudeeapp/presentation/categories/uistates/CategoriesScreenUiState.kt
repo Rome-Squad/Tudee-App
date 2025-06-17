@@ -1,9 +1,9 @@
 package com.giraffe.tudeeapp.presentation.categories.uistates
 
+import androidx.core.net.toUri
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
+import kotlinx.serialization.Serializable
 
 data class CategoriesScreenUiState(
     val categories: List<CategoryUi> = emptyList(),
@@ -14,21 +14,11 @@ data class CategoriesScreenUiState(
     val showSuccessSnackBar: Boolean = false
 )
 
+@Serializable
 data class CategoryUi(
-    val id: Long = 1,
-    val name: String = "",
+    val id: Long = 0L,
+    val name: String = "no name",
     val taskCount: Int = 0,
-    val imageUri: String? = null,
-    val icon: Int = R.drawable.airplane_01,
+    val imageUri: String = ("android.resource://com.giraffe.tudeeapp/${R.drawable.body_part_muscle}".toUri()).toString(),
+    val isEditable: Boolean = false,
 )
-
-
-fun Category.toUiState(countTasks: Int): CategoryUi {
-    return CategoryUi(
-        id = id,
-        name = name,
-        taskCount = countTasks,
-        imageUri = imageUri,
-        icon = getCategoryIcon(name),
-    )
-}

@@ -8,16 +8,14 @@ import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoriesScreenUiState
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
-import com.giraffe.tudeeapp.presentation.categories.uistates.toUiState
-import com.giraffe.tudeeapp.presentation.utils.toEntity
+import com.giraffe.tudeeapp.presentation.utils.toCategory
+import com.giraffe.tudeeapp.presentation.utils.toUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,31 +36,29 @@ class CategoryViewModel(
     }
 
     private fun getAllCategories() {
-        _categoriesUiState.update { it.copy(isLoading = true, error = null) }
-        categoriesService.getAllCategories().onEach { result ->
-            result.onSuccess { categories ->
-                val categoryIds = categories.map { it.id }
-                _categoriesUiState.update { currentState ->
-                    currentState.copy(
-                        categories = categories.map { it.toUiState(getTaskCountForCategory(it.id)) },
-                        isLoading = false,
-                        error = null
-                    )
-                }
-            }.onError { error ->
-                _categoriesUiState.update { it.copy(isLoading = false, error = error) }
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun getTaskCountForCategory(categoryId: Long): Int {
-        return 0
-    }
-
-
-    override fun selectCategory(categoryId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(categoryId))
+            _categoriesUiState.update { it.copy(isLoading = true, error = null) }
+            categoriesService.getAllCategories()
+                .onSuccess { flow ->
+                    flow.collect { categories ->
+                        _categoriesUiState.update { currentState ->
+                            currentState.copy(
+                                categories = categories.map { category -> category.toUiState() },
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    }
+                }.onError { error ->
+                    _categoriesUiState.update { it.copy(isLoading = false, error = error) }
+                }
+
+        }
+    }
+
+    override fun selectCategory(category: CategoryUi) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(category))
         }
     }
 
@@ -72,7 +68,7 @@ class CategoryViewModel(
 
     override fun addCategory(category: CategoryUi) {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.createCategory(category.toEntity())
+            categoriesService.createCategory(category.toCategory())
                 .onSuccess {
                     _categoriesUiState.update {
                         it.copy(

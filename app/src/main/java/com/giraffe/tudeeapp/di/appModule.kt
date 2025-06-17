@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.giraffe.tudeeapp.data.service.CategoryServiceImp
 import com.giraffe.tudeeapp.data.service.SplashServiceImpl
 import com.giraffe.tudeeapp.data.service.TasksServiceImp
@@ -20,6 +21,5 @@ val appModule = module {
 
 
     viewModel { SplashViewModel(get()) }
-    viewModel { TasksByCategoryViewModel(get(),get(),get()) }
     viewModel { CategoryViewModel(get()) }
 }

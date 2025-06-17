@@ -214,14 +214,16 @@ fun CategoryBottomSheet(
                         onEditClick(
                             categoryToEdit.copy(
                                 name = categoryTitle,
-                                imageUri = photoUri?.toString(),
+                                imageUri = photoUri.toString(),
                             )
                         )
                     } else {
                         onAddClick(
                             CategoryUi(
                                 name = categoryTitle,
-                                imageUri = photoUri?.toString(),
+                                imageUri = photoUri.toString(),
+                                taskCount = 0,
+                                isEditable = true
                             )
                         )
                     }

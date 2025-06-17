@@ -12,20 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TabsBar
-import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
-import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
-import com.giraffe.tudeeapp.presentation.utils.getColorForCategoryIcon
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun TasksByCategoryScreen(
@@ -49,7 +43,7 @@ fun TasksByCategoryContent(
     ) {
 
         TudeeTopBar(
-            title = state.selectedCategory.name,
+            title = state.selectedCategoryStr,
             withOption = true,
             onClickBack = { /*navController.popBackStack()*/ },
             onClickEdit = { actions.setBottomSheetVisibility(true) }
@@ -64,15 +58,20 @@ fun TasksByCategoryContent(
         ) {
             state.tasks[state.selectedTab]?.let { tasks ->
                 items(tasks) { task ->
-                    TaskCard(
-                        taskIcon = painterResource(getCategoryIcon("Education")),
+                    /*TaskCard(
+                        taskIcon = rememberAsyncImagePainter(
+                            ImageRequest
+                                .Builder(LocalContext.current)
+                                .data(data = task.ca)
+                                .build()
+                        ),
                         blurColor = getColorForCategoryIcon("Education"),
                         priority = PriorityType.MEDIUM,
                         taskTitle = "Organize Study Desk",
                         date = "12-03-2025",
                         taskDescription = "Review cell structure and functions for tomorrow...",
                         taskCardType = TaskCardType.CATEGORY
-                    )
+                    )*/
                 }
             }
 

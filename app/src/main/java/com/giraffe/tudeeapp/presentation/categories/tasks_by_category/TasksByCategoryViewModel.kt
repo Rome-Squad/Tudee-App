@@ -9,7 +9,7 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
-import com.giraffe.tudeeapp.presentation.utils.toEntity
+import com.giraffe.tudeeapp.presentation.utils.toCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,31 +23,39 @@ class TasksByCategoryViewModel(
 ) : ViewModel(), TasksByCategoryScreenActions {
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
-
-    private val categoryId = savedStateHandle.get<Long>("categoryId") ?: 1
+    /*val category = Gson().fromJson(
+        savedStateHandle.get<String>("category") ?: "",
+        CategoryUi::class.java
+    )*/
 
     init {
-        _state.update { it.copy(selectedCategory = CategoryUi(id = categoryId)) }
+        _state.update {
+            it.copy(
+                selectedCategoryStr = savedStateHandle.get<String>("categoryId") ?: ""
+            )
+        }
         getTasks()
     }
 
     private fun getTasks() {
         viewModelScope.launch(Dispatchers.IO) {
-            tasksService.getTasksByCategory(_state.value.selectedCategory.id).collect { result ->
-                result.onSuccess { tasks ->
-                    _state.update {
-                        it.copy(
-                            tasks = mapOf(
-                                TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
-                                TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
-                                TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
+            tasksService.getTasksByCategory(_state.value.selectedCategory.id)
+                .onSuccess { flow ->
+                    flow.collect { tasks ->
+                        _state.update { state ->
+                            state.copy(
+                                tasks = mapOf(
+                                    TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
+                                    TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
+                                    TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
+                                )
                             )
-                        )
+                        }
                     }
-                }.onError { error ->
+                }
+                .onError { error ->
                     _state.update { it.copy(error = error) }
                 }
-            }
         }
     }
 
@@ -65,7 +73,7 @@ class TasksByCategoryViewModel(
 
     override fun editCategory(category: CategoryUi) {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.updateCategory(category = category.toEntity())
+            categoriesService.updateCategory(category = category.toCategory())
                 .onSuccess {
                     _state.update { it.copy() }
                 }.onError { error ->
