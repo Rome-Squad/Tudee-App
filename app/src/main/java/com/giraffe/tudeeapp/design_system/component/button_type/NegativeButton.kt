@@ -30,14 +30,14 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 fun NegativeButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading: Boolean=false,
-    isDisable: Boolean=false,
+    isLoading: Boolean = false,
+    isDisable: Boolean = false,
     onClick: () -> Unit,
 ) {
 
     val background =
-         if (isDisable) Theme.color.disable else Theme.color.errorVariant
-    val content =Theme.color.error
+        if (isDisable) Theme.color.disable else Theme.color.errorVariant
+    val content = Theme.color.error
 
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
@@ -66,11 +66,11 @@ fun NegativeButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading )
+            if (isLoading)
                 Icon(
-                    painterResource(R.drawable.loading),
-                    "contentDescription",
-                    Modifier.size(24.dp)
+                    painter = painterResource(R.drawable.loading),
+                    contentDescription = "contentDescription",
+                    modifier = Modifier.size(24.dp)
                 )
 
         }
@@ -88,7 +88,7 @@ fun TudeeNegativeButtonsPreview() {
             isLoading = false,
             isDisable = true,
 
-        )
+            )
 
 
     }
