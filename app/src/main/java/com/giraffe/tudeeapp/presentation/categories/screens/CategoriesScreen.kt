@@ -114,7 +114,7 @@ fun CategoriesContent(
         if (state.isBottomSheetVisible) {
             CategoryBottomSheet(
                 title = "Add new category",
-                isVisible = true,
+                onVisibilityChange = actions::setBottomSheetVisibility,
                 onAddClick = actions::addCategory,
             )
         }

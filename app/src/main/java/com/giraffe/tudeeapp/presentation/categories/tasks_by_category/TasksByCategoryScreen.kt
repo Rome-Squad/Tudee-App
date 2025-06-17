@@ -78,12 +78,14 @@ fun TasksByCategoryContent(
 
         }
 
-        CategoryBottomSheet(
-            title = "Edit category",
-            isVisible = state.isBottomSheetVisible,
-            categoryToEdit = state.selectedCategory,
-            onEditClick = actions::editCategory
-        )
+        if (state.isBottomSheetVisible) {
+            CategoryBottomSheet(
+                title = "Edit category",
+                onVisibilityChange = actions::setBottomSheetVisibility,
+                categoryToEdit = state.selectedCategory,
+                onEditClick = actions::editCategory
+            )
+        }
 
     }
 }
