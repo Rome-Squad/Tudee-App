@@ -25,10 +25,10 @@ interface TaskDao {
     suspend fun createTask(taskEntity: TaskEntity): Long
 
     @Update
-    suspend fun updateTask(taskEntity: TaskEntity): Long
+    suspend fun updateTask(taskEntity: TaskEntity)
 
-    @Delete
-    suspend fun deleteTask(id: Long): Long
+    @Query("DELETE FROM $TASK_TABLE_NAME WHERE uid = :id")
+    suspend fun deleteTask(id: Long)
 
     @Query("UPDATE $TASK_TABLE_NAME SET status = :newStatus WHERE uid = :id")
     suspend fun changeStatus(id: Long, newStatus: TaskStatus): Unit
