@@ -46,7 +46,8 @@ fun SwipableTask(
     isRevealed: Boolean = false,
     onExpanded: () -> Unit = {},
     onCollapsed: () -> Unit = {},
-    action: (Boolean) -> Unit = { }
+    action: (Boolean) -> Unit = { },
+    onDeleteClick: (TaskUi) -> Unit={}
 ) {
 
     val buttonWidth = 130f
@@ -77,7 +78,7 @@ fun SwipableTask(
                 .background(Theme.color.errorVariant)
         ) {
             TaskDeleteButton(
-                onClick = { action },
+                onClick = {onDeleteClick(taskUi)},
                 modifier = Modifier
                     .fillMaxHeight()
             )

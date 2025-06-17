@@ -2,7 +2,7 @@ package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.model.category.Category
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
@@ -76,6 +76,24 @@ class TasksViewModel(
         }
         return category ?: Category(id = 0, name = "Unknown", imageUri = "")
     }
+
+    fun confirmDelete(task: TaskUi) {
+        _state.update { it.copy(taskToDelete = task) }
+    }
+
+    fun cancelDelete() {
+        _state.update { it.copy(taskToDelete = null) }
+    }
+
+    fun deleteConfirmed() {
+        val task = _state.value.taskToDelete ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            tasksService.deleteTask(task.id)
+            getTasks(_state.value.pickedDate)
+            _state.update { it.copy(taskToDelete = null) }
+        }
+    }
+
 
 }
 

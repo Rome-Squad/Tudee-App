@@ -1,9 +1,11 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +56,7 @@ fun TaskScreenContent(
     actions: TasksViewModel
 ) {
     Scaffold(
-        containerColor = Theme.color.surfaceHigh,
+        containerColor = Theme.color.surface,
         topBar = {
             TopAppBar(
                 title = {
@@ -99,7 +102,13 @@ fun TaskScreenContent(
                 }
                 if (selectedTasks.isEmpty()) {
                     item {
-                       NoTasksSection()
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxSize().padding(start = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            NoTasksSection()
+                        }
                     }
                     return@LazyColumn
                 }
@@ -109,6 +118,7 @@ fun TaskScreenContent(
                     SwipableTask(
                         taskUi = taskUi,
                         action = actions::setBottomSheetVisibility,
+                        onDeleteClick = actions::confirmDelete
                     )
                 }
 //                items(10) { index ->
@@ -118,6 +128,7 @@ fun TaskScreenContent(
 //                    )
 //                }
 
+//  state.taskToDelete?.let {Delete bottom sheet}
             }
         }
     }
@@ -140,7 +151,7 @@ fun dummyTask(): TaskUi {
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun TaskScreenPreview() {
     TaskScreen()

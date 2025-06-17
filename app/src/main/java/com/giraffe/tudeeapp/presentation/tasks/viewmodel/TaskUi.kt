@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.PriorityType
-import com.giraffe.tudeeapp.domain.model.category.Category
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
