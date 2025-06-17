@@ -8,5 +8,7 @@ import com.giraffe.tudeeapp.data.util.Constants
 data class CategoryEntity(
     @PrimaryKey val uid: Long,
     val name:String,
-    val imageUri: String?
+    val imageUri: String,
+    val isEditable: Boolean,
+    val taskCount: Int
 )

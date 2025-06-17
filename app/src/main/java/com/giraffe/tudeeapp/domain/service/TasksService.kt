@@ -9,9 +9,9 @@ import kotlinx.datetime.LocalDateTime
 
 interface TasksService {
 
-    fun getTasksByDate(date: LocalDateTime): Flow<Result<List<Task>, DomainError>>
+    fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError>
 
-    fun getTasksByCategory(categoryId: Long): Flow<Result<List<Task>, DomainError>>
+    fun getTasksByCategory(categoryId: Long): Result<Flow<List<Task>>, DomainError>
 
     suspend fun getTaskById(id: Long): Result<Task, DomainError>
 
