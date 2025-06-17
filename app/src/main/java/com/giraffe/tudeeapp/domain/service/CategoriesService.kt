@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.domain.service
 
-import com.giraffe.tudeeapp.data.model.CategoryTaskCount
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
@@ -8,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoriesService {
 
-    fun getAllCategories(): Flow<Result<List<Category>, DomainError>>
+    fun getAllCategories(): Result<Flow<List<Category>>, DomainError>
 
     suspend fun getCategoryById(id: Long): Result<Category, DomainError>
 
@@ -17,5 +16,4 @@ interface CategoriesService {
     suspend fun updateCategory(category: Category): Result<Unit, DomainError>
 
     suspend fun deleteCategory(id: Long): Result<Unit, DomainError>
-    suspend fun getTaskCountByCategories(categoryIds: List<Long>): Result<List<CategoryTaskCount>, DomainError>
 }
