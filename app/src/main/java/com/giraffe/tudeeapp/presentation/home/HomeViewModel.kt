@@ -6,6 +6,8 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.Result
+import com.giraffe.tudeeapp.domain.util.onError
+import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 import com.giraffe.tudeeapp.presentation.home.uistate.toUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,52 +32,48 @@ class HomeViewModel(
         getAllTasks()
     }
 
-
     private fun getAllTasks() {
         _tasksUiState.update { it.copy(isLoading = true, errorMessage = null) }
 
         tasksService.getTasksByDate(currentDate).onEach { result ->
-            _tasksUiState.update { currentState ->
-                when (result) {
-                    is Result.Success -> {
-                        val tasks = result.data
-                        val tasksUiList = tasks.map { task ->
-                            val categoryResult = categoryService.getCategoryById(task.categoryId)
-                            val category = if (categoryResult is Result.Success) {
-                                categoryResult.data
-                            } else null
+            result.onSuccess { tasks ->
+                val tasksUiList = tasks.map { task ->
+                    val categoryResult = categoryService.getCategoryById(task.categoryId)
+                    val category = if (categoryResult is Result.Success) {
+                        categoryResult.data
+                    } else null
 
-                            task.toUiState(
-                                categoryImage = category?.imageUri
-                            )
-                        }
+                    task.toUiState(
+                        categoryImage = category?.imageUri
+                    )
+                }
 
-                        val todoTasks =
-                            tasksUiList.filter { it.taskStatusUi == TaskStatus.TODO }.take(2)
+                val todoTasks =
+                    tasksUiList.filter { it.taskStatusUi == TaskStatus.TODO }.take(2)
 
-                        val doneTasks =
-                            tasksUiList.filter { it.taskStatusUi == TaskStatus.DONE }.take(2)
+                val doneTasks =
+                    tasksUiList.filter { it.taskStatusUi == TaskStatus.DONE }.take(2)
 
-                        val iProgressTasks =
-                            tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }.take(2)
+                val iProgressTasks =
+                    tasksUiList.filter { it.taskStatusUi == TaskStatus.IN_PROGRESS }.take(2)
 
-                        currentState.copy(
-                            allTasks = tasksUiList,
-                            todoTasks = todoTasks,
-                            inProgressTasks = iProgressTasks,
-                            doneTasks = doneTasks,
-                            allTasksCount = tasksUiList.size,
-                            toDoTasksCount = todoTasks.size,
-                            inProgressTasksCount = iProgressTasks.size,
-                            doneTasksCount = doneTasks.size,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-
-                    is Result.Error -> {
-                        currentState.copy(isLoading = false, errorMessage = result.error)
-                    }
+                _tasksUiState.update { currentState ->
+                    currentState.copy(
+                        allTasks = tasksUiList,
+                        todoTasks = todoTasks,
+                        inProgressTasks = iProgressTasks,
+                        doneTasks = doneTasks,
+                        allTasksCount = tasksUiList.size,
+                        toDoTasksCount = todoTasks.size,
+                        inProgressTasksCount = iProgressTasks.size,
+                        doneTasksCount = doneTasks.size,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
+            }.onError { error ->
+                _tasksUiState.update { currentState ->
+                    currentState.copy(isLoading = false, errorMessage = error)
                 }
             }
         }.launchIn(viewModelScope)
