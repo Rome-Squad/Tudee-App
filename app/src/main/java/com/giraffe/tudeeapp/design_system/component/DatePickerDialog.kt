@@ -1,6 +1,7 @@
-package com.giraffe.tudeeapp.presentation.home.componant
+package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
@@ -65,23 +66,29 @@ fun DatePickerDialog(
                             headlineContentColor = Theme.color.title,
                         )
                     )
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
                     ) {
 
+                        Box(modifier = Modifier.weight(1f)) {
+                            TextButton(
+                                onClick = { onDismissRequest() },
+                                text = stringResource(R.string.clear_button),
+                                isLoading = false,
+                                isDisable = false,
+                            )
+                        }
+                      
+
+
+
+                    Row(
+                        modifier = Modifier.weight(2f),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
                         TextButton(
-                            onClick = { onDismissRequest() },
-                            text = stringResource(R.string.close_button),
-                            isLoading = false,
-                            isDisable = false,
-
-                        )
-
-
-                        TextButton(
+                            Modifier.weight(1f),
                             onClick = { onDismissRequest() },
                             text = stringResource(R.string.cancel_button),
                             isLoading = false,
@@ -89,6 +96,7 @@ fun DatePickerDialog(
                         )
 
                         TextButton(
+                            Modifier.weight(1f),
                             onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
                                 onDateSelected(selectedDate)
@@ -99,6 +107,7 @@ fun DatePickerDialog(
                             isDisable = false,
                         )
                     }
+                }
                 }
             }
         }
