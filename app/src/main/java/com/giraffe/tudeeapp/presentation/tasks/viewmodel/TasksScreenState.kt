@@ -16,7 +16,7 @@ data class TasksScreenState(
     val inProgressTasks: List<Task> = emptyList(),
     val todoTasks: List<Task> = emptyList(),
     val doneTasks: List<Task> = emptyList(),
-    val isBottomSheetVisible: Boolean = false,
+    val isBottomSheetVisible: Boolean = true,
     val error: DomainError? = null,
     val taskToDelete: TaskUi? = null,
 

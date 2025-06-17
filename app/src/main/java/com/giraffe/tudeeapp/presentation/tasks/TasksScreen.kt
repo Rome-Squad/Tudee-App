@@ -1,16 +1,17 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.NavBar
+import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
@@ -38,7 +40,6 @@ import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel()
@@ -48,7 +49,6 @@ fun TaskScreen(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreenContent(
@@ -56,7 +56,7 @@ fun TaskScreenContent(
     actions: TasksViewModel
 ) {
     Scaffold(
-        containerColor = Theme.color.surface,
+        containerColor = Theme.color.surfaceHigh,
         topBar = {
             TopAppBar(
                 title = {
@@ -78,7 +78,7 @@ fun TaskScreenContent(
         floatingActionButton = {
             FabButton(
                 icon = painterResource(R.drawable.add_task),
-                onClick = { actions::setBottomSheetVisibility }
+                onClick = {actions.setBottomSheetVisibility(true)  }
             )
         }
     ) { innerPadding ->
@@ -129,7 +129,19 @@ fun TaskScreenContent(
 //                }
 
 //  state.taskToDelete?.let {Delete bottom sheet}
+
+
+
             }
+
+          /*  if (state.isBottomSheetVisible) {
+                ModalBottomSheet(
+                    onDismissRequest = { actions.setBottomSheetVisibility(false) },
+                    modifier = Modifier.fillMaxHeight(0.95f)
+                ) {
+                    // Replace with your actual add task content
+                }
+            }*/
         }
     }
 }

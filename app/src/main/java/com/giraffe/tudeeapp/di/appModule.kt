@@ -7,6 +7,7 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.SplashService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -18,4 +19,5 @@ val appModule = module {
 
 
     viewModel { SplashViewModel(get()) }
+    viewModel{TasksViewModel(get(),get())}
 }

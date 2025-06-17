@@ -32,18 +32,19 @@ class TasksViewModel(
 
     private fun getTasks(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
-            tasksService.getTasksByDate(date).collect { result ->
-                result.onSuccess { tasks ->
+            val result = tasksService.getTasksByDate(date)
+            result.onSuccess { flow ->
+                flow.collect { tasks ->
                     _state.update {
                         it.copy(
-                            todoTasks = tasks.filter { it.status.name == TaskStatus.TODO.name },
-                            inProgressTasks = tasks.filter { it.status.name == TaskStatus.IN_PROGRESS.name },
-                            doneTasks = tasks.filter { it.status.name == TaskStatus.DONE.name },
+                            todoTasks = tasks.filter { it.status == TaskStatus.TODO },
+                            inProgressTasks = tasks.filter { it.status == TaskStatus.IN_PROGRESS },
+                            doneTasks = tasks.filter { it.status == TaskStatus.DONE },
                         )
                     }
-                }.onError { error ->
-                    _state.update { it.copy(error = error) }
                 }
+            }.onError { error ->
+                _state.update { it.copy(error = error) }
             }
         }
     }
@@ -74,7 +75,8 @@ class TasksViewModel(
                 .onSuccess { category = it }
                 .onError { }
         }
-        return category ?: Category(id = 0, name = "Unknown", imageUri = "")
+        return category ?: Category(id = 0, name = "Unknown", imageUri = "", isEditable = false
+        , taskCount = 0)
     }
 
     fun confirmDelete(task: TaskUi) {
