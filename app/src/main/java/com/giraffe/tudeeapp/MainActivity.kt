@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
+import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
@@ -96,6 +97,10 @@ class MainActivity : ComponentActivity() {
 
                         composable(Screen.CategoriesScreen.route) {
                             CategoriesScreen(navController = navController)
+                        }
+
+                        composable(Screen.TasksByCategoryScreen.route) {
+                            TasksByCategoryScreen(navController = navController)
                         }
                     }
                 }
