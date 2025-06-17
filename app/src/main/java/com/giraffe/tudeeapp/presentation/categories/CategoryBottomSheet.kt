@@ -61,6 +61,7 @@ fun CategoryBottomSheet(
     onVisibilityChange: (Boolean) -> Unit = {},
     onAddClick: (CategoryUi) -> Unit = {},
     onEditClick: (CategoryUi) -> Unit = {},
+    onDeleteClick: (CategoryUi) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var categoryTitle by remember { mutableStateOf("") }
@@ -80,15 +81,30 @@ fun CategoryBottomSheet(
         ) {
 
             Column {
-                Text(
+                Box(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    text = title,
-                    style = Theme.textStyle.title.large,
-                    color = Theme.color.title
-                )
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        text = title,
+                        style = Theme.textStyle.title.large,
+                        color = Theme.color.title
+                    )
+                    if (categoryToEdit != null) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clickable(onClick = { onDeleteClick(categoryToEdit) }),
+                            text = "Delete",
+                            style = Theme.textStyle.label.large,
+                            color = Theme.color.error
+                        )
+                    }
+                }
+
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    textValue = categoryToEdit?.name ?: categoryTitle,
+                    textValue = categoryToEdit?.name ?: "",
                     onValueChange = { categoryTitle = it },
                     hint = "Category title",
                     iconRes = R.drawable.categories_unselected,
@@ -96,7 +112,7 @@ fun CategoryBottomSheet(
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
                     text = "Category image",
-                    style = Theme.textStyle.title.large,
+                    style = Theme.textStyle.title.medium,
                     color = Theme.color.title
                 )
                 Box(
@@ -193,7 +209,8 @@ fun CategoryBottomSheet(
                 ) {
                     PrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Add",
+                        text = if (categoryToEdit != null) "Sava" else "Add",
+                        isDisable = categoryTitle.isBlank() && photoUri == null
                     ) {
                         if (categoryToEdit != null) {
                             onEditClick(
