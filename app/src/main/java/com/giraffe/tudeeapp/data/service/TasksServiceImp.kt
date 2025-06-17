@@ -1,8 +1,8 @@
 package com.giraffe.tudeeapp.data.service
 
 import TaskDao
-import com.giraffe.tudeeapp.data.mapper.toData
-import com.giraffe.tudeeapp.data.mapper.toDomain
+import com.giraffe.tudeeapp.data.mapper.toEntity
+import com.giraffe.tudeeapp.data.mapper.toTask
 import com.giraffe.tudeeapp.data.util.safeCall
 import com.giraffe.tudeeapp.data.util.safeFlowCall
 import com.giraffe.tudeeapp.domain.model.task.Task
@@ -18,36 +18,36 @@ class TasksServiceImp(
     private val taskDao: TaskDao,
 
     ) : TasksService {
-    override fun getTasksByDate(date: LocalDateTime): Flow<Result<List<Task>, DomainError>> {
+    override fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
             taskDao.getTasksByDate(date.toString())
-                .map { list -> list.map { it.toDomain() } }
+                .map { list -> list.map { it.toTask() } }
         }
     }
 
-    override fun getTasksByCategory(categoryId: Long): Flow<Result<List<Task>, DomainError>> {
+    override fun getTasksByCategory(categoryId: Long): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
             taskDao.getTasksByCategory(categoryId)
-                .map { list -> list.map { it.toDomain() } }
+                .map { list -> list.map { it.toTask() } }
         }
     }
 
     override suspend fun getTaskById(id: Long): Result<Task, DomainError> {
         return safeCall {
-            taskDao.getTaskById(id).toDomain()
+            taskDao.getTaskById(id).toTask()
         }
     }
 
     override suspend fun createTask(task: Task): Result<Long, DomainError> {
         return safeCall {
-            val dataTask = task.toData()
+            val dataTask = task.toEntity()
             taskDao.createTask(dataTask)
         }
     }
 
     override suspend fun updateTask(task: Task): Result<Unit, DomainError> {
         return safeCall {
-            val dataTask = task.toData()
+            val dataTask = task.toEntity()
             taskDao.updateTask(dataTask)
         }
     }

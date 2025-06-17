@@ -3,7 +3,7 @@ package com.giraffe.tudeeapp.domain.model.task
 import kotlinx.datetime.LocalDateTime
 
 data class Task(
-    val id: Long,
+    val id: Long = 0L,
     val title: String,
     val description: String,
     val taskPriority: TaskPriority,
