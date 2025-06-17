@@ -26,11 +26,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabsBar(modifier: Modifier = Modifier) {
-    val startTab = Tabs.IN_PROGRESS
+fun TabsBar(
+    modifier: Modifier = Modifier,
+    onTabSelected: (TaskStatus) -> Unit = {},
+    todoTasksCount: Int = 0,
+    inProgressTasksCount: Int = 14,
+    doneTasksCount: Int = 0,
+) {
+    val startTab = TaskStatus.IN_PROGRESS
     var selectedTab by rememberSaveable { mutableIntStateOf(startTab.ordinal) }
     PrimaryTabRow(
         modifier = modifier,
@@ -44,11 +51,17 @@ fun TabsBar(modifier: Modifier = Modifier) {
             )
         }
     ) {
-        Tabs.entries.forEachIndexed { index, tab ->
+        TaskStatus.entries.forEachIndexed { index, tab ->
+            val tasksCount = when (tab) {
+                TaskStatus.TODO -> todoTasksCount
+                TaskStatus.IN_PROGRESS -> inProgressTasksCount
+                TaskStatus.DONE -> doneTasksCount
+            }
             Tab(
                 selected = selectedTab == index,
                 onClick = {
                     selectedTab = index
+                    onTabSelected(tab)
                 },
                 selectedContentColor = Theme.color.title,
                 unselectedContentColor = Theme.color.hint,
@@ -61,12 +74,13 @@ fun TabsBar(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .weight(.73f),
                             textAlign = TextAlign.Center,
-                            text = tab.text,
+                            text = tab.name,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = if (selectedTab == index) Theme.textStyle.label.medium else Theme.textStyle.label.small,
                         )
-                        if (tab.notificationsCount != 0) {
+
+                        if (tasksCount != 0) {
                             Box(
                                 modifier = Modifier
                                     .weight(.27f)
@@ -76,7 +90,7 @@ fun TabsBar(modifier: Modifier = Modifier) {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = tab.notificationsCount.toString(),
+                                    text = tasksCount.toString(),
                                     style = Theme.textStyle.label.medium,
                                     color = Theme.color.body
                                 )
@@ -87,12 +101,6 @@ fun TabsBar(modifier: Modifier = Modifier) {
             )
         }
     }
-}
-
-enum class Tabs(val text: String, val notificationsCount: Int = 0) {
-    IN_PROGRESS("In Progress", 14),
-    TO_DO("To Do"),
-    DONE("Done"),
 }
 
 @Preview
