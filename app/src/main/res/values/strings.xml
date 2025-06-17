@@ -22,7 +22,9 @@
     <string name="splash_logo">Splash Logo</string>
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
-    <string name="close_button">Close</string>
+    <string name="clear_button">Clear</string>
     <string name="date_picker_placeholder">Select a due date</string>
     <string name="due_date_hint">Due Date</string>
+    <string name="priority">Priority</string>
+    <string name="category">Category</string>
 </resources>
