@@ -1,5 +1,4 @@
 package com.giraffe.tudeeapp.presentation.home.componant
-import kotlinx.datetime.minus
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,11 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
+import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DefaultTextField
 import com.giraffe.tudeeapp.design_system.component.ParagraphTextField
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
+import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.Category
@@ -47,7 +48,6 @@ import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.TaskEditorBottomSheetUiState
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
@@ -83,7 +83,9 @@ fun TaskEditorBottomSheetContent(
 
     if (isLoading || categoriesLoading) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Theme.color.surface),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -138,7 +140,7 @@ fun TaskEditorBottomSheetContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Priority",
+                    text = stringResource(R.string.priority),
                     color = Theme.color.title,
                     style = Theme.textStyle.title.medium,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -148,7 +150,7 @@ fun TaskEditorBottomSheetContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TaskPriority.entries.forEach { priority ->
+                    TaskPriority.entries.reversed().forEach { priority ->
                         val priorityType = when (priority) {
                             TaskPriority.HIGH -> PriorityType.HIGH
                             TaskPriority.MEDIUM -> PriorityType.MEDIUM
@@ -169,7 +171,7 @@ fun TaskEditorBottomSheetContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Category:",
+                    text = stringResource(R.string.category),
                     color = Theme.color.title,
                     style = Theme.textStyle.title.medium,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -217,7 +219,7 @@ fun TaskEditorBottomSheetContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                PrimaryButton(
+                SecondaryButton(
                     text = "Cancel",
                     isLoading = false,
                     isDisable = false,
@@ -235,12 +237,12 @@ fun TaskEditorBottomSheetContentPreview() {
 
     TudeeTheme(isDarkTheme = false) {
         val fakeCategories = listOf(
-            Category(id = 1, name = "Study", imageUri = ""),
-            Category(id = 2, name = "Shopping", imageUri = ""),
-            Category(id = 3, name = "Health", imageUri = ""),
-            Category(id = 4, name = "Work", imageUri = ""),
-            Category(id = 5, name = "Personal", imageUri = ""),
-            Category(id = 6, name = "Other", imageUri = "")
+            Category(id = 1, name = "Study", imageUri = "", isEditable = false, taskCount = 0),
+            Category(id = 2, name = "Shopping", imageUri = "", isEditable = false, taskCount = 0),
+            Category(id = 3, name = "Health", imageUri = "", isEditable = false, taskCount = 0),
+            Category(id = 4, name = "Work", imageUri = "", isEditable = false, taskCount = 0),
+            Category(id = 5, name = "Personal", imageUri = "", isEditable = false, taskCount = 0),
+            Category(id = 6, name = "Other", imageUri = "", isEditable = false, taskCount = 0),
         )
 
         fun validateInputs(state: TaskEditorBottomSheetUiState): Boolean {
@@ -249,29 +251,6 @@ fun TaskEditorBottomSheetContentPreview() {
                     state.description.isNotBlank() &&
                     state.categoryId != null && state.dueDate.date >= now.date
         }
-//        var state by remember {
-//            mutableStateOf(
-//                TaskEditorBottomSheetUiState(
-//                    title = "Read a book",
-//                    description = "Read at least 20 pages.",
-//                    taskPriority = TaskPriority.HIGH,
-//                    taskStatus = TaskStatus.TODO,
-//                    categoryId = 1,
-//                    dueDate = Clock.System.now()
-//                        .minus(2, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.currentSystemDefault())
-//                        .toLocalDateTime(TimeZone.currentSystemDefault()),
-//                    dueDateMillis = Clock.System.now()
-//                        .minus(2, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.currentSystemDefault())
-//                        .toEpochMilliseconds(),
-//                    categories = fakeCategories,
-//                    isLoadingTask = false,
-//                    isLoadingSave = false,
-//                    isLoadingCategories = false,
-//                ).let { initial ->
-//                    initial.copy(isValidInput = validateInputs(initial))
-//                }
-//            )
-//        }
 
         var state by remember {
             mutableStateOf(
