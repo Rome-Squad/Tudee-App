@@ -14,7 +14,7 @@ data class TaskEntity (
     val description: String,
     val taskPriority: TaskPriority,
     val status: TaskStatus,
-    val categoryId: Long,
+    val categoryId: Long, // foreign key to categories entity
     val dueDate: String,
     val createdAt: String,
     val updatedAt: String

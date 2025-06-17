@@ -10,7 +10,8 @@ fun Category.toEntity(): CategoryEntity {
         uid = this.id,
         name = this.name,
         imageUri = this.imageUri,
-        isEditable = this.isEditable
+        isEditable = this.isEditable,
+        taskCount = this.taskCount
     )
 
 }
@@ -20,5 +21,7 @@ fun CategoryEntity.toCategory():Category{
         id = this.uid,
         name=this.name,
         imageUri=this.imageUri,
-        isEditable = this.isEditable)
+        isEditable = this.isEditable,
+        taskCount = this.taskCount
+    )
 }
