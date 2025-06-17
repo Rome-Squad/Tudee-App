@@ -36,4 +36,7 @@
     <string name="splash_background">Splash Background</string>
     <string name="skip">Skip</string>
     <string name="splash_logo">Splash Logo</string>
+    <string name="in_progress">In Progress</string>
+    <string name="to_do">To-Do</string>
+    <string name="done">Done</string>
 </resources>
