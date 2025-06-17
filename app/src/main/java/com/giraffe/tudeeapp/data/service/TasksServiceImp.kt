@@ -18,14 +18,14 @@ class TasksServiceImp(
     private val taskDao: TaskDao,
 
     ) : TasksService {
-    override fun getTasksByDate(date: LocalDateTime): Flow<Result<List<Task>, DomainError>> {
+    override fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
             taskDao.getTasksByDate(date.toString())
                 .map { list -> list.map { it.toTask() } }
         }
     }
 
-    override fun getTasksByCategory(categoryId: Long): Flow<Result<List<Task>, DomainError>> {
+    override fun getTasksByCategory(categoryId: Long): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
             taskDao.getTasksByCategory(categoryId)
                 .map { list -> list.map { it.toTask() } }
