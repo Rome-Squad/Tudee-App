@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,15 +39,6 @@ fun TabsBar(
 ) {
     val startTab = TaskStatus.IN_PROGRESS
     var selectedTab by rememberSaveable { mutableIntStateOf(startTab.ordinal) }
-    val tabs by rememberSaveable {
-        mutableStateOf(
-            listOf(
-                TabsUiState(TaskStatus.IN_PROGRESS, "In progress", inProgressTasksCount),
-                TabsUiState(TaskStatus.TODO, "To Do", todoTasksCount),
-                TabsUiState(TaskStatus.DONE, "Done", doneTasksCount),
-            )
-        )
-    }
     PrimaryTabRow(
         modifier = modifier,
         selectedTabIndex = selectedTab,
@@ -61,12 +51,17 @@ fun TabsBar(
             )
         }
     ) {
-        tabs.forEachIndexed { index, tab ->
+        TaskStatus.entries.forEachIndexed { index, tab ->
+            val tasksCount = when (tab) {
+                TaskStatus.TODO -> todoTasksCount
+                TaskStatus.IN_PROGRESS -> inProgressTasksCount
+                TaskStatus.DONE -> doneTasksCount
+            }
             Tab(
                 selected = selectedTab == index,
                 onClick = {
                     selectedTab = index
-                    onTabSelected(tab.status)
+                    onTabSelected(tab)
                 },
                 selectedContentColor = Theme.color.title,
                 unselectedContentColor = Theme.color.hint,
@@ -79,12 +74,13 @@ fun TabsBar(
                             modifier = Modifier
                                 .weight(.73f),
                             textAlign = TextAlign.Center,
-                            text = tab.title,
+                            text = tab.name,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = if (selectedTab == index) Theme.textStyle.label.medium else Theme.textStyle.label.small,
                         )
-                        if (tab.tasksCount != 0) {
+
+                        if (tasksCount != 0) {
                             Box(
                                 modifier = Modifier
                                     .weight(.27f)
@@ -94,7 +90,7 @@ fun TabsBar(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = tab.tasksCount.toString(),
+                                    text = tasksCount.toString(),
                                     style = Theme.textStyle.label.medium,
                                     color = Theme.color.body
                                 )
@@ -106,12 +102,6 @@ fun TabsBar(
         }
     }
 }
-
-data class TabsUiState(
-    val status: TaskStatus,
-    val title: String,
-    val tasksCount: Int
-)
 
 @Preview
 @Composable
