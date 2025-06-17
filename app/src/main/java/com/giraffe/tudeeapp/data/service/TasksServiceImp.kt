@@ -14,13 +14,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
 
-public class TasksServiceImp(
+class TasksServiceImp(
     private val taskDao: TaskDao,
 
     ) : TasksService {
     override fun getTasksByDate(date: LocalDateTime): Flow<Result<List<Task>, DomainError>> {
         return safeFlowCall {
-            taskDao.getTasksByDate(date)
+            taskDao.getTasksByDate(date.toString())
                 .map { list -> list.map { it.toDomain() } }
         }
     }
