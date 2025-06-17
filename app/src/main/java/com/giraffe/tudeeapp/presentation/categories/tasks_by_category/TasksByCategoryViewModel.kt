@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
@@ -17,12 +18,16 @@ import kotlinx.coroutines.launch
 
 class TasksByCategoryViewModel(
     private val tasksService: TasksService,
-    private val categoriesService: CategoriesService
+    private val categoriesService: CategoriesService,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), TasksByCategoryScreenActions {
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
 
+    private val categoryId = savedStateHandle.get<Long>("categoryId") ?: 1
+
     init {
+        _state.update { it.copy(selectedCategory = CategoryUi(id = categoryId)) }
         getTasks()
     }
 

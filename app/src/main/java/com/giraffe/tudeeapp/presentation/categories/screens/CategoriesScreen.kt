@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
@@ -41,7 +42,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel()) {
+fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navController: NavController) {
     val state = viewModel.categoriesUiState.collectAsState().value
     val lifeCycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifeCycleOwner.lifecycle) {
@@ -50,6 +51,7 @@ fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel()) {
                 viewModel.events.collect { event ->
                     when (event) {
                         is CategoriesUiEvent.NavigateToTasksByCategoryScreen -> {
+                            navController.navigate("tasks_by_category/${event.categoryId}")
                         }
                     }
                 }
@@ -137,6 +139,6 @@ fun CategoriesContent(
 @Composable
 private fun CategoriesScreenPreview() {
     TudeeTheme {
-        CategoriesScreen()
+        CategoriesScreen(navController = NavController(LocalContext.current))
     }
 }

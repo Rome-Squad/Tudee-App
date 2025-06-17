@@ -9,18 +9,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
+import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
-import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
 
 class MainActivity : ComponentActivity() {
@@ -96,10 +98,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.CategoriesScreen.route) {
-                            CategoriesScreen()
+                            CategoriesScreen(navController = navController)
                         }
 
-                        composable(Screen.TasksByCategoryScreen.route) {
+                        composable(
+                            "${Screen.TasksByCategoryScreen.route}/{categoryId}",
+                            arguments = listOf(navArgument("categoryId") { NavType.LongType })
+                        ) { backStackEntry ->
                             TasksByCategoryScreen()
                         }
                     }

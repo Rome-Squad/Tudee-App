@@ -3,7 +3,6 @@ package com.giraffe.tudeeapp.presentation.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.service.CategoriesService
-import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
@@ -41,26 +40,17 @@ class CategoryViewModel(
     private fun getAllCategories() {
         _categoriesUiState.update { it.copy(isLoading = true, error = null) }
         categoriesService.getAllCategories().onEach { result ->
-            _categoriesUiState.update { currentState ->
-                when (result) {
-                    is Result.Success -> {
-                        val categoryIds = result.data.map { it.id }
-                        currentState.copy(
-                            categories = result.data.map { category ->
-                                category.toUiState(getTaskCountForCategory(category.id))
-                            },
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-
-                    is Result.Error -> {
-                        currentState.copy(
-                            isLoading = false,
-                            error = result.error
-                        )
-                    }
+            result.onSuccess { categories ->
+                val categoryIds = categories.map { it.id }
+                _categoriesUiState.update { currentState ->
+                    currentState.copy(
+                        categories = categories.map { it.toUiState(getTaskCountForCategory(it.id)) },
+                        isLoading = false,
+                        error = null
+                    )
                 }
+            }.onError { error ->
+                _categoriesUiState.update { it.copy(isLoading = false, error = error) }
             }
         }.launchIn(viewModelScope)
     }
@@ -84,7 +74,6 @@ class CategoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             categoriesService.createCategory(category.toEntity())
                 .onSuccess {
-                    getAllCategories()
                     _categoriesUiState.update {
                         it.copy(
                             showSuccessSnackBar = true,

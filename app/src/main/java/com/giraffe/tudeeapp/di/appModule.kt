@@ -20,6 +20,6 @@ val appModule = module {
 
 
     viewModel { SplashViewModel(get()) }
-    viewModel { TasksByCategoryViewModel(get(),get()) }
+    viewModel { TasksByCategoryViewModel(get(),get(),get()) }
     viewModel { CategoryViewModel(get()) }
 }
