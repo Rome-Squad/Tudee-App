@@ -15,7 +15,7 @@ data class TaskEntity (
     val taskPriority: TaskPriority,
     val status: TaskStatus,
     val categoryId: Long,
-    val dueDate: LocalDateTime,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val dueDate: String,
+    val createdAt: String,
+    val updatedAt: String
 )

@@ -2,6 +2,7 @@ package com.giraffe.tudeeapp.data.mapper
 
 import com.giraffe.tudeeapp.data.model.TaskEntity
 import com.giraffe.tudeeapp.domain.model.task.Task
+import kotlinx.datetime.LocalDateTime
 
 
 fun Task.toData(): TaskEntity {
@@ -12,9 +13,9 @@ fun Task.toData(): TaskEntity {
         taskPriority = this.taskPriority,
         status = this.status,
         categoryId = this.categoryId,
-        dueDate = this.dueDate,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt
+        dueDate = this.dueDate.toString(),
+        createdAt = this.createdAt.toString(),
+        updatedAt = this.updatedAt.toString()
     )
 }
 
@@ -26,8 +27,8 @@ fun TaskEntity.toDomain(): Task {
         taskPriority = this.taskPriority,
         status = this.status,
         categoryId = this.categoryId,
-        dueDate = this.dueDate,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt
+        dueDate = LocalDateTime.parse(this.dueDate),
+        createdAt = LocalDateTime.parse(this.createdAt),
+        updatedAt = LocalDateTime.parse(this.updatedAt)
     )
 }
