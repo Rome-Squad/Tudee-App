@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -69,26 +70,26 @@ fun DatePickerDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Box(modifier = Modifier.weight(1f)) {
+
                             TextButton(
+                                modifier = Modifier,
                                 onClick = { onDismissRequest() },
                                 text = stringResource(R.string.clear_button),
                                 isLoading = false,
                                 isDisable = false,
                             )
-                        }
-                      
 
 
 
                     Row(
-                        modifier = Modifier.weight(2f),
-                        horizontalArrangement = Arrangement.Start
+                      //  modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         TextButton(
-                            Modifier.weight(1f),
+                            modifier = Modifier,
                             onClick = { onDismissRequest() },
                             text = stringResource(R.string.cancel_button),
                             isLoading = false,
@@ -96,7 +97,7 @@ fun DatePickerDialog(
                         )
 
                         TextButton(
-                            Modifier.weight(1f),
+                            modifier = Modifier,
                             onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
                                 onDateSelected(selectedDate)
