@@ -1,7 +1,7 @@
 package com.giraffe.tudeeapp.presentation.categories.uistates
 
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.domain.model.category.Category
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
 

@@ -99,7 +99,7 @@ fun circleButton(
                 color = borderColor,
                 shape = CircleShape
             )
-            .clickable(onClick = { onClick })
+            .clickable(onClick = onClick)
             .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {

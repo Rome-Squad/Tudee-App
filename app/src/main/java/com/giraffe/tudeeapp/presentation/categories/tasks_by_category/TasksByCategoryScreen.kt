@@ -10,30 +10,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
-import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
+import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
-import com.giraffe.tudeeapp.presentation.utils.categoriesIcon
+import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
+import com.giraffe.tudeeapp.presentation.utils.getColorForCategoryIcon
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TasksByCategoryScreen(
     viewModel: TasksByCategoryViewModel = koinViewModel(),
-    navController: NavController
+    //navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
     TasksByCategoryContent(state, viewModel)
@@ -42,7 +39,7 @@ fun TasksByCategoryScreen(
 @Composable
 fun TasksByCategoryContent(
     state: TasksByCategoryScreenState = TasksByCategoryScreenState(),
-    actions: TasksByCategoryScreenActions = dummyActions,
+    actions: TasksByCategoryScreenActions,
     //navController: NavController
 ) {
     Column(
@@ -68,8 +65,8 @@ fun TasksByCategoryContent(
             state.tasks[state.selectedTab]?.let { tasks ->
                 items(tasks) { task ->
                     TaskCard(
-                        taskIcon = painterResource(categoriesIcon("Education").categoryImage),
-                        blurColor = categoriesIcon("Education").blurColor,
+                        taskIcon = painterResource(getCategoryIcon("Education")),
+                        blurColor = getColorForCategoryIcon("Education"),
                         priority = PriorityType.MEDIUM,
                         taskTitle = "Organize Study Desk",
                         date = "12-03-2025",
@@ -81,13 +78,12 @@ fun TasksByCategoryContent(
 
         }
 
-        if (state.isBottomSheetVisible) {
-            CategoryBottomSheet(
-                title = "Edit category",
-                categoryToEdit = state.selectedCategory,
-                onEditClick = actions::editCategory
-            )
-        }
+        CategoryBottomSheet(
+            title = "Edit category",
+            isVisible = state.isBottomSheetVisible,
+            categoryToEdit = state.selectedCategory,
+            onEditClick = actions::editCategory
+        )
 
     }
 }
@@ -96,19 +92,6 @@ fun TasksByCategoryContent(
 @Composable
 private fun Preview() {
     TudeeTheme {
-        TasksByCategoryContent()
-    }
-}
-
-
-val dummyActions = object : TasksByCategoryScreenActions {
-    override fun setBottomSheetVisibility(isVisible: Boolean) {
-
-    }
-
-    override fun selectTab(tab: TaskStatus) {
-    }
-
-    override fun editCategory(category: CategoryUi) {
+        TasksByCategoryScreen()
     }
 }

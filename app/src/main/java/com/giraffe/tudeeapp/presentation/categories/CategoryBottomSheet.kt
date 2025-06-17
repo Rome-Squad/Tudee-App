@@ -64,7 +64,7 @@ fun CategoryBottomSheet(
     onDeleteClick: (CategoryUi) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var categoryTitle by remember { mutableStateOf("") }
+    var categoryTitle by remember { mutableStateOf(categoryToEdit?.name ?: "") }
     var photoUri: Uri? by remember { mutableStateOf(null) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -104,7 +104,7 @@ fun CategoryBottomSheet(
 
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    textValue = categoryToEdit?.name ?: "",
+                    textValue = categoryTitle,
                     onValueChange = { categoryTitle = it },
                     hint = "Category title",
                     iconRes = R.drawable.categories_unselected,
