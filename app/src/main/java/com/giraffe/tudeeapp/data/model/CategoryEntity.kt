@@ -6,7 +6,9 @@ import com.giraffe.tudeeapp.data.util.Constants
 
 @Entity(tableName = Constants.CATEGORY_TABLE_NAME)
 data class CategoryEntity(
-    @PrimaryKey val uid: Long,
+    @PrimaryKey(autoGenerate = true) val uid: Long = 0L,
     val name:String,
-    val imageUri: String?
+    val imageUri: String,
+    val isEditable: Boolean,
+    val taskCount: Int
 )

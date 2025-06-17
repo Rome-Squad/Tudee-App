@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoriesService {
 
-    fun getAllCategories(): Flow<Result<List<Category>, DomainError>>
+    fun getAllCategories(): Result<Flow<List<Category>>, DomainError>
 
     suspend fun getCategoryById(id: Long): Result<Category, DomainError>
 

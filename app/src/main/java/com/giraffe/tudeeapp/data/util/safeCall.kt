@@ -2,8 +2,6 @@ package com.giraffe.tudeeapp.data.util
 
 import com.giraffe.tudeeapp.domain.util.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
 suspend fun <T> safeCall(
     block: suspend () -> T
@@ -15,13 +13,11 @@ suspend fun <T> safeCall(
     }
 }
 
-fun <T> safeFlowCall(block: () -> Flow<T>): Flow<Result<T, DomainError>> {
+fun <T> safeFlowCall(block: () -> Flow<T>): Result<Flow<T>, DomainError> {
     return try {
-        block().map { list ->
-            Result.Success(list)
-        }
+            Result.Success(block())
     } catch (e: Exception) {
-        flow {emit((Result.Error(mapExceptionToDomainError(e))))}
+        Result.Error(mapExceptionToDomainError(e))
     }
 }
 
