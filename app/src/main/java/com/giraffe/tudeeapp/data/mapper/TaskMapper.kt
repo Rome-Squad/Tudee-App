@@ -5,7 +5,7 @@ import com.giraffe.tudeeapp.domain.model.task.Task
 import kotlinx.datetime.LocalDateTime
 
 
-fun Task.toData(): TaskEntity {
+fun Task.toEntity(): TaskEntity {
     return TaskEntity(
         uid = this.id,
         title = this.title,
@@ -19,7 +19,7 @@ fun Task.toData(): TaskEntity {
     )
 }
 
-fun TaskEntity.toDomain(): Task {
+fun TaskEntity.toTask(): Task {
     return Task(
         id = this.uid,
         title = this.title,

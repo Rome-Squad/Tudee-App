@@ -2,7 +2,7 @@ package com.giraffe.tudeeapp.data.service
 
 import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.mapper.toCategory
-import com.giraffe.tudeeapp.data.mapper.toCategoryEntity
+import com.giraffe.tudeeapp.data.mapper.toEntity
 import com.giraffe.tudeeapp.data.model.CategoryTaskCount
 import com.giraffe.tudeeapp.data.util.safeCall
 import com.giraffe.tudeeapp.data.util.safeFlowCall
@@ -29,13 +29,13 @@ class CategoryServiceImp(   private val categoryDao: CategoryDao
 
     override suspend fun createCategory(category: Category): Result<Long, DomainError> {
         return safeCall {
-            val categoryEntity=category.toCategoryEntity()
+            val categoryEntity=category.toEntity()
             categoryDao.createCategory(categoryEntity)
         }    }
 
     override suspend fun updateCategory(category: Category): Result<Unit, DomainError> {
         return safeCall {
-            val categoryEntity=category.toCategoryEntity()
+            val categoryEntity=category.toEntity()
              categoryDao.updateCategory(categoryEntity)
         }}
 
