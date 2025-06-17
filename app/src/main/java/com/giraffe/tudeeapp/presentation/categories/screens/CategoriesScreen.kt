@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
@@ -43,7 +41,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navController: NavController) {
+fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel()) {
     val state = viewModel.categoriesUiState.collectAsState().value
     val lifeCycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifeCycleOwner.lifecycle) {
@@ -72,18 +70,16 @@ fun CategoriesContent(
             .fillMaxSize()
             .background(Theme.color.surface)
     ) {
-        Column(Modifier.verticalScroll(rememberScrollState())) {
+        Column {
             HeaderContent("Categories")
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(360.dp),
-                contentPadding = PaddingValues(
-                    top = 12.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 69.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
+                columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(top = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(state.categories.size) { index ->
                     CategoryItem(
@@ -91,7 +87,12 @@ fun CategoriesContent(
                             if (state.categories[index].imageUri == null)
                                 painterResource(state.categories[index].icon)
                             else
-                                rememberAsyncImagePainter(state.categories[index].imageUri),
+                                rememberAsyncImagePainter(
+                                    ImageRequest
+                                        .Builder(LocalContext.current)
+                                        .data(data = state.categories[index].imageUri)
+                                        .build()
+                                ),
                         categoryName = state.categories[index].name,
                         count = state.categories[index].taskCount,
                         onClick = {
@@ -105,12 +106,15 @@ fun CategoriesContent(
         FabButton(
             icon = painterResource(R.drawable.add_category_icon),
             onClick = { actions.setBottomSheetVisibility(isVisible = true) },
-            modifier = Modifier.align(Alignment.BottomEnd)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 8.dp)
         )
 
         if (state.isBottomSheetVisible) {
             CategoryBottomSheet(
                 title = "Add new category",
+                isVisible = true,
                 onAddClick = actions::addCategory,
             )
         }
@@ -133,6 +137,6 @@ fun CategoriesContent(
 @Composable
 private fun CategoriesScreenPreview() {
     TudeeTheme {
-        CategoriesScreen(navController = NavController(LocalContext.current))
+        CategoriesScreen()
     }
 }

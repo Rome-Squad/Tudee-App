@@ -96,11 +96,11 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.CategoriesScreen.route) {
-                            CategoriesScreen(navController = navController)
+                            CategoriesScreen()
                         }
 
                         composable(Screen.TasksByCategoryScreen.route) {
-                            TasksByCategoryScreen(navController = navController)
+                            TasksByCategoryScreen()
                         }
                     }
                 }
