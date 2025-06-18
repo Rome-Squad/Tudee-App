@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.categories.screens
+package com.giraffe.tudeeapp.presentation.categories
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -32,11 +32,6 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesAction
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiEvent
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiState
-import com.giraffe.tudeeapp.presentation.categories.viewmodel.CategoryViewModel
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -51,7 +46,7 @@ fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navControll
             withContext(Dispatchers.Main.immediate) {
                 viewModel.events.collect { event ->
                     when (event) {
-                        is CategoriesUiEvent.NavigateToTasksByCategoryScreen -> {
+                        is CategoriesScreenEvents.NavigateToTasksByCategoryScreen -> {
                             navController.navigate("${Screen.TasksByCategoryScreen.route}/${event.categoryId}")
                         }
                     }
@@ -64,8 +59,8 @@ fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navControll
 
 @Composable
 fun CategoriesContent(
-    state: CategoriesUiState,
-    actions: CategoriesAction
+    state: CategoriesScreenState,
+    actions: CategoriesScreenActions
 ) {
     Box(
         Modifier

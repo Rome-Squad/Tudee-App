@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.categories.viewmodel
+package com.giraffe.tudeeapp.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,9 +6,6 @@ import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesAction
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiEvent
-import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -21,12 +18,12 @@ import kotlinx.coroutines.launch
 
 class CategoryViewModel(
     private val categoriesService: CategoriesService,
-) : ViewModel(), CategoriesAction {
+) : ViewModel(), CategoriesScreenActions {
 
-    private var _categoriesUiState = MutableStateFlow(CategoriesUiState())
-    val categoriesUiState: StateFlow<CategoriesUiState> = _categoriesUiState.asStateFlow()
+    private var _categoriesUiState = MutableStateFlow(CategoriesScreenState())
+    val categoriesUiState: StateFlow<CategoriesScreenState> = _categoriesUiState.asStateFlow()
 
-    private val _events = Channel<CategoriesUiEvent>()
+    private val _events = Channel<CategoriesScreenEvents>()
     val events = _events.receiveAsFlow()
 
 
@@ -57,7 +54,7 @@ class CategoryViewModel(
 
     override fun selectCategory(categoryId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(categoryId))
+            _events.send(CategoriesScreenEvents.NavigateToTasksByCategoryScreen(categoryId))
         }
     }
 

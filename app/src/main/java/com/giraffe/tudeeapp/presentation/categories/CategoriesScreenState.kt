@@ -1,9 +1,9 @@
-package com.giraffe.tudeeapp.presentation.categories.state
+package com.giraffe.tudeeapp.presentation.categories
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.util.DomainError
 
-data class CategoriesUiState(
+data class CategoriesScreenState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = true,
     val error: DomainError? = null,
