@@ -13,6 +13,7 @@ data class TasksScreenState(
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
     val tasks: Map<TaskStatus, List<Task>> = mapOf(),
+    val selectedTaskId: Long = 0L,
     val isAddBottomSheetVisible: Boolean = false,
     val isDeleteBottomSheetVisible: Boolean = false,
     val error: DomainError? = null,

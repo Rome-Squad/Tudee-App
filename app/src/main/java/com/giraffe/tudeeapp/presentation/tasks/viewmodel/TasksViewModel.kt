@@ -87,6 +87,12 @@ class TasksViewModel(
         )
     }
 
+    fun setSelectedTaskId(taskId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(selectedTaskId = taskId) }
+        }
+    }
+
     fun deleteTask(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             tasksService.deleteTask(taskId)

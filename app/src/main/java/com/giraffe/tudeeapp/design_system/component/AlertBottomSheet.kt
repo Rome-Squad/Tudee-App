@@ -52,7 +52,8 @@ fun AlertBottomSheet(
         onDismissRequest = {
             showBottomSheet = false
         },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = Theme.color.surface
     ) {
         Column {
             Text(

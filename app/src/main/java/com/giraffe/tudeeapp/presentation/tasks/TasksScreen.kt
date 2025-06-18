@@ -3,6 +3,8 @@ package com.giraffe.tudeeapp.presentation.tasks
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,26 +16,32 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,6 +68,8 @@ fun TaskScreenContent(
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
     ) {
+
+        val hidingTaskIds = remember { mutableStateListOf<Long>() }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,6 +91,7 @@ fun TaskScreenContent(
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
                 val selectedTasks = state.tasks[state.selectedTab]
+//                val selectedTasks = listOf(dummyTask(), dummyTask(), dummyTask())
                 val selectedTasksSize = selectedTasks?.size ?: 0
                 if (selectedTasksSize == 0) {
                     item {
@@ -100,21 +111,37 @@ fun TaskScreenContent(
                     val category =
                         actions.getCategoryById(selectedTasks?.get(index)?.categoryId ?: 0L)
                     val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
-                    SwipableTask(
-                        taskUi = taskUi,
-                        action = { actions.setDeleteBottomSheetVisibility(true) },
-                        onDeleteClick = { actions.deleteTask(it.id) }
-                    )
+
+                    val isVisible = !hidingTaskIds.contains(taskUi.id)
+
+                    AnimatedVisibility(
+                        visible = isVisible,
+                        exit = slideOutHorizontally { fullWidth -> fullWidth } + fadeOut()
+                    ) {
+                        SwipableTask(
+                            taskUi = taskUi,
+                            action = {
+                                actions.setDeleteBottomSheetVisibility(true)
+                                actions.setSelectedTaskId(taskUi.id)
+                            },
+                            onDeleteClick = { actions.deleteTask(it.id) }
+                        )
+                    }
                 }
             }
 
             if (state.isDeleteBottomSheetVisible) {
-                ModalBottomSheet(
-                    onDismissRequest = { actions.setDeleteBottomSheetVisibility(false) },
-                    modifier = Modifier.fillMaxHeight(0.95f)
-                ) {
-                    // Replace with your  delete task content
-                }
+                AlertBottomSheet(
+                    title = "Delete task",
+                    subTitle = "Are you sure to continue?",
+                    imgRes = R.drawable.sure_robot,
+                    redBtnTitle = "Delete",
+                    blueBtnTitle = "Cancel",
+                    onRedBtnClick = {
+                        actions.deleteTask(state.selectedTaskId)
+                    },
+                    onBlueBtnClick = { actions.setDeleteBottomSheetVisibility(false) }
+                )
             }
 
             if (state.isAddBottomSheetVisible) {
@@ -122,7 +149,8 @@ fun TaskScreenContent(
                     onDismissRequest = { actions.setAddBottomSheetVisibility(false) },
                     modifier = Modifier.fillMaxHeight(0.95f)
                 ) {
-                    // Replace with your  add task content
+
+                    // Replace with add task
                 }
             }
         }
@@ -130,7 +158,7 @@ fun TaskScreenContent(
         FabButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 8.dp), // adjust bottom padding as needed
+                .padding(end = 16.dp, bottom = 8.dp),
             icon = painterResource(R.drawable.add_task),
             onClick = { actions.setAddBottomSheetVisibility(true) }
         )
@@ -169,7 +197,9 @@ fun dummyTask(): Task {
 @Preview(showBackground = true)
 @Composable
 fun TaskScreenPreview() {
-    TaskScreen()
+    TudeeTheme(isDarkTheme = true) {
+        TaskScreen()
+    }
 }
 
 
