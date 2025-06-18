@@ -178,7 +178,9 @@ fun HomeContent(
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
                 onnDismiss = onDismissTaskDetails,
-                onEditTask = onAddEditTask
+                onEditTask = onAddEditTask,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
             )
         }
 
@@ -187,7 +189,9 @@ fun HomeContent(
                 taskId = state.currentTaskId,
                 onDismissRequest = onDismissAddEditTask,
                 headerTitle = if (state.currentTaskId == null) "Add Task" else "Edit Task",
-                saveButtonText = "Save"
+                saveButtonText = "Save",
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
             )
         }
     }

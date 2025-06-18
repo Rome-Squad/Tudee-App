@@ -126,9 +126,7 @@ fun TaskEditorBottomSheetContent(
                     modifier = Modifier.clickable { showDatePickerDialog = true }
                 ) {
                     DefaultTextField(
-                        textValue = taskState.dueDateMillis?.let { millis ->
-                            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(millis))
-                        } ?: stringResource(R.string.date_picker_placeholder),
+                        textValue = taskState.dueDate.date.toString(),
                         onValueChange = { },
                         hint = stringResource(R.string.due_date_hint),
                         iconRes = R.drawable.calendar
