@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.categories
+package com.giraffe.tudeeapp.design_system.component
 
 import android.content.Intent
 import android.net.Uri
@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.DefaultTextField
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
