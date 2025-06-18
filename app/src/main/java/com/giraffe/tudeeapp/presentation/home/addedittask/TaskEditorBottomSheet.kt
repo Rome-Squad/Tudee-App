@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.utils.millisToLocalDateTime
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -33,12 +34,14 @@ fun TaskEditorBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = {
+            viewModel.onCancel()
             onDismissRequest()
             scope.launch { bottomSheetState.hide() }
         },
         sheetState = bottomSheetState,
         modifier = Modifier
             .fillMaxWidth(),
+        containerColor = Theme.color.surface
     ) {
         TaskEditorBottomSheetContent(
             headerTitle = headerTitle,
@@ -51,14 +54,14 @@ fun TaskEditorBottomSheet(
             onDescriptionChange = { viewModel.onDescriptionChange(it) },
             onPriorityChange = { viewModel.onPriorityChange(it) },
             onCategoryChange = { viewModel.onCategoryChange(it) },
-            onDueDateChange = { millis ->
-                viewModel.onDueDateChange(millisToLocalDateTime(millis))
-            },
+            onDueDateChange = viewModel::onDueDateChange
+            ,
             onSaveClick = {
                 viewModel.saveTask()
                 onDismissRequest()
             },
             onCancelClick = {
+                viewModel.onCancel()
                 scope.launch { bottomSheetState.hide() }
                 onDismissRequest()
             }

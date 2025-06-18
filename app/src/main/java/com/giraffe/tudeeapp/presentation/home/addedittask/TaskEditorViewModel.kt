@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -86,9 +87,20 @@ class TaskEditorViewModel(
         updateState { copy(description = newDescription) }
     }
 
-    fun onDueDateChange(newDueDate: LocalDateTime) {
-        updateState { copy(dueDate = newDueDate) }
+    fun onDueDateChange(newDueDateMillis: Long?) {
+        val newDueDate = newDueDateMillis?.let {
+            Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault())
+        }
+
+        updateState {
+            copy(
+                dueDateMillis = newDueDateMillis,
+                dueDate = newDueDate ?: this.dueDate
+            )
+        }
     }
+
+
 
     fun onPriorityChange(priority: TaskPriority) {
         updateState { copy(taskPriority = priority) }
@@ -96,6 +108,10 @@ class TaskEditorViewModel(
 
     fun onCategoryChange(categoryId: Long) {
         updateState { copy(categoryId = categoryId) }
+    }
+
+    fun onCancel() {
+        clearCurrentTask()
     }
 
     fun saveTask() {
