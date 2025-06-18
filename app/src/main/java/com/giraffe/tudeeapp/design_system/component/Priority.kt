@@ -7,26 +7,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 
 
 @Composable
 fun Priority(
-    priorityType: PriorityType,
+    priorityType: TaskPriority,
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
     var icon: Int
     var label: String
     when (priorityType) {
-        PriorityType.HIGH -> {
+        TaskPriority.HIGH -> {
             icon = R.drawable.flag_icon; label = stringResource(R.string.high)
         }
 
-        PriorityType.MEDIUM -> {
+        TaskPriority.MEDIUM -> {
             icon = R.drawable.alert_icon; label = stringResource(R.string.medium)
         }
 
-        PriorityType.LOW -> {
+        TaskPriority.LOW -> {
             icon = R.drawable.trade_down_icon; label = stringResource(R.string.low)
         }
     }
@@ -45,13 +46,7 @@ fun Priority(
 @Composable
 fun PriorityPreview() {
     Priority(
-        priorityType = PriorityType.HIGH,
+        priorityType = TaskPriority.HIGH,
         isSelected = true
     )
-}
-
-enum class PriorityType {
-    HIGH,
-    MEDIUM,
-    LOW
 }
