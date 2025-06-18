@@ -1,8 +1,7 @@
-package com.giraffe.tudeeapp.presentation.home
+package com.giraffe.tudeeapp.presentation.home.addedittask
 
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -11,13 +10,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.giraffe.tudeeapp.presentation.home.componant.TaskEditorBottomSheetContent
+import com.giraffe.tudeeapp.presentation.utils.millisToLocalDateTime
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -44,26 +38,21 @@ fun TaskEditorBottomSheet(
         },
         sheetState = bottomSheetState,
         modifier = Modifier
-            .width(360.dp)
-            .height(690.dp),
+            .fillMaxWidth(),
     ) {
         TaskEditorBottomSheetContent(
             headerTitle = headerTitle,
             saveButtonText = saveButtonText,
             taskState = taskState,
             categories = taskState.categories,
-            isLoading = taskState.isLoadingTask ,
-            categoriesLoading = taskState.isLoadingCategories,
+            isLoading = taskState.isLoading ,
+            categoriesLoading = taskState.isLoading,
             onTitleChange = { viewModel.onTitleChange(it) },
             onDescriptionChange = { viewModel.onDescriptionChange(it) },
             onPriorityChange = { viewModel.onPriorityChange(it) },
             onCategoryChange = { viewModel.onCategoryChange(it) },
             onDueDateChange = { millis ->
-                val localDateTime = millis?.let {
-                    Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault())
-                } ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
-                viewModel.onDueDateChange(localDateTime)
+                viewModel.onDueDateChange(millisToLocalDateTime(millis))
             },
             onSaveClick = { viewModel.saveTask() },
             onCancelClick = {

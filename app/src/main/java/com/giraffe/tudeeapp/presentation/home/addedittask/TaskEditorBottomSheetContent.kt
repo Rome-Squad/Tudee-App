@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.home.componant
+package com.giraffe.tudeeapp.presentation.home.addedittask
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +46,6 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.home.TaskEditorBottomSheetUiState
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -208,7 +207,7 @@ fun TaskEditorBottomSheetContent(
             ) {
                 PrimaryButton(
                     text = saveButtonText,
-                    isLoading = taskState.isLoadingSave,
+                    isLoading = taskState.isLoading,
                     isDisable = !taskState.isValidInput,
                     onClick = onSaveClick,
                     modifier = Modifier
@@ -263,9 +262,7 @@ fun TaskEditorBottomSheetContentPreview() {
                     dueDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                     dueDateMillis = Clock.System.now().toEpochMilliseconds(),
                     categories = fakeCategories,
-                    isLoadingTask = false,
-                    isLoadingSave = false,
-                    isLoadingCategories = false,
+                    isLoading = false,
                 ).let { initial ->
                     initial.copy(isValidInput = validateInputs(initial))
                 }

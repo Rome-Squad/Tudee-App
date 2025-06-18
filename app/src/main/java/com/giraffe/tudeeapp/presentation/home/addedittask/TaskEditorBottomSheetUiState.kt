@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.home
+package com.giraffe.tudeeapp.presentation.home.addedittask
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
@@ -19,18 +19,11 @@ data class TaskEditorBottomSheetUiState(
     val categoryId: Long? = null,
 
     val categories: List<Category> = emptyList(),
-    val isLoadingCategories: Boolean = false,
-    val errorMessageCategories: String? = null,
 
-    val isLoadingTask: Boolean = false,
-    val errorMessageTask: String? = null,
-
-
-    val isLoadingSave: Boolean = false,
+    val isLoading: Boolean = false,
     val isSuccessSave: Boolean = false,
-    val errorMessageSave: String? = null,
+    val errorMessage: String? = null,
 
     val isValidInput: Boolean = false
-
 )
 

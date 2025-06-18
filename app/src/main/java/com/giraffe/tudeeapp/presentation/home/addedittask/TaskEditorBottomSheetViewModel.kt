@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.home
+package com.giraffe.tudeeapp.presentation.home.addedittask
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,22 +32,22 @@ class TaskEditorBottomSheetViewModel(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            updateState { copy(isLoadingCategories = true, errorMessageCategories = null) }
+            updateState { copy(isLoading = true, errorMessage = null) }
 
             categoriesService.getAllCategories().onSuccess { flow ->
                 flow.collect { categories ->
                     updateState {
                         copy(
                             categories = categories,
-                            isLoadingCategories = false
+                            isLoading = false
                         )
                     }
                 }
             }.onError { error ->
                 updateState {
                     copy(
-                        isLoadingCategories = false,
-                        errorMessageCategories = error.toString()
+                        isLoading = false,
+                        errorMessage = error.toString()
                     )
                 }
             }
@@ -56,7 +56,7 @@ class TaskEditorBottomSheetViewModel(
 
     private fun loadTask(id: Long) {
         viewModelScope.launch {
-            updateState { copy(isLoadingTask = true, errorMessageTask = null) }
+            updateState { copy(isLoading = true, errorMessage = null) }
 
             tasksService.getTaskById(id).onSuccess { task ->
                 updateState {
@@ -68,11 +68,11 @@ class TaskEditorBottomSheetViewModel(
                         taskPriority = task.taskPriority,
                         taskStatus = task.status,
                         categoryId = task.categoryId,
-                        isLoadingTask = false
+                        isLoading = false
                     )
                 }
             }.onError { error ->
-                updateState { copy(isLoadingTask = false, errorMessageTask = error.toString()) }
+                updateState { copy(isLoading = false, errorMessage = error.toString()) }
             }
         }
     }
@@ -99,7 +99,7 @@ class TaskEditorBottomSheetViewModel(
 
     fun saveTask() {
         viewModelScope.launch {
-            updateState { copy(isLoadingSave = true, errorMessageSave = null) }
+            updateState { copy(isLoading = true, errorMessage = null) }
 
             val currentState = _taskState.value
 
@@ -122,9 +122,9 @@ class TaskEditorBottomSheetViewModel(
             }
 
             result.onSuccess {
-                updateState { copy(isSuccessSave = true, isLoadingSave = false) }
+                updateState { copy(isSuccessSave = true, isLoading = false) }
             }.onError { error ->
-                updateState { copy(isLoadingSave = false, errorMessageSave = error.toString()) }
+                updateState { copy(isLoading = false, errorMessage = error.toString()) }
             }
         }
     }
