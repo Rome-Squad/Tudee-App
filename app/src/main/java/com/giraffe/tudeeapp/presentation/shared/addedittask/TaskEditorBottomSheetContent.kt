@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
 import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
@@ -88,15 +89,16 @@ fun TaskEditorBottomSheetContent(
             CircularProgressIndicator()
         }
     } else {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface)
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Theme.color.surface)
+                    .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 120.dp, top = 16.dp)
-                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 Text(
                     text = headerTitle,
@@ -123,7 +125,8 @@ fun TaskEditorBottomSheetContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .clickable { showDatePickerDialog = true }
                 ) {
                     DefaultTextField(
@@ -178,7 +181,7 @@ fun TaskEditorBottomSheetContent(
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(items = categories, key = { it.id }) { category ->
-                        val painter = painterResource(R.drawable.book_open_icon)
+                        val painter = rememberAsyncImagePainter(model = category.imageUri)
                         CategoryItem(
                             icon = painter,
                             categoryName = category.name,
@@ -194,7 +197,6 @@ fun TaskEditorBottomSheetContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
                     .background(Theme.color.surfaceHigh)
                     .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
             ) {
