@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -118,58 +119,60 @@ fun HomeContent(
                                     .height(55.dp)
                                     .background(Theme.color.primary),
                             )
+                            Box(
+                                modifier = Modifier
+                                    .offset(y = -55.dp)
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Theme.color.surfaceHigh)
+                                    .padding(top = 8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                    SliderStatus(
+                                        state,
+                                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                                    )
+                                    OverViewSection(tasksState = state)
+                                }
+                            }
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(Theme.color.surface)
-                                    .padding(top = 250.dp)
                             ) {
-                                if (state.allTasksCount == 0) {
+                                if (state.allTasksCount == 1) {
                                     NoTask(
                                         modifier = Modifier
-                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                                            .offset(y = -7.dp)
+                                            .padding(start = 15.dp, end = 15.dp)
                                     )
                                 } else {
                                     TaskSection(
+                                        modifier = Modifier.offset(y = -31.dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasksCount.toString(),
                                         tasks = state.inProgressTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
+                                        modifier = Modifier.offset(y = -7.dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.toDoTasksCount.toString(),
                                         tasks = state.todoTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
+                                        modifier = Modifier.padding(top = 17.dp),
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasksCount.toString(),
                                         tasks = state.doneTasks,
                                         onTaskClick = onTaskClick
                                     )
                                 }
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Theme.color.surfaceHigh)
-                                .padding(top = 8.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                                SliderStatus(
-                                    state,
-                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                                )
-                                OverViewSection(tasksState = state)
                             }
                         }
                     }
@@ -227,6 +230,6 @@ fun HomeContent(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun Preview() {
+fun home() {
     HomeContent(state = HomeUiState())
 }
