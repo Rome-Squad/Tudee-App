@@ -32,6 +32,7 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
+    modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
     onDateSelected: (Long?) -> Unit
@@ -44,14 +45,13 @@ fun DatePickerDialog(
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 shape = RoundedCornerShape(16.dp),
                 color = Theme.color.surface
             ) {
                 Column(
-                    modifier = Modifier.padding(0.dp)
                 ) {
                     DatePicker(
                         state = datePickerState,
@@ -70,14 +70,14 @@ fun DatePickerDialog(
                         )
                     )
                     Row(
-                        modifier = Modifier
+                        modifier = modifier
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
 
                             TextButton(
-                                modifier = Modifier,
+                                modifier = modifier,
                                 onClick = { onDismissRequest() },
                                 text = stringResource(R.string.clear_button),
                                 isLoading = false,
@@ -90,7 +90,7 @@ fun DatePickerDialog(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         TextButton(
-                            modifier = Modifier,
+                            modifier = modifier,
                             onClick = { onDismissRequest() },
                             text = stringResource(R.string.cancel_button),
                             isLoading = false,
@@ -98,7 +98,7 @@ fun DatePickerDialog(
                         )
 
                         TextButton(
-                            modifier = Modifier,
+                            modifier = modifier,
                             onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
                                 onDateSelected(selectedDate)
