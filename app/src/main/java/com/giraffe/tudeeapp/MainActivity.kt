@@ -19,11 +19,15 @@ import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryScreen
+import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryViewModel
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
+import org.koin.android.ext.android.getKoin
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,12 +106,19 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = "${Screen.TasksByCategoryScreen.route}/{categoryId}",
-                            arguments = listOf(navArgument("categoryId") {
+                            route = "${Screen.TasksByCategoryScreen.route}/{${Screen.TasksByCategoryScreen.CATEGORY_ID}}",
+                            arguments = listOf(navArgument(Screen.TasksByCategoryScreen.CATEGORY_ID) {
                                 type = NavType.LongType
                             })
                         ) { backStackEntry ->
-                            TasksByCategoryScreen()
+                            val viewModel: TasksByCategoryViewModel = koinViewModel(
+                                viewModelStoreOwner = backStackEntry
+                            )
+
+                            TasksByCategoryScreen(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
                         }
                     }
                 }

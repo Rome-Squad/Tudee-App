@@ -9,6 +9,7 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
+import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.utils.toCategory
 import com.giraffe.tudeeapp.presentation.utils.toUiState
 import kotlinx.coroutines.Dispatchers
@@ -26,16 +27,8 @@ class TasksByCategoryViewModel(
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
 
-
-    val categoryId: Long = savedStateHandle.get<Long>("categoryId") ?: 0L
-
     init {
-        _state.update {
-            it.copy(
-                selectedCategoryId = categoryId,
-            )
-        }
-        getCategoryById(categoryId)
+        getCategoryById(savedStateHandle.get<Long>(Screen.TasksByCategoryScreen.CATEGORY_ID) ?: 0L)
         getTasks()
     }
 

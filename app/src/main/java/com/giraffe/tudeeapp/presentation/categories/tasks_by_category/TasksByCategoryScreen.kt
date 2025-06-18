@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
@@ -29,17 +30,17 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TasksByCategoryScreen(
     viewModel: TasksByCategoryViewModel = koinViewModel(),
-    //navController: NavController
+    navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
-    TasksByCategoryContent(state, viewModel)
+    TasksByCategoryContent(state, viewModel, navController)
 }
 
 @Composable
 fun TasksByCategoryContent(
     state: TasksByCategoryScreenState = TasksByCategoryScreenState(),
     actions: TasksByCategoryScreenActions,
-    //navController: NavController
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
@@ -48,9 +49,9 @@ fun TasksByCategoryContent(
     ) {
         Column {
             TudeeTopBar(
-                title = state.selectedCategoryStr,
-                withOption = true,
-                onClickBack = { /*navController.popBackStack()*/ },
+                title = state.selectedCategory.name,
+                withOption = state.selectedCategory.isEditable,
+                onClickBack = { navController.popBackStack() },
                 onClickEdit = { actions.setBottomSheetVisibility(true) }
             )
             TabsBar(onTabSelected = actions::selectTab)
@@ -109,6 +110,6 @@ fun TasksByCategoryContent(
 @Composable
 private fun Preview() {
     TudeeTheme {
-        TasksByCategoryScreen()
+        //TasksByCategoryScreen()
     }
 }

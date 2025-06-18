@@ -22,4 +22,7 @@ val appModule = module {
 
     viewModel { SplashViewModel(get()) }
     viewModel { CategoryViewModel(get()) }
+    viewModel { (handle: SavedStateHandle) ->
+        TasksByCategoryViewModel(get(), get(), handle)
+    }
 }

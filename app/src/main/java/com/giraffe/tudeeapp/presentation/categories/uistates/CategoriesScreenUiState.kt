@@ -3,7 +3,6 @@ package com.giraffe.tudeeapp.presentation.categories.uistates
 import androidx.core.net.toUri
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.domain.util.DomainError
-import kotlinx.serialization.Serializable
 
 data class CategoriesScreenUiState(
     val categories: List<CategoryUi> = emptyList(),
@@ -14,7 +13,6 @@ data class CategoriesScreenUiState(
     val showSuccessSnackBar: Boolean = false
 )
 
-@Serializable
 data class CategoryUi(
     val id: Long = 0L,
     val name: String = "no name",

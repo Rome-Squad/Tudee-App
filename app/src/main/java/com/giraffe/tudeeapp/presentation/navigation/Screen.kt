@@ -4,7 +4,9 @@ sealed class Screen(val route: String) {
     object SplashScreen : Screen("splashScreen")
     object HomeScreen : Screen("homeScreen")
     object CategoriesScreen : Screen("categoriesScreen")
-    object TasksByCategoryScreen : Screen("tasksByCategoryScreen")
+    object TasksByCategoryScreen : Screen("tasksByCategoryScreen"){
+        const val CATEGORY_ID ="CATEGORY_ID"
+    }
     object TaskScreen : Screen("taskScreen")
 
     object OnboardingScreen : Screen("onboardingScreen")

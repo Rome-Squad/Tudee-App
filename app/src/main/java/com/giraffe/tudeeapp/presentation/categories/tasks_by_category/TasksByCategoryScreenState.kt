@@ -6,8 +6,6 @@ import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 
 data class TasksByCategoryScreenState(
-    val selectedCategoryStr: String = "",
-    val selectedCategoryId: Long = 0L,
     val selectedCategory: CategoryUi = CategoryUi(),
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
     val tasks: Map<TaskStatus, List<Task>> = mapOf(),
