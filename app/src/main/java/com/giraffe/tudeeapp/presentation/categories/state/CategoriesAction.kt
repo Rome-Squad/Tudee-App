@@ -1,8 +1,8 @@
-package com.giraffe.tudeeapp.presentation.categories
+package com.giraffe.tudeeapp.presentation.categories.state
 
 import com.giraffe.tudeeapp.domain.model.Category
 
-interface CategoriesScreenAction {
+interface CategoriesAction {
     fun selectCategory(categoryId: Long)
     fun setBottomSheetVisibility(isVisible: Boolean)
     fun addCategory(category: Category)

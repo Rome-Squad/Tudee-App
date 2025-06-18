@@ -32,11 +32,11 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.CategoriesScreenAction
 import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
-import com.giraffe.tudeeapp.presentation.categories.CategoryViewModel
-import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoriesScreenUiState
+import com.giraffe.tudeeapp.presentation.categories.state.CategoriesAction
+import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiEvent
+import com.giraffe.tudeeapp.presentation.categories.state.CategoriesUiState
+import com.giraffe.tudeeapp.presentation.categories.viewmodel.CategoryViewModel
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -64,8 +64,8 @@ fun CategoriesScreen(viewModel: CategoryViewModel = koinViewModel(), navControll
 
 @Composable
 fun CategoriesContent(
-    state: CategoriesScreenUiState,
-    actions: CategoriesScreenAction
+    state: CategoriesUiState,
+    actions: CategoriesAction
 ) {
     Box(
         Modifier
