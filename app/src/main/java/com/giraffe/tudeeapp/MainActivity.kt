@@ -25,9 +25,7 @@ import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
-import org.koin.android.ext.android.getKoin
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

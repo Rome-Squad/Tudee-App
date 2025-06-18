@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,12 +34,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -161,6 +158,8 @@ fun TaskDetailsBottomSheet(
 
                     SecondaryButton(
                         text = if (task?.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
                     ) {
                         viewModel.changeTaskStatus(if (task?.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
                     }
