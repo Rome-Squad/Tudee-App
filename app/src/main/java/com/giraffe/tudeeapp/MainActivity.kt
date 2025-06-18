@@ -9,23 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
-import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryScreen
-import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryViewModel
+import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
 import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
-import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,23 +95,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.CategoriesScreen.route) {
-                            CategoriesScreen(navController = navController)
-                        }
-
-                        composable(
-                            route = "${Screen.TasksByCategoryScreen.route}/{${Screen.TasksByCategoryScreen.CATEGORY_ID}}",
-                            arguments = listOf(navArgument(Screen.TasksByCategoryScreen.CATEGORY_ID) {
-                                type = NavType.LongType
-                            })
-                        ) { backStackEntry ->
-                            val viewModel: TasksByCategoryViewModel = koinViewModel(
-                                viewModelStoreOwner = backStackEntry
-                            )
-
-                            TasksByCategoryScreen(
-                                viewModel = viewModel,
-                                navController = navController
-                            )
+                            CategoriesScreen()
                         }
                     }
                 }
