@@ -10,19 +10,18 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "splash_prefs")
 
-class SplashServiceImpl(applicationContext: Context) : SplashService {
+class SplashServiceImpl( private val applicationContext: Context) : SplashService {
 
-    private val context = applicationContext.applicationContext
     private val ONBOARDING_SHOWN_KEY = booleanPreferencesKey("onboarding_shown")
 
     override suspend fun setOnboardingShown(shown: Boolean) {
-        context.dataStore.edit { preferences ->
+        applicationContext.dataStore.edit { preferences ->
             preferences[ONBOARDING_SHOWN_KEY] = shown
         }
     }
 
     override suspend fun isOnboardingShown(): Boolean {
-        return context.dataStore.data
+        return applicationContext.dataStore.data
             .map { preferences ->
                 preferences[ONBOARDING_SHOWN_KEY] ?: false
             }.first()
