@@ -1,11 +1,14 @@
 package com.giraffe.tudeeapp.presentation.home
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,15 +30,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.home.addedittask.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -52,6 +57,15 @@ fun HomeScreen(
             viewModel.openAddEditTaskBottomSheet(it)
         },
         onDismissAddEditTask = viewModel::closeAddEditTaskBottomSheet,
+        onSuccessSave = {
+            Log.d("TAG", "HomeScreen: ")
+            viewModel.showSnackBarSuccess()
+        },
+        onErrorSave = {
+            viewModel.showSnackBarError(it)
+        },
+        onThemeSwitchToggle = onThemeSwitchToggle,
+        isDarkTheme = isDarkTheme
     ) { taskId ->
         viewModel.openTaskDetails(taskId)
     }
@@ -66,13 +80,25 @@ fun HomeContent(
     onDismissTaskDetails: () -> Unit = {},
     onDismissAddEditTask: () -> Unit = {},
     onAddEditTask: (Long?) -> Unit = {},
+    onSuccessSave: () -> Unit = {},
+    onErrorSave: (String?) -> Unit = {},
     onTaskClick: (Long) -> Unit = {},
 ) {
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = false
+    systemUiController.setStatusBarColor(
+        color = Theme.color.primary,
+        darkIcons = useDarkIcons
+    )
+
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             var width by remember { mutableIntStateOf(0) }
             val heightInDp = with(LocalDensity.current) { (width * 0.2f).toDp() }
@@ -103,58 +129,60 @@ fun HomeContent(
                                     .height(55.dp)
                                     .background(Theme.color.primary),
                             )
+                            Box(
+                                modifier = Modifier
+                                    .offset(y = (-55).dp)
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Theme.color.surfaceHigh)
+                                    .padding(top = 8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                    SliderStatus(
+                                        state,
+                                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                                    )
+                                    OverViewSection(tasksState = state)
+                                }
+                            }
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(Theme.color.surface)
-                                    .padding(top = 250.dp)
                             ) {
                                 if (state.allTasksCount == 0) {
                                     NoTask(
                                         modifier = Modifier
-                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                                            .offset(y = (-7).dp)
+                                            .padding(start = 15.dp, end = 15.dp)
                                     )
                                 } else {
                                     TaskSection(
+                                        modifier = Modifier.offset(y = (-31).dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasksCount.toString(),
                                         tasks = state.inProgressTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
+                                        modifier = Modifier.offset(y = (-7).dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.toDoTasksCount.toString(),
                                         tasks = state.todoTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
+                                        modifier = Modifier.padding(top = 17.dp),
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasksCount.toString(),
                                         tasks = state.doneTasks,
                                         onTaskClick = onTaskClick
                                     )
                                 }
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Theme.color.surfaceHigh)
-                                .padding(top = 8.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                                SliderStatus(
-                                    state,
-                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                                )
-                                OverViewSection(tasksState = state)
                             }
                         }
                     }
@@ -185,7 +213,26 @@ fun HomeContent(
                 taskId = state.currentTaskId,
                 onDismissRequest = onDismissAddEditTask,
                 headerTitle = if (state.currentTaskId == null) "Add Task" else "Edit Task",
-                saveButtonText = "Save"
+                saveButtonText = "Save",
+                onSuccessSave = {
+                    Log.d("TAG", "HomeScreen: 000000")
+                    onSuccessSave()
+                },
+                onError = {
+                    onErrorSave(it)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        AnimatedVisibility(state.isShowSnakbar) {
+            TudeeSnackBar(
+                message = if (state.errorMessage != null && state.addEditBottomSheetToAdd) "Some error happened" else if (state.errorMessage == null && !state.addEditBottomSheetToAdd) "Edited Task successfully." else "Added Task Successfully.",
+                iconRes = if (state.errorMessage == null) R.drawable.ic_success else R.drawable.ic_error,
+                iconTintColor = if (state.errorMessage == null) Theme.color.greenAccent else Theme.color.error,
+                iconBackgroundColor = if (state.errorMessage == null) Theme.color.greenVariant else Theme.color.errorVariant,
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
@@ -193,6 +240,6 @@ fun HomeContent(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun Preview() {
+fun Home() {
     HomeContent(state = HomeUiState())
 }

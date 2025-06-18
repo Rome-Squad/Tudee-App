@@ -1,7 +1,9 @@
-package com.giraffe.tudeeapp.presentation.home.taskdetails
+package com.giraffe.tudeeapp.presentation.shared.taskdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -29,12 +34,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -51,11 +54,14 @@ fun TaskDetailsBottomSheet(
     val task = viewModel.taskDetailsState.task
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = onnDismiss
+        onDismissRequest = onnDismiss,
+        modifier = modifier,
+        containerColor = Theme.color.surface
     ) {
         Column(
-            modifier = modifier
-                .padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment =Alignment.Start
         ) {
@@ -130,17 +136,30 @@ fun TaskDetailsBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(90.dp),
                 ) {
-                    SecondaryButton(
-                        text = "",
-                        icon = painterResource(R.drawable.ic_pencil_edit),
+                    Box(
+                        modifier = Modifier
+                            .height(56.dp)
+                            .border(1.dp, Theme.color.stroke, RoundedCornerShape(100.dp))
+                            .clip(RoundedCornerShape(100.dp))
+                            .padding(horizontal = 24.dp)
+                            .clickable {
+                                onEditTask(task?.id)
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
-                        onEditTask(task?.id)
+                        Icon(
+                            painter = painterResource(R.drawable.ic_pencil_edit),
+                            contentDescription = stringResource(R.string.edit_task),
+                            tint = Theme.color.primary
+                        )
                     }
 
-                    NegativeTextButton(
+                    SecondaryButton(
                         text = if (task?.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
                     ) {
                         viewModel.changeTaskStatus(if (task?.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
                     }

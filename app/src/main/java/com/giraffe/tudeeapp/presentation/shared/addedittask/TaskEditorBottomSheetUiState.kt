@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.home.addedittask
+package com.giraffe.tudeeapp.presentation.shared.addedittask
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority

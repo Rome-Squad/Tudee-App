@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json)
 //    implementation(libs.androidx.navigation.safe.args.generator)
     ksp(libs.room.compiler)
     annotationProcessor(libs.room.compiler)
@@ -81,5 +83,5 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
-
+    implementation(libs.accompanist.systemuicontroller)
 }

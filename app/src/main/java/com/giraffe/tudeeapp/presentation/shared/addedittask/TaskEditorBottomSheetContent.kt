@@ -1,9 +1,10 @@
-package com.giraffe.tudeeapp.presentation.home.addedittask
+package com.giraffe.tudeeapp.presentation.shared.addedittask
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,9 +49,6 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun TaskEditorBottomSheetContent(
@@ -96,7 +94,8 @@ fun TaskEditorBottomSheetContent(
                     .fillMaxWidth()
                     .background(Theme.color.surface)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 120.dp, top = 16.dp)
                     .align(Alignment.TopCenter)
             ) {
                 Text(
@@ -128,9 +127,7 @@ fun TaskEditorBottomSheetContent(
                         .clickable { showDatePickerDialog = true }
                 ) {
                     DefaultTextField(
-                        textValue = taskState.dueDateMillis?.let { millis ->
-                            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date(millis))
-                        } ?: stringResource(R.string.date_picker_placeholder),
+                        textValue = taskState.dueDate.date.toString(),
                         onValueChange = { },
                         hint = stringResource(R.string.due_date_hint),
                         iconRes = R.drawable.calendar
@@ -177,7 +174,8 @@ fun TaskEditorBottomSheetContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 328.dp)
+                        .heightIn(max = 328.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(items = categories, key = { it.id }) { category ->
                         val painter = painterResource(R.drawable.book_open_icon)
