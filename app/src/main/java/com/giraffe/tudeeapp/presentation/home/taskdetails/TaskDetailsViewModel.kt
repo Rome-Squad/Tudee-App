@@ -14,16 +14,15 @@ import com.giraffe.tudeeapp.presentation.util.errorToMessage
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel(
+    private val taskId: Long,
     val taskService: TasksService,
     val categoryService: CategoriesService
 ) : ViewModel() {
     var taskDetailsState by mutableStateOf<TaskDetailsState>(TaskDetailsState())
         private set
 
-    fun setTask(task: TaskUi) {
-        taskDetailsState = taskDetailsState.copy(
-            task = task
-        )
+    init {
+        getTaskById(taskId)
     }
 
     fun getTaskById(taskId: Long) = viewModelScope.launch {
