@@ -6,7 +6,8 @@
     <string name="low">Low</string>
     <string name="category_icon">Category icon</string>
     <string name="checkmark_container">Checkmark Container</string>
-    <string name="slider_subtitle_for_empty_tasks">Fill your day with something \nawesome.</string>
+    <string name="tudee_slider_subtitle">You\'ve completed 3 out of 10 \ntasks Keep going!</string>
+    <string name="tudee_slider_title">Stay working!</string>
     <string name="tudee">Tudee</string>
     <string name="app_tagline">Your cute Helper for Every Task</string>
     <string name="task_icon">Task Icon</string>
@@ -36,6 +37,13 @@
     <string name="splash_background">Splash Background</string>
     <string name="skip">Skip</string>
     <string name="splash_logo">Splash Logo</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="clear_button">Clear</string>
+    <string name="date_picker_placeholder">Select a due date</string>
+    <string name="due_date_hint">Due Date</string>
+    <string name="priority">Priority</string>
+    <string name="category">Category</string>
     <string name="in_progress">In Progress</string>
     <string name="to_do">To-Do</string>
     <string name="done">Done</string>
