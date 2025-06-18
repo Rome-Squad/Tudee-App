@@ -33,13 +33,14 @@ import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
+import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -59,10 +60,10 @@ fun HomeScreen(
         onSuccessSave = {
             Log.d("TAG", "HomeScreen: ")
             viewModel.showSnackBarSuccess()
-                        },
+        },
         onErrorSave = {
             viewModel.showSnackBarError(it)
-                      },
+        },
         onThemeSwitchToggle = onThemeSwitchToggle,
         isDarkTheme = isDarkTheme
     ) { taskId ->
@@ -83,8 +84,17 @@ fun HomeContent(
     onErrorSave: (String?) -> Unit = {},
     onTaskClick: (Long) -> Unit = {},
 ) {
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = false
+    systemUiController.setStatusBarColor(
+        color = Theme.color.primary,
+        darkIcons = useDarkIcons
+    )
+
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
     ) {
         Column(
             modifier = Modifier
@@ -121,7 +131,7 @@ fun HomeContent(
                             )
                             Box(
                                 modifier = Modifier
-                                    .offset(y = -55.dp)
+                                    .offset(y = (-55).dp)
                                     .fillMaxWidth()
                                     .padding(start = 16.dp, end = 16.dp)
                                     .clip(RoundedCornerShape(16.dp))
@@ -147,19 +157,19 @@ fun HomeContent(
                                 if (state.allTasksCount == 0) {
                                     NoTask(
                                         modifier = Modifier
-                                            .offset(y = -7.dp)
+                                            .offset(y = (-7).dp)
                                             .padding(start = 15.dp, end = 15.dp)
                                     )
                                 } else {
                                     TaskSection(
-                                        modifier = Modifier.offset(y = -31.dp),
+                                        modifier = Modifier.offset(y = (-31).dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasksCount.toString(),
                                         tasks = state.inProgressTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.offset(y = -7.dp),
+                                        modifier = Modifier.offset(y = (-7).dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.toDoTasksCount.toString(),
                                         tasks = state.todoTasks,
@@ -230,6 +240,6 @@ fun HomeContent(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun home() {
+fun Home() {
     HomeContent(state = HomeUiState())
 }
