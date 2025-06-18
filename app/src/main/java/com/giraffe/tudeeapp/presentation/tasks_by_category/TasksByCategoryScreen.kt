@@ -25,6 +25,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
@@ -116,7 +117,21 @@ fun TasksByCategoryContent(
                     onVisibilityChange = actions::setBottomSheetVisibility,
                     categoryToEdit = state.selectedCategory,
                     onEditClick = actions::editCategory,
-                    onDeleteClick = actions::deleteCategory
+                    onDeleteClick = { category ->
+                        actions.setCategoryToDelete(category)
+                        actions.setBottomSheetVisibility(false)
+                        actions.setAlertBottomSheetVisibility(true)
+                    }
+                )
+            }
+
+            if (state.isAlertBottomSheetVisible) {
+                AlertBottomSheet(
+                    onRedBtnClick = { state.categoryToDelete?.let { actions.deleteCategory(it) } },
+                    onBlueBtnClick = {
+                        actions.setCategoryToDelete(null)
+                        actions.setAlertBottomSheetVisibility(false)
+                    }
                 )
             }
 

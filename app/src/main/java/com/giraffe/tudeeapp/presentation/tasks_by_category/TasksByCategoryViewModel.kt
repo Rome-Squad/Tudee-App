@@ -54,6 +54,12 @@ class TasksByCategoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {}
     }
 
+    override fun setAlertBottomSheetVisibility(isVisible: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(isAlertBottomSheetVisible = isVisible) }
+        }
+    }
+
     override fun setBottomSheetVisibility(isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isBottomSheetVisible = isVisible) }
@@ -119,6 +125,12 @@ class TasksByCategoryViewModel(
                     delay(3000)
                     _state.update { it.copy(showSuccessSnackBar = false) }
                 }
+        }
+    }
+
+    override fun setCategoryToDelete(category: Category?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(categoryToDelete = category) }
         }
     }
 }

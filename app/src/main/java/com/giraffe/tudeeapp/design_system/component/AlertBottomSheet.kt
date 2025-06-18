@@ -49,8 +49,10 @@ fun AlertBottomSheet(
 
     ModalBottomSheet(
         modifier = modifier,
+        containerColor = Theme.color.surface,
         onDismissRequest = {
             showBottomSheet = false
+            onBlueBtnClick()
         },
         sheetState = sheetState
     ) {

@@ -9,12 +9,14 @@ import com.giraffe.tudeeapp.domain.util.DomainError
 
 data class TasksByCategoryScreenState(
     val selectedCategory: Category? = null,
+    val categoryToDelete: Category? = null,
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
     val tasks: Map<TaskStatus, List<TaskUiModel>> = mapOf(
         TaskStatus.TODO to List(3) { TaskUiModel(categoryIcon = ("android.resource://com.giraffe.tudeeapp/${R.drawable.airplane_01}".toUri()).toString()) },
         TaskStatus.IN_PROGRESS to List(5) { TaskUiModel() },
         TaskStatus.DONE to List(10) { TaskUiModel(categoryIcon = ("android.resource://com.giraffe.tudeeapp/${R.drawable.developer}".toUri()).toString()) },
     ),
+    val isAlertBottomSheetVisible: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
     val error: DomainError? = null,
     val showSuccessSnackBar: Boolean = false,
