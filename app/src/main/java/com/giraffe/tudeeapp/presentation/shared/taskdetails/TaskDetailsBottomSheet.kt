@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.home.taskdetails
+package com.giraffe.tudeeapp.presentation.shared.taskdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

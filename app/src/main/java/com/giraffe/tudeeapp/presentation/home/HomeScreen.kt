@@ -29,13 +29,13 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.home.addedittask.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
