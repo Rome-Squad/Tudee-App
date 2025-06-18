@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.utils.millisToLocalDateTime
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -55,6 +56,7 @@ fun TaskEditorBottomSheet(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = maxSheetHeight),
+        containerColor = Theme.color.surface
     ) {
         TaskEditorBottomSheetContent(
             headerTitle = headerTitle,
