@@ -29,11 +29,12 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -42,10 +43,10 @@ import org.koin.core.parameter.parametersOf
 fun TaskDetailsBottomSheet(
     taskId: Long,
     onnDismiss: () -> Unit,
-    onEditTask: (TaskUi?) -> Unit,
+    onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    viewModel: TaskDetailsViewModel = koinViewModel { parametersOf(taskId) }
+    viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
     val task = viewModel.taskDetailsState.task
     ModalBottomSheet(
@@ -120,7 +121,7 @@ fun TaskDetailsBottomSheet(
                 }
 
                 Priority(
-                    priorityType = task?.priorityType ?: PriorityType.LOW,
+                    priorityType = task?.priorityType ?: TaskPriority.LOW,
                     isSelected = true
                 )
             }
@@ -135,7 +136,7 @@ fun TaskDetailsBottomSheet(
                         text = "",
                         icon = painterResource(R.drawable.ic_pencil_edit),
                     ) {
-                        onEditTask(task)
+                        onEditTask(task?.id)
                     }
 
                     NegativeTextButton(
