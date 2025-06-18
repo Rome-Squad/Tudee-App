@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.categories
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -63,12 +64,19 @@ fun CategoryBottomSheet(
     onEditClick: (Category) -> Unit = {},
     onDeleteClick: (Category) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var categoryTitle by remember { mutableStateOf(categoryToEdit?.name ?: "") }
     var photoUri: Uri? by remember { mutableStateOf(null) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            photoUri = uri
+            uri?.let {
+                photoUri = it
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
         }
     ModalBottomSheet(
         modifier = modifier,
