@@ -29,23 +29,25 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
+import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.button_type.NegativeTextButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailsBottomSheet(
-    task: TaskUi,
+    taskId: Long,
     onnDismiss: () -> Unit,
     onEditTask: (TaskUi?) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    viewModel: TaskDetailsViewModel = koinViewModel()
+    viewModel: TaskDetailsViewModel = koinViewModel { parametersOf(taskId) }
 ) {
-    viewModel.setTask(task)
+    val task = viewModel.taskDetailsState.task
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onnDismiss
@@ -70,19 +72,19 @@ fun TaskDetailsBottomSheet(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(task.category.imageUri),
-                    contentDescription = task.title,
+                    painter = rememberAsyncImagePainter(task?.category?.imageUri),
+                    contentDescription = task?.title,
                 )
             }
 
             Text(
-                text = task.title,
+                text = task?.title.toString(),
                 style = Theme.textStyle.title.medium,
                 color = Theme.color.title
             )
 
             Text(
-                text = task.description,
+                text = task?.description.toString(),
                 style = Theme.textStyle.body.small,
                 color = Theme.color.body
             )
@@ -111,19 +113,19 @@ fun TaskDetailsBottomSheet(
                     )
 
                     Text(
-                        text = task.status.name.lowercase(),
+                        text = task?.status?.name?.lowercase().toString(),
                         style = Theme.textStyle.body.small,
                         color = Theme.color.body
                     )
                 }
 
                 Priority(
-                    priorityType = task.priorityType,
+                    priorityType = task?.priorityType ?: PriorityType.LOW,
                     isSelected = true
                 )
             }
 
-            if (task.status != TaskStatus.DONE) {
+            if (task?.status != TaskStatus.DONE) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -137,9 +139,9 @@ fun TaskDetailsBottomSheet(
                     }
 
                     NegativeTextButton(
-                        text = if (task.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
+                        text = if (task?.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
                     ) {
-                        viewModel.changeTaskStatus(if (task.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
+                        viewModel.changeTaskStatus(if (task?.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
                     }
                 }
             }
