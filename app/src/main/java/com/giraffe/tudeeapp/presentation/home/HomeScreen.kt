@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,22 +30,46 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.home.addedittask.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
+import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
-    val state by viewModel.tasksUiState.collectAsState()
-    HomeContent(state = state)
+fun HomeScreen(
+    isDarkTheme: Boolean = false,
+    onThemeSwitchToggle: () -> Unit = {},
+    viewModel: HomeViewModel = koinViewModel()
+) {
+    val state by viewModel.homeUiState.collectAsState()
+    HomeContent(
+        state = state,
+        onDismissTaskDetails = viewModel::closeTaskDetails,
+        onAddEditTask = {
+            viewModel.openAddEditTaskBottomSheet(it)
+        },
+        onDismissAddEditTask = viewModel::closeAddEditTaskBottomSheet,
+    ) { taskId ->
+        viewModel.openTaskDetails(taskId)
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(state: TasksUiState) {
+fun HomeContent(
+    state: HomeUiState,
+    isDarkTheme: Boolean = false,
+    onThemeSwitchToggle: () -> Unit = {},
+    onDismissTaskDetails: () -> Unit = {},
+    onDismissAddEditTask: () -> Unit = {},
+    onAddEditTask: (Long?) -> Unit = {},
+    onTaskClick: (Long) -> Unit = {},
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -60,8 +85,8 @@ fun HomeContent(state: TasksUiState) {
                         width = it.size.width
                     }
                     .height(heightInDp),
-                isDarkTheme = false,
-                onThemeSwitchToggle = {}
+                isDarkTheme = isDarkTheme,
+                onThemeSwitchToggle = onThemeSwitchToggle
             )
 
             Column(
@@ -98,17 +123,20 @@ fun HomeContent(state: TasksUiState) {
                                 TaskSection(
                                     taskStatus = stringResource(R.string.in_progress_tasks),
                                     numberOfTasks = state.inProgressTasksCount.toString(),
-                                    tasks = state.inProgressTasks
+                                    tasks = state.inProgressTasks,
+                                    onTaskClick = onTaskClick
                                 )
                                 TaskSection(
                                     taskStatus = stringResource(R.string.to_do_tasks),
                                     numberOfTasks = state.toDoTasksCount.toString(),
-                                    tasks = state.todoTasks
+                                    tasks = state.todoTasks,
+                                    onTaskClick = onTaskClick
                                 )
                                 TaskSection(
                                     taskStatus = stringResource(R.string.done_tasks),
                                     numberOfTasks = state.doneTasksCount.toString(),
-                                    tasks = state.doneTasks
+                                    tasks = state.doneTasks,
+                                    onTaskClick = onTaskClick
                                 )
                             }
                         }
@@ -142,13 +170,31 @@ fun HomeContent(state: TasksUiState) {
                 .align(Alignment.BottomEnd)
                 .padding(end = 12.dp, bottom = 10.dp),
             icon = painterResource(R.drawable.add_task_icon),
-            onClick = {}
+            onClick = {
+                onAddEditTask(null)
+            }
         )
+        if (state.isOpenTaskDetailsBottomSheet && state.currentTaskId != null) {
+            TaskDetailsBottomSheet(
+                taskId = state.currentTaskId,
+                onnDismiss = onDismissTaskDetails,
+                onEditTask = onAddEditTask
+            )
+        }
+
+        if (state.isOpenAddEditTaskBottomSheet) {
+            TaskEditorBottomSheet(
+                taskId = state.currentTaskId,
+                onDismissRequest = onDismissAddEditTask,
+                headerTitle = if (state.currentTaskId == null) "Add Task" else "Edit Task",
+                saveButtonText = "Save"
+            )
+        }
     }
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
-    HomeContent(state = TasksUiState())
+    HomeContent(state = HomeUiState())
 }

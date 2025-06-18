@@ -8,10 +8,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Slider
 import com.giraffe.tudeeapp.presentation.home.HomeContent
-import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
+import com.giraffe.tudeeapp.presentation.home.HomeUiState
 
 @Composable
-fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
+fun SliderStatus(state: HomeUiState, modifier: Modifier = Modifier) {
     val slider = when {
         state.allTasksCount == 0 -> Slider(
             image = painterResource(R.drawable.tudee_slider_image),
@@ -66,5 +66,5 @@ fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
 @Preview(widthDp = 360)
 @Composable
 fun Preview() {
-    HomeContent(state = TasksUiState())
+    HomeContent(state = HomeUiState())
 }

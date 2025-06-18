@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
+import com.giraffe.tudeeapp.presentation.home.HomeUiState
 
 data class TaskCardData(
     val color: Color,
@@ -22,7 +22,7 @@ data class TaskCardData(
 )
 
 @Composable
-fun OverViewSection(modifier: Modifier = Modifier, tasksState: TasksUiState) {
+fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
     TitleOverView()
 
     val cardsData = listOf(
