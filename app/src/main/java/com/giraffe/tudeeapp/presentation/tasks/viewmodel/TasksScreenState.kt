@@ -3,22 +3,19 @@ package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 data class TasksScreenState(
-    val pickedDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) ,
-    val selectedCategory: CategoryUi = CategoryUi(),
+    val pickedDate: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault()),
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
-    val inProgressTasks: List<Task> = emptyList(),
-    val todoTasks: List<Task> = emptyList(),
-    val doneTasks: List<Task> = emptyList(),
+    val tasks: Map<TaskStatus, List<Task>> = mapOf(),
     val isBottomSheetVisible: Boolean = false,
     val error: DomainError? = null,
-    val taskToDelete: TaskUi? = null,
-
-    )
+    val isSnackBarVisible: Boolean = false,
+    val snackBarMsg: String = "",
+)
 

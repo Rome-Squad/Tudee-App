@@ -6,11 +6,10 @@ import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -37,9 +36,11 @@ class TasksViewModel(
                 flow.collect { tasks ->
                     _state.update {
                         it.copy(
-                            todoTasks = tasks.filter { it.status == TaskStatus.TODO },
-                            inProgressTasks = tasks.filter { it.status == TaskStatus.IN_PROGRESS },
-                            doneTasks = tasks.filter { it.status == TaskStatus.DONE },
+                            tasks = mapOf(
+                                TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
+                                TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
+                                TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
+                            )
                         )
                     }
                 }
@@ -75,27 +76,37 @@ class TasksViewModel(
                 .onSuccess { category = it }
                 .onError { }
         }
-        return category ?: Category(id = 0, name = "Unknown", imageUri = "", isEditable = false
-        , taskCount = 0)
+        return category ?: Category(
+            id = 0, name = "Unknown", imageUri = "", isEditable = false, taskCount = 0
+        )
     }
 
-    fun confirmDelete(task: TaskUi) {
-        _state.update { it.copy(taskToDelete = task) }
-    }
-
-    fun cancelDelete() {
-        _state.update { it.copy(taskToDelete = null) }
-    }
-
-    fun deleteConfirmed() {
-        val task = _state.value.taskToDelete ?: return
+    fun deleteTask(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            tasksService.deleteTask(task.id)
-            getTasks(_state.value.pickedDate)
-            _state.update { it.copy(taskToDelete = null) }
+            tasksService.deleteTask(taskId)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            snackBarMsg = "Deleted task successfully.",
+                            isSnackBarVisible = true,
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(isSnackBarVisible = false) }
+                }
+                .onError { error ->
+                    _state.update {
+                        it.copy(
+                            error = error,
+                            isSnackBarVisible = true,
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(isSnackBarVisible = false) }
+                }
         }
     }
-
-
 }
 
