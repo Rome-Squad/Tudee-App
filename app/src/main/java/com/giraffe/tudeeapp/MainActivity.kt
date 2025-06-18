@@ -13,10 +13,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.screens.CategoriesScreen
-import com.giraffe.tudeeapp.presentation.home.HomeScreen
-import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
-import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.navigation.TudeeNavGraph
 import com.giraffe.tudeeapp.presentation.shared.MainViewModel
