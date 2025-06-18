@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.presentation.home
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
@@ -52,6 +55,15 @@ fun HomeScreen(
             viewModel.openAddEditTaskBottomSheet(it)
         },
         onDismissAddEditTask = viewModel::closeAddEditTaskBottomSheet,
+        onSuccessSave = {
+            Log.d("TAG", "HomeScreen: ")
+            viewModel.showSnackBarSuccess()
+                        },
+        onErrorSave = {
+            viewModel.showSnackBarError(it)
+                      },
+        onThemeSwitchToggle = onThemeSwitchToggle,
+        isDarkTheme = isDarkTheme
     ) { taskId ->
         viewModel.openTaskDetails(taskId)
     }
@@ -66,6 +78,8 @@ fun HomeContent(
     onDismissTaskDetails: () -> Unit = {},
     onDismissAddEditTask: () -> Unit = {},
     onAddEditTask: (Long?) -> Unit = {},
+    onSuccessSave: () -> Unit = {},
+    onErrorSave: (String?) -> Unit = {},
     onTaskClick: (Long) -> Unit = {},
 ) {
     Box(
@@ -187,8 +201,25 @@ fun HomeContent(
                 onDismissRequest = onDismissAddEditTask,
                 headerTitle = if (state.currentTaskId == null) "Add Task" else "Edit Task",
                 saveButtonText = "Save",
+                onSuccessSave = {
+                    Log.d("TAG", "HomeScreen: 000000")
+                    onSuccessSave()
+                },
+                onError = {
+                    onErrorSave(it)
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+            )
+        }
+
+        AnimatedVisibility(state.isShowSnakbar) {
+            TudeeSnackBar(
+                message = if (state.errorMessage != null && state.addEditBottomSheetToAdd) "Some error happened" else if (state.errorMessage == null && !state.addEditBottomSheetToAdd) "Edited Task successfully." else "Added Task Successfully.",
+                iconRes = if (state.errorMessage == null) R.drawable.ic_success else R.drawable.ic_error,
+                iconTintColor = if (state.errorMessage == null) Theme.color.greenAccent else Theme.color.error,
+                iconBackgroundColor = if (state.errorMessage == null) Theme.color.greenVariant else Theme.color.errorVariant,
+                modifier = Modifier.padding(16.dp)
             )
         }
     }

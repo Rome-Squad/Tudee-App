@@ -9,8 +9,9 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
+import com.giraffe.tudeeapp.presentation.util.errorToMessage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,7 @@ class HomeViewModel(
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
     private val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
     //2025-06-18T00:00
     init {
         getAllTasks()
@@ -82,7 +84,7 @@ class HomeViewModel(
             .onError { error ->
                 Log.d("TAG", "getAllTasks: $error")
                 _homeUiState.update { currentState ->
-                    currentState.copy(isLoading = false, errorMessage = error)
+                    currentState.copy(isLoading = false, errorMessage = errorToMessage(error))
                 }
             }
 
@@ -90,7 +92,11 @@ class HomeViewModel(
 
     fun openAddEditTaskBottomSheet(taskId: Long?) {
         _homeUiState.update { currentState ->
-            currentState.copy(isOpenAddEditTaskBottomSheet = true, currentTaskId = taskId)
+            currentState.copy(
+                isOpenAddEditTaskBottomSheet = true,
+                currentTaskId = taskId,
+                addEditBottomSheetToAdd = taskId == null
+            )
         }
     }
 
@@ -109,6 +115,27 @@ class HomeViewModel(
     fun closeTaskDetails() {
         _homeUiState.update { currentState ->
             currentState.copy(isOpenTaskDetailsBottomSheet = false, currentTaskId = null)
+        }
+    }
+
+    fun showSnackBarSuccess() = viewModelScope.launch {
+        Log.d("TAG", "showSnackBarSuccess: ${_homeUiState.value.isShowSnakbar}")
+        _homeUiState.update { currentState ->
+            currentState.copy(isShowSnakbar = true)
+        }
+        delay(3000)
+        _homeUiState.update { currentState ->
+            currentState.copy(isShowSnakbar = false)
+        }
+    }
+
+    fun showSnackBarError(error: String?) = viewModelScope.launch {
+        _homeUiState.update { currentState ->
+            currentState.copy(isShowSnakbar = true, errorMessage = error)
+        }
+        delay(3000)
+        _homeUiState.update { currentState ->
+            currentState.copy(isShowSnakbar = false)
         }
     }
 }

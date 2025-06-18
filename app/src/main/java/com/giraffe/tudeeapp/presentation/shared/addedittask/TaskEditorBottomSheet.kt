@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.shared.addedittask
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,8 @@ fun TaskEditorBottomSheet(
     headerTitle: String,
     saveButtonText: String,
     modifier: Modifier = Modifier,
+    onSuccessSave: () -> Unit = {},
+    onError: (String?) -> Unit = {},
     viewModel: TaskEditorViewModel = koinViewModel { parametersOf(taskId) },
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -35,6 +38,14 @@ fun TaskEditorBottomSheet(
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    if (taskState.isSuccessSave) {
+        Log.d("TAG", "TaskEditorBottomSheet: 1111111")
+        onSuccessSave()
+    }
+
+    if (taskState.errorMessage != null) {
+        onError(taskState.errorMessage)
+    }
 
     ModalBottomSheet(
         onDismissRequest = {

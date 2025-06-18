@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 data class HomeUiState(
@@ -14,7 +13,9 @@ data class HomeUiState(
     val doneTasksCount: Int = 0,
     val isOpenTaskDetailsBottomSheet: Boolean = false,
     val isOpenAddEditTaskBottomSheet: Boolean = false,
+    val isShowSnakbar: Boolean = false,
+    val addEditBottomSheetToAdd: Boolean = false,
     val currentTaskId: Long? = null,
     val isLoading: Boolean = true,
-    val errorMessage: DomainError? = null
+    val errorMessage: String? = null
 )
