@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,8 +62,12 @@ fun OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
+                color = Theme.color.surface
+            )
+            .background(
                 color = Theme.color.overlay
             )
+            .statusBarsPadding()
     ) {
         Image(
             painter = painterResource(id = Theme.resources.bacgroundImage),
@@ -76,7 +80,7 @@ fun OnboardingScreen(
         if (pagerState.currentPage < pages.lastIndex) {
             Text(
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 56.dp)
+                    .padding(start = 16.dp, top = 16.dp)
                     .align(Alignment.TopStart)
                     .clickable {
                         scope.launch {
@@ -92,95 +96,96 @@ fun OnboardingScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box {
-                HorizontalPager(
-                    state = pagerState, modifier = Modifier
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) { page ->
+                Column(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .height(500.dp)
-                ) { page ->
-                    Column(
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = pages[page].imageRes),
+                        contentDescription = null,
+                    )
+
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 32.dp)
+                            .background(
+                                color = Theme.color.onPrimaryCard,
+                                shape = RoundedCornerShape(32.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Theme.color.onPrimaryStroke,
+                                shape = RoundedCornerShape(32.dp)
+                            )
+                            .padding(top = 24.dp, bottom = 48.dp, start = 16.dp, end = 16.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = pages[page].imageRes),
-                            contentDescription = null,
-                            modifier = Modifier.padding(top = 36.dp)
-                        )
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp),
+                                text = pages[page].title,
+                                style = Theme.textStyle.title.medium,
+                                textAlign = TextAlign.Center,
+                                color = Theme.color.title,
+                                maxLines = 2
+                            )
 
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 56.dp)
-                                .height(44.dp),
-                            text = pages[page].title,
-                            style = Theme.textStyle.title.medium,
-                            textAlign = TextAlign.Center,
-                            color = Theme.color.title,
-                            maxLines = 2
-                        )
-
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .height(60.dp),
-                            text = pages[page].description,
-                            style = Theme.textStyle.body.medium,
-                            textAlign = TextAlign.Center,
-                            color = Theme.color.body,
-                            maxLines = 3,
-                            minLines = 3
-                        )
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
+                                text = pages[page].description,
+                                style = Theme.textStyle.body.medium,
+                                textAlign = TextAlign.Center,
+                                color = Theme.color.body,
+                                maxLines = 3,
+                            )
+                        }
                     }
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .height(192.dp)
-                        .background(
-                            color = Theme.color.onPrimaryCard, shape = RoundedCornerShape(32.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Theme.color.onPrimaryStroke,
-                            shape = RoundedCornerShape(32.dp)
-                        )
-                )
-
-                TudeeFabButton(
-                    modifier = Modifier
-                        .offset(y = 35.dp)
-                        .align(Alignment.BottomCenter),
-                    isLoading = false,
-                    isDisable = false,
-                    icon = painterResource(R.drawable.arrow_right_double),
-                    onClick = {
-                        scope.launch {
-                            if (pagerState.currentPage < pages.lastIndex) {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            } else {
-                                viewModel.setOnboardingShown(true)
-                                onFinish()
-                            }
-                        }
-                    })
             }
 
+            TudeeFabButton(
+                modifier = Modifier
+                    .offset(y = -37.dp),
+                isLoading = false,
+                isDisable = false,
+                icon = painterResource(R.drawable.arrow_right_double),
+                onClick = {
+                    scope.launch {
+                        if (pagerState.currentPage < pages.lastIndex) {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        } else {
+                            viewModel.setOnboardingShown(true)
+                            onFinish()
+                        }
+                    }
+                }
+            )
 
             DotsIndicator(
                 totalDots = pages.size,
                 selectedIndex = pagerState.currentPage,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 59.dp, bottom = 24.dp)
+                    .padding(bottom = 24.dp)
             )
         }
     }
