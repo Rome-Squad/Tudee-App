@@ -9,22 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.tasks_by_category.TasksByCategoryScreen
-import com.giraffe.tudeeapp.presentation.tasks_by_category.TasksByCategoryViewModel
-import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
-import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.navigation.Screen
-import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
-import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
-import com.giraffe.tudeeapp.presentation.tasks.TaskScreen
+import com.giraffe.tudeeapp.presentation.navigation.TudeeNavGraph
+import com.giraffe.tudeeapp.presentation.shared.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -32,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val mainViewModel = koinViewModel<MainViewModel>()
             TudeeTheme {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -52,7 +44,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-
                     val paddingModifier = if (currentRoute in noBottomBarRoutes) {
                         Modifier.fillMaxSize()
                     } else {
@@ -60,65 +51,12 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     }
-
-                    NavHost(
+                    TudeeNavGraph(
+                        modifier = paddingModifier,
                         navController = navController,
-                        startDestination = Screen.SplashScreen.route,
-                        modifier = paddingModifier
-                    ) {
-                        composable(Screen.SplashScreen.route) {
-                            SplashScreen(
-                                onOnboardingShown = {
-                                    navController.navigate(Screen.HomeScreen.route) {
-                                        popUpTo(Screen.SplashScreen.route) { inclusive = true }
-                                    }
-                                },
-                                onOnboardingNotShown = {
-                                    navController.navigate(Screen.OnboardingScreen.route) {
-                                        popUpTo(Screen.SplashScreen.route) { inclusive = true }
-                                    }
-                                }
-                            )
-                        }
-
-                        composable(Screen.OnboardingScreen.route) {
-                            OnboardingScreen(
-                                onFinish = {
-                                    navController.navigate(Screen.HomeScreen.route) {
-                                        popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
-                                    }
-                                }
-                            )
-                        }
-
-                        composable(Screen.HomeScreen.route) {
-                            HomeScreen()
-                        }
-
-                        composable(Screen.TaskScreen.route) {
-                            TaskScreen()
-                        }
-
-                        composable(Screen.CategoriesScreen.route) {
-                            CategoriesScreen(navController = navController)
-                        }
-
-                        composable(
-                            route = "${Screen.TasksByCategoryScreen.route}/{${Screen.TasksByCategoryScreen.CATEGORY_ID}}",
-                            arguments = listOf(navArgument(Screen.TasksByCategoryScreen.CATEGORY_ID) {
-                                type = NavType.LongType
-                            })
-                        ) { backStackEntry ->
-                            val viewModel: TasksByCategoryViewModel = koinViewModel(
-                                viewModelStoreOwner = backStackEntry
-                            )
-
-                            TasksByCategoryScreen(
-                                viewModel = viewModel,
-                                navController = navController
-                            )
-                        }
-                    }
+                        isDarkTheme = mainViewModel.isDarkTheme,
+                        onToggleTheme = { mainViewModel.onToggleTheme() }
+                    )
                 }
             }
         }
