@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
@@ -16,10 +17,10 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-class TaskEditorBottomSheetViewModel(
+class TaskEditorViewModel(
+    private val taskId: Long? = null,
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
-    private val taskId: Long? = null
 ) : ViewModel() {
 
     private val _taskState = MutableStateFlow(TaskEditorBottomSheetUiState())
@@ -122,8 +123,10 @@ class TaskEditorBottomSheetViewModel(
             }
 
             result.onSuccess {
+                clearCurrentTask()
                 updateState { copy(isSuccessSave = true, isLoading = false) }
             }.onError { error ->
+                clearCurrentTask()
                 updateState { copy(isLoading = false, errorMessage = error.toString()) }
             }
         }
@@ -142,5 +145,25 @@ class TaskEditorBottomSheetViewModel(
         return state.title.isNotBlank() &&
                 state.description.isNotBlank() &&
                 state.categoryId != null && isValidDueDate
+    }
+
+    private fun clearCurrentTask() {
+        updateState {
+            copy(
+                id = null,
+                title = "",
+                description = "",
+                dueDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                dueDateMillis = null,
+                taskPriority = TaskPriority.MEDIUM,
+                taskStatus = TaskStatus.TODO,
+                categoryId = null,
+                categories = emptyList(),
+                isLoading = false,
+                isSuccessSave = false,
+                errorMessage = null,
+                isValidInput = false
+            )
+        }
     }
 }

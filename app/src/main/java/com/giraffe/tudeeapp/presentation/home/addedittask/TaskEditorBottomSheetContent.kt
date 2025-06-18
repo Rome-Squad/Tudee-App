@@ -38,7 +38,6 @@ import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DefaultTextField
 import com.giraffe.tudeeapp.design_system.component.ParagraphTextField
 import com.giraffe.tudeeapp.design_system.component.Priority
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -90,7 +89,7 @@ fun TaskEditorBottomSheetContent(
             CircularProgressIndicator()
         }
     } else {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -150,14 +149,8 @@ fun TaskEditorBottomSheetContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     TaskPriority.entries.reversed().forEach { priority ->
-                        val priorityType = when (priority) {
-                            TaskPriority.HIGH -> PriorityType.HIGH
-                            TaskPriority.MEDIUM -> PriorityType.MEDIUM
-                            TaskPriority.LOW -> PriorityType.LOW
-                        }
-
                         Priority(
-                            priorityType = priorityType,
+                            priorityType = priority,
                             isSelected = taskState.taskPriority == priority,
                             modifier = Modifier
                                 .height(28.dp)

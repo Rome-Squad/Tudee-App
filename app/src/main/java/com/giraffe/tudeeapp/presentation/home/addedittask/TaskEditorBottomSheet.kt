@@ -18,11 +18,11 @@ import org.koin.core.parameter.parametersOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskEditorBottomSheet(
-    taskId: Long? = null,
+    taskId: Long?,
     onDismissRequest: () -> Unit,
     headerTitle: String,
     saveButtonText: String,
-    viewModel: TaskEditorBottomSheetViewModel = koinViewModel{ parametersOf(taskId) },
+    viewModel: TaskEditorViewModel = koinViewModel { parametersOf(taskId) },
 ) {
 
     val taskState by viewModel.taskState.collectAsState()
@@ -45,7 +45,7 @@ fun TaskEditorBottomSheet(
             saveButtonText = saveButtonText,
             taskState = taskState,
             categories = taskState.categories,
-            isLoading = taskState.isLoading ,
+            isLoading = taskState.isLoading,
             categoriesLoading = taskState.isLoading,
             onTitleChange = { viewModel.onTitleChange(it) },
             onDescriptionChange = { viewModel.onDescriptionChange(it) },
@@ -54,7 +54,10 @@ fun TaskEditorBottomSheet(
             onDueDateChange = { millis ->
                 viewModel.onDueDateChange(millisToLocalDateTime(millis))
             },
-            onSaveClick = { viewModel.saveTask() },
+            onSaveClick = {
+                viewModel.saveTask()
+                onDismissRequest()
+            },
             onCancelClick = {
                 scope.launch { bottomSheetState.hide() }
                 onDismissRequest()
