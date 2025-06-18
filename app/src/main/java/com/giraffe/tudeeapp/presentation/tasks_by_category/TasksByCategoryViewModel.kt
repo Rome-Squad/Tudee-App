@@ -9,7 +9,6 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.navigation.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -31,12 +30,13 @@ class TasksByCategoryViewModel(
     val events = _events.receiveAsFlow()
 
     init {
-        getCategoryById(savedStateHandle.get<Long>(Screen.TasksByCategoryScreen.CATEGORY_ID) ?: 0L)
+        getCategoryById(CategoriesArgs(savedStateHandle = savedStateHandle).categoryId)
         getTasks()
     }
 
     private fun getCategoryById(categoryId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {            categoriesService.getCategoryById(categoryId)
+        viewModelScope.launch(Dispatchers.IO) {
+            categoriesService.getCategoryById(categoryId)
                 .onSuccess { category ->
                     _state.update { state ->
                         state.copy(

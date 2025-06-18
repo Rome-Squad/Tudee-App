@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
@@ -41,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TasksByCategoryScreen(
     viewModel: TasksByCategoryViewModel = koinViewModel(),
-    navController: NavController
+    onBackClick: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsState()
     val lifeCycleOwner = LocalLifecycleOwner.current
@@ -51,21 +50,21 @@ fun TasksByCategoryScreen(
                 viewModel.events.collect { event ->
                     when (event) {
                         is TasksByCategoryEvents.CategoryDeleted -> {
-                            navController.popBackStack()
+                            onBackClick()
                         }
                     }
                 }
             }
         }
     }
-    TasksByCategoryContent(state, viewModel, navController)
+    TasksByCategoryContent(state, viewModel, onBackClick)
 }
 
 @Composable
 fun TasksByCategoryContent(
     state: TasksByCategoryScreenState = TasksByCategoryScreenState(),
     actions: TasksByCategoryScreenActions,
-    navController: NavController
+    onBackClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -76,7 +75,7 @@ fun TasksByCategoryContent(
             TudeeTopBar(
                 title = state.selectedCategory?.name ?: "",
                 withOption = state.selectedCategory?.isEditable == true,
-                onClickBack = { navController.popBackStack() },
+                onClickBack = { onBackClick() },
                 onClickEdit = { actions.setBottomSheetVisibility(true) }
             )
             TabsBar(
@@ -139,6 +138,6 @@ fun TasksByCategoryContent(
 @Composable
 private fun Preview() {
     TudeeTheme {
-        //TasksByCategoryScreen()
+        TasksByCategoryScreen()
     }
 }
