@@ -38,6 +38,7 @@ import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel()
@@ -47,6 +48,7 @@ fun TaskScreen(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreenContent(
@@ -76,10 +78,9 @@ fun TaskScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Theme.color.surface)
-                    .padding(8.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
-//                val selectedTasks = state.tasks[state.selectedTab]
-                val selectedTasks = listOf(dummyTask(), dummyTask(), dummyTask())
+                val selectedTasks = state.tasks[state.selectedTab]
                 val selectedTasksSize = selectedTasks?.size ?: 0
                 if (selectedTasksSize == 0) {
                     item {

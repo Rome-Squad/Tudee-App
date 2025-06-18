@@ -64,7 +64,6 @@ fun SwipableTask(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .height(125.dp)
     ) {
         Row(
