@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +33,6 @@ fun CardOverView(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
-            .height(112.dp)
             .background(color)
     ) {
         Icon(
@@ -47,7 +45,7 @@ fun CardOverView(
         )
         Column(
             modifier = Modifier
-                .padding(start = 12.dp, top = 12.dp),
+                .padding(12.dp),
         ) {
             Icon(
                 modifier = Modifier

@@ -37,7 +37,6 @@ import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsBottomSheet
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -144,7 +143,6 @@ fun HomeContent(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(281.dp)
                             .padding(start = 16.dp, end = 16.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .background(Theme.color.surfaceHigh)
