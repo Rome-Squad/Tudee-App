@@ -25,12 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 
 @Composable
 fun TaskCard(
     taskIcon: Painter,
     blurColor: Color,
-    priority: PriorityType,
+    priority: TaskPriority,
     taskTitle: String,
     taskDescription: String,
     taskCardType: TaskCardType,
@@ -81,18 +82,18 @@ fun TaskCard(
                     )
                 }
                 when (priority) {
-                    PriorityType.HIGH -> Priority(
-                        priorityType = PriorityType.HIGH,
+                    TaskPriority.HIGH -> Priority(
+                        priorityType = TaskPriority.HIGH,
                         isSelected = true
                     )
 
-                    PriorityType.MEDIUM -> Priority(
-                        priorityType = PriorityType.MEDIUM,
+                    TaskPriority.MEDIUM -> Priority(
+                        priorityType = TaskPriority.MEDIUM,
                         isSelected = true
                     )
 
-                    PriorityType.LOW -> Priority(
-                        priorityType = PriorityType.HIGH,
+                    TaskPriority.LOW -> Priority(
+                        priorityType = TaskPriority.HIGH,
                         isSelected = true
                     )
                 }
@@ -127,7 +128,7 @@ fun TaskCardPreview() {
         TaskCard(
             taskIcon = painterResource(R.drawable.birthday_cake_icon),
             blurColor = Theme.color.pinkAccent.copy(alpha = .08f),
-            priority = PriorityType.HIGH,
+            priority = TaskPriority.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",
             date = "12-03-2025",
