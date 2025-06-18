@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
@@ -67,7 +68,7 @@ fun CategoryBottomSheet(
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var categoryTitle by remember { mutableStateOf(categoryToEdit?.name ?: "") }
-    var photoUri: Uri? by remember { mutableStateOf(null) }
+    var photoUri: Uri? by remember { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let {
