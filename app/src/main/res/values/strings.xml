@@ -50,4 +50,5 @@
     <string name="done">Done</string>
     <string name="card_overview_icon">card overview icon</string>
     <string name="slider_subtitle_for_empty_tasks">Fill your day with something \nawesome.</string>
+    <string name="edit_task">Edit Task</string>
 </resources>

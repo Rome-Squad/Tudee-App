@@ -2,6 +2,8 @@ package com.giraffe.tudeeapp.presentation.home.taskdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -54,7 +58,8 @@ fun TaskDetailsBottomSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onnDismiss,
-        modifier = modifier
+        modifier = modifier,
+        containerColor = Theme.color.surface
     ) {
         Column(
             modifier = Modifier
@@ -134,16 +139,27 @@ fun TaskDetailsBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(90.dp),
                 ) {
-                    SecondaryButton(
-                        text = "",
-                        icon = painterResource(R.drawable.ic_pencil_edit),
+                    Box(
+                        modifier = Modifier
+                            .height(56.dp)
+                            .border(1.dp, Theme.color.stroke, RoundedCornerShape(100.dp))
+                            .clip(RoundedCornerShape(100.dp))
+                            .padding(horizontal = 24.dp)
+                            .clickable {
+                                onEditTask(task?.id)
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
-                        onEditTask(task?.id)
+                        Icon(
+                            painter = painterResource(R.drawable.ic_pencil_edit),
+                            contentDescription = stringResource(R.string.edit_task),
+                            tint = Theme.color.primary
+                        )
                     }
 
-                    NegativeTextButton(
+                    SecondaryButton(
                         text = if (task?.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
                     ) {
                         viewModel.changeTaskStatus(if (task?.status == TaskStatus.TODO) TaskStatus.IN_PROGRESS else TaskStatus.DONE)
