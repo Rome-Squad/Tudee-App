@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.home.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.presentation.home.uistate.TaskUi
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 @Composable
 fun TaskSection(
@@ -31,6 +31,7 @@ fun TaskSection(
     taskStatus: String = "In Progress",
     numberOfTasks: String = "0",
     tasks: List<TaskUi> = emptyList(),
+    onTaskClick: (Long) -> Unit
 ) {
     Column(modifier = modifier.padding(top = 24.dp)) {
         Row(
@@ -72,27 +73,23 @@ fun TaskSection(
 
         tasks.forEach { task ->
             TaskCard(
-                taskIcon = painterResource(task.categoryImage?.toInt() ?: R.drawable.ic_error),
-                blurColor = when (task.taskPriorityUi) {
+                taskIcon = painterResource(task.category.imageUri.toInt()),
+                blurColor = when (task.priorityType) {
                     TaskPriority.HIGH -> Theme.color.pinkAccent
                     TaskPriority.MEDIUM -> Theme.color.yellowAccent
                     TaskPriority.LOW -> Theme.color.greenAccent
                 },
-                priority = task.taskPriorityUi.toPriorityType(),
-                taskTitle = task.taskTitle,
-                taskDescription = task.taskDescription,
+                priority = task.priorityType,
+                taskTitle = task.title,
+                taskDescription = task.description,
                 taskCardType = TaskCardType.TASK,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                modifier = Modifier
+                    .clickable {
+                        onTaskClick(task.id)
+                    }
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }
-    }
-}
-
-fun TaskPriority.toPriorityType(): PriorityType {
-    return when (this) {
-        TaskPriority.LOW -> PriorityType.LOW
-        TaskPriority.MEDIUM -> PriorityType.MEDIUM
-        TaskPriority.HIGH -> PriorityType.HIGH
     }
 }
 
@@ -105,6 +102,6 @@ fun TaskSectionComponentPreview() {
             .background(Color.White)
             .fillMaxWidth()
     ) {
-        TaskSection()
+        TaskSection() {}
     }
 }

@@ -16,8 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoriesScreen
-import com.giraffe.tudeeapp.presentation.home.HomeContent
-import com.giraffe.tudeeapp.presentation.home.uistate.TasksUiState
 import com.giraffe.tudeeapp.presentation.home.HomeScreen
 import com.giraffe.tudeeapp.presentation.splash.onboard.OnboardingScreen
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.SplashScreen
@@ -89,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.HomeScreen.route) {
-                            HomeContent(state = TasksUiState())
+                            HomeScreen()
                         }
 
                         composable(Screen.TaskScreen.route) {
