@@ -173,7 +173,6 @@ class TaskEditorViewModel(
                 taskPriority = TaskPriority.MEDIUM,
                 taskStatus = TaskStatus.TODO,
                 categoryId = null,
-                categories = emptyList(),
                 isLoading = false,
                 isSuccessSave = false,
                 errorMessage = null,
