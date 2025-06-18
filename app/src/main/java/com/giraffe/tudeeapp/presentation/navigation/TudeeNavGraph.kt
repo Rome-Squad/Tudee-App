@@ -11,7 +11,12 @@ import com.giraffe.tudeeapp.presentation.splash.splashscreen.splashRoute
 import com.giraffe.tudeeapp.presentation.tasks.tasksRoute
 
 @Composable
-fun TudeeNavGraph(modifier: Modifier = Modifier, navController: NavHostController) {
+fun TudeeNavGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    onToggleTheme: () -> Unit,
+    isDarkTheme: Boolean
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.SplashScreen.route,
@@ -19,7 +24,11 @@ fun TudeeNavGraph(modifier: Modifier = Modifier, navController: NavHostControlle
     ) {
         splashRoute(navController)
         onboardingRoute(navController)
-        homeRoute(navController)
+        homeRoute(
+            navController = navController,
+            isDarkTheme = isDarkTheme,
+            onToggleTheme = onToggleTheme
+        )
         tasksRoute(navController)
         categoriesRoute(navController)
     }

@@ -15,12 +15,15 @@ import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.navigation.TudeeNavGraph
+import com.giraffe.tudeeapp.presentation.shared.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val mainViewModel = koinViewModel<MainViewModel>()
             TudeeTheme {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -48,7 +51,12 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     }
-                    TudeeNavGraph(modifier = paddingModifier, navController = navController)
+                    TudeeNavGraph(
+                        modifier = paddingModifier,
+                        navController = navController,
+                        isDarkTheme = mainViewModel.isDarkTheme,
+                        onToggleTheme = { mainViewModel.onToggleTheme() }
+                    )
                 }
             }
         }

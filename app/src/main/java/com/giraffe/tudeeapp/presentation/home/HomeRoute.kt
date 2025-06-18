@@ -6,9 +6,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 
-fun NavGraphBuilder.homeRoute(navController: NavController? = null) {
+fun NavGraphBuilder.homeRoute(
+    navController: NavController? = null,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit,
+) {
     composable(Screen.HomeScreen.route) {
-        HomeScreen()
+        HomeScreen(
+            isDarkTheme = isDarkTheme,
+            onThemeSwitchToggle = onToggleTheme
+        )
     }
 }
 
