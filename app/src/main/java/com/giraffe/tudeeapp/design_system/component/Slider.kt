@@ -28,10 +28,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 @Composable
 fun Slider(
     modifier: Modifier = Modifier,
-    image: Painter,
-    title: String,
-    subtitle: String,
-    status: Painter,
+    slider: Slider,
 ) {
     Box(
         modifier = modifier
@@ -50,19 +47,19 @@ fun Slider(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = title,
+                    text = slider.title,
                     style = Theme.textStyle.title.small,
                     color = Theme.color.title
                 )
                 Image(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = status,
+                    painter = slider.status,
                     contentDescription = "tudee status icon"
                 )
             }
             Text(
-                text = subtitle,
+                text = slider.subtitle,
                 style = Theme.textStyle.body.small,
                 color = Theme.color.body,
                 maxLines = 2,
@@ -77,7 +74,7 @@ fun Slider(
             contentDescription = "blue circle"
         )
         Image(
-            painter = image, contentDescription = "tudee image",
+            painter = slider.image, contentDescription = "tudee image",
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(7.dp)
@@ -85,6 +82,13 @@ fun Slider(
         )
     }
 }
+
+data class Slider(
+    val image: Painter,
+    val title: String,
+    val subtitle: String,
+    val status: Painter
+)
 
 
 @Preview(showSystemUi = true, showBackground = true)
