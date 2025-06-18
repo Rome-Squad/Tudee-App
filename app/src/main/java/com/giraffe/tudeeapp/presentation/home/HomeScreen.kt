@@ -71,8 +71,15 @@ fun HomeContent(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(127.dp)
+                .background(Theme.color.primary),
+        )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             var width by remember { mutableIntStateOf(0) }
             val heightInDp = with(LocalDensity.current) { (width * 0.2f).toDp() }
@@ -100,14 +107,26 @@ fun HomeContent(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(55.dp)
-                                    .background(Theme.color.primary),
-                            )
+                                    .padding(start = 16.dp, end = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Theme.color.surfaceHigh)
+                                    .padding(top = 8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                    SliderStatus(
+                                        state,
+                                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                                    )
+                                    OverViewSection(tasksState = state)
+                                }
+                            }
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(Theme.color.surface)
-                                    .padding(top = 250.dp)
                             ) {
                                 if (state.allTasksCount == 0) {
                                     NoTask(
@@ -116,6 +135,7 @@ fun HomeContent(
                                     )
                                 } else {
                                     TaskSection(
+                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasksCount.toString(),
                                         tasks = state.inProgressTasks,
@@ -136,25 +156,6 @@ fun HomeContent(
                                         onTaskClick = onTaskClick
                                     )
                                 }
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Theme.color.surfaceHigh)
-                                .padding(top = 8.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                                SliderStatus(
-                                    state,
-                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                                )
-                                OverViewSection(tasksState = state)
                             }
                         }
                     }

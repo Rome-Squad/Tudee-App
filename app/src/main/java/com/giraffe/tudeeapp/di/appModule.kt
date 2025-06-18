@@ -11,6 +11,7 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.home.HomeViewModel
 import com.giraffe.tudeeapp.presentation.home.addedittask.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsViewModel
+import com.giraffe.tudeeapp.presentation.shared.MainViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel

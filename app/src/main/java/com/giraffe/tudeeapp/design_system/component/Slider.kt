@@ -33,9 +33,6 @@ fun Slider(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(
-                Color.White,
-            )
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
