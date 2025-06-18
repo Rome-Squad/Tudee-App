@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -113,7 +114,7 @@ fun TasksByCategoryContent(
 
             if (state.isBottomSheetVisible) {
                 CategoryBottomSheet(
-                    title = "Edit category",
+                    title = stringResource(R.string.edit_category),
                     onVisibilityChange = actions::setBottomSheetVisibility,
                     categoryToEdit = state.selectedCategory,
                     onEditClick = actions::editCategory,
@@ -138,7 +139,7 @@ fun TasksByCategoryContent(
         }
         AnimatedVisibility(state.showSuccessSnackBar) {
             TudeeSnackBar(
-                message = if (state.error == null) state.snackBarMsg else "Some error happened",
+                message = if (state.error == null) state.snackBarMsg else stringResource(R.string.some_error_happened),
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,

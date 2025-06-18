@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -70,7 +71,7 @@ fun CategoriesContent(
             .background(Theme.color.surface)
     ) {
         Column {
-            HeaderContent("Categories")
+            HeaderContent(stringResource(R.string.categories))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier
@@ -108,7 +109,7 @@ fun CategoriesContent(
 
         if (state.isBottomSheetVisible) {
             CategoryBottomSheet(
-                title = "Add new category",
+                title = stringResource(R.string.add_new_category),
                 onVisibilityChange = actions::setBottomSheetVisibility,
                 onAddClick = actions::addCategory,
             )
@@ -116,7 +117,9 @@ fun CategoriesContent(
 
         AnimatedVisibility(state.showSuccessSnackBar) {
             TudeeSnackBar(
-                message = if (state.error == null) "Added category successfully." else "Some error happened",
+                message = if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(
+                    R.string.some_error_happened
+                ),
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
