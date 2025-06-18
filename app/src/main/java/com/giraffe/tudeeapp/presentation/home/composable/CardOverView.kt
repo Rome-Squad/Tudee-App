@@ -37,19 +37,18 @@ fun CardOverView(
     ) {
         Icon(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(38.dp),
+                .align(Alignment.TopEnd),
             painter = painterResource(id = R.drawable.overview_card_background),
             tint = Theme.color.onPrimary,
             contentDescription = stringResource(R.string.calendar_icon),
         )
         Column(
             modifier = Modifier
-                .padding(12.dp),
+                .padding(start = 12.dp, top = 12.dp, bottom = 12.dp),
         ) {
             Icon(
                 modifier = Modifier
-                    .size(38.dp),
+                    .size(40.dp),
                 painter = icon,
                 tint = Theme.color.onPrimary,
                 contentDescription = stringResource(R.string.card_overview_icon),

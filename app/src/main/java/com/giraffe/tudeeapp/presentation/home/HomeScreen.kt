@@ -7,9 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -73,11 +72,11 @@ fun HomeContent(
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             var width by remember { mutableIntStateOf(0) }
             val heightInDp = with(LocalDensity.current) { (width * 0.2f).toDp() }
+
             TudeeAppBar(
                 modifier = Modifier
                     .onGloballyPositioned {
@@ -88,81 +87,81 @@ fun HomeContent(
                 onThemeSwitchToggle = onThemeSwitchToggle
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(55.dp)
+                                    .background(Theme.color.primary),
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Theme.color.surface)
+                                    .padding(top = 250.dp)
+                            ) {
+                                if (state.allTasksCount == 0) {
+                                    NoTask(
+                                        modifier = Modifier
+                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                                    )
+                                } else {
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.in_progress_tasks),
+                                        numberOfTasks = state.inProgressTasksCount.toString(),
+                                        tasks = state.inProgressTasks,
+                                        onTaskClick = onTaskClick
+                                    )
+                                    TaskSection(
+                                        modifier = Modifier.padding(top = 24.dp),
+                                        taskStatus = stringResource(R.string.to_do_tasks),
+                                        numberOfTasks = state.toDoTasksCount.toString(),
+                                        tasks = state.todoTasks,
+                                        onTaskClick = onTaskClick
+                                    )
+                                    TaskSection(
+                                        modifier = Modifier.padding(top = 24.dp),
+                                        taskStatus = stringResource(R.string.done_tasks),
+                                        numberOfTasks = state.doneTasksCount.toString(),
+                                        tasks = state.doneTasks,
+                                        onTaskClick = onTaskClick
+                                    )
+                                }
+                            }
+                        }
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(55.dp)
-                                .background(Theme.color.primary),
-                        )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Theme.color.surface)
-                                .padding(top = 230.dp)
+                                .padding(start = 16.dp, end = 16.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Theme.color.surfaceHigh)
+                                .padding(top = 8.dp)
                         ) {
-                            if (state.allTasksCount == 0) {
-                                NoTask(
-                                    modifier = Modifier
-                                        .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                            Column(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                SliderStatus(
+                                    state,
+                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                                 )
-                            } else {
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.in_progress_tasks),
-                                    numberOfTasks = state.inProgressTasksCount.toString(),
-                                    tasks = state.inProgressTasks,
-                                    onTaskClick = onTaskClick
-                                )
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.to_do_tasks),
-                                    numberOfTasks = state.toDoTasksCount.toString(),
-                                    tasks = state.todoTasks,
-                                    onTaskClick = onTaskClick
-                                )
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.done_tasks),
-                                    numberOfTasks = state.doneTasksCount.toString(),
-                                    tasks = state.doneTasks,
-                                    onTaskClick = onTaskClick
-                                )
+                                OverViewSection(tasksState = state)
                             }
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Theme.color.surfaceHigh)
-                            .padding(top = 8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                            SliderStatus(
-                                state,
-                                modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                            )
-                            OverViewSection(tasksState = state)
                         }
                     }
                 }
             }
         }
+
         FabButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -172,6 +171,7 @@ fun HomeContent(
                 onAddEditTask(null)
             }
         )
+
         if (state.isOpenTaskDetailsBottomSheet && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
