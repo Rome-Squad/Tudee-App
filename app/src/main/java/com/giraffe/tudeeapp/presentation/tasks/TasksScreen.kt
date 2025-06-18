@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,9 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.NavBar
+import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TabsBar
@@ -49,53 +45,35 @@ fun TaskScreen(
 }
 
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
     actions: TasksViewModel
 ) {
-    Scaffold(
-        containerColor = Theme.color.surfaceHigh,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Tasks",
-                        style = Theme.textStyle.title.large,
-                        color = Theme.color.title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Theme.color.surfaceHigh)
-                            .padding(vertical = 20.dp, horizontal = 16.dp)
-                    )
-                }
-            )
-        },
-        bottomBar = {
-            NavBar(navController = rememberNavController())
-        },
-        floatingActionButton = {
-            FabButton(
-                icon = painterResource(R.drawable.add_task),
-                onClick = {actions.setBottomSheetVisibility(true)  }
-            )
-        }
-    ) { innerPadding ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surfaceHigh)
+    ) {
         Column(
             modifier = Modifier
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .fillMaxSize()
+                .padding( bottom = 100.dp)
         ) {
+            HeaderContent("Tasks")
+
             DatePicker(actions::setPickedDate)
 
             TabsBar(onTabSelected = actions::selectTab)
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier,
+                modifier = Modifier.fillMaxSize()
             ) {
-                var selectedTasks = when (state.selectedTab) {
+                val selectedTasks = when (state.selectedTab) {
                     TaskStatus.TODO -> state.todoTasks
                     TaskStatus.IN_PROGRESS -> state.inProgressTasks
                     TaskStatus.DONE -> state.doneTasks
@@ -104,7 +82,8 @@ fun TaskScreenContent(
                     item {
                         Box(
                             modifier = Modifier
-                                .fillParentMaxSize().padding(start = 12.dp),
+                                .fillParentMaxSize()
+                                .padding(start = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             NoTasksSection()
@@ -112,6 +91,7 @@ fun TaskScreenContent(
                     }
                     return@LazyColumn
                 }
+
                 items(selectedTasks.size) { index ->
                     val category = actions.getCategoryById(selectedTasks[index].categoryId)
                     val taskUi = selectedTasks[index].toTaskUi(category)
@@ -121,29 +101,29 @@ fun TaskScreenContent(
                         onDeleteClick = actions::confirmDelete
                     )
                 }
-//                items(10) { index ->
-//                    SwipableTask(
-//                        dummyTask(),
-//                        action = actions::setBottomSheetVisibility
-//                    )
-//                }
-
-//  state.taskToDelete?.let {Delete bottom sheet}
-
-
-
             }
 
-          /*  if (state.isBottomSheetVisible) {
+            if (state.isBottomSheetVisible) {
                 ModalBottomSheet(
                     onDismissRequest = { actions.setBottomSheetVisibility(false) },
                     modifier = Modifier.fillMaxHeight(0.95f)
                 ) {
-                    // Replace with your actual add task content
+                    // Replace with your  add task content
                 }
-            }*/
+            }
         }
+
+
+        FabButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 8.dp), // adjust bottom padding as needed
+            icon = painterResource(R.drawable.add_task),
+            onClick = { actions.setBottomSheetVisibility(true) }
+        )
     }
+
+
 }
 
 @Composable
