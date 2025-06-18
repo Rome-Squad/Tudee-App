@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -139,7 +140,15 @@ fun CategoryBottomSheet(
                     .dashedBorder(
                         color = Theme.color.stroke,
                         shape = RoundedCornerShape(16.dp)
-                    ),
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable {
+                        launcher.launch(
+                            PickVisualMediaRequest(
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 if (photoUri == null && categoryToEdit?.imageUri == null) {
@@ -148,18 +157,7 @@ fun CategoryBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            modifier = Modifier
-                                .size(22.dp)
-                                .clickable(
-                                    interactionSource = null,
-                                    indication = null
-                                ) {
-                                    launcher.launch(
-                                        PickVisualMediaRequest(
-                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                        )
-                                    )
-                                },
+                            modifier = Modifier.size(22.dp),
                             painter = painterResource(R.drawable.ic_add_image),
                             contentDescription = "add image",
                             tint = Theme.color.hint
@@ -190,18 +188,7 @@ fun CategoryBottomSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .clickable(
-                                    interactionSource = null,
-                                    indication = null
-                                ) {
-                                    launcher.launch(
-                                        PickVisualMediaRequest(
-                                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                        )
-                                    )
-                                },
+                            modifier = Modifier.padding(6.dp),
                             painter = painterResource(R.drawable.ic_pen),
                             contentDescription = "edit image",
                             tint = Theme.color.secondary
@@ -220,7 +207,7 @@ fun CategoryBottomSheet(
                 PrimaryButton(
                     modifier = Modifier.fillMaxWidth(),
                     text = if (categoryToEdit != null) "Sava" else "Add",
-                    isDisable = categoryTitle.isBlank() && photoUri == null
+                    isDisable = categoryTitle.isBlank() || photoUri == null
                 ) {
                     if (categoryToEdit != null) {
                         onEditClick(
