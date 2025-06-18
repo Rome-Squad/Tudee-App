@@ -15,9 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
@@ -73,12 +76,12 @@ fun TaskSection(
 
         tasks.forEach { task ->
             TaskCard(
-                taskIcon = painterResource(task.category.imageUri.toInt()),
-                blurColor = when (task.priorityType) {
-                    TaskPriority.HIGH -> Theme.color.pinkAccent
-                    TaskPriority.MEDIUM -> Theme.color.yellowAccent
-                    TaskPriority.LOW -> Theme.color.greenAccent
-                },
+                taskIcon = rememberAsyncImagePainter(
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(data = task.category.imageUri)
+                        .build()
+                ),
                 priority = task.priorityType,
                 taskTitle = task.title,
                 taskDescription = task.description,

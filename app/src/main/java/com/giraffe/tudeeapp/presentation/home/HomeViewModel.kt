@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
 import kotlinx.datetime.toLocalDateTime
 
 class HomeViewModel(
@@ -28,7 +29,7 @@ class HomeViewModel(
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
     private val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
+    //2025-06-18T00:00
     init {
         getAllTasks()
     }
@@ -39,7 +40,7 @@ class HomeViewModel(
         tasksService.getTasksByDate(currentDate)
             .onSuccess { tasksFlow ->
                 tasksFlow.collect { tasks ->
-                    Log.d("HomeViewModel", "getAllTasks: $tasks")
+                    Log.d("TAG", "getAllTasks:${currentDate.date.atTime(0, 0)} $tasks")
                     val tasksUiList = tasks.map { task ->
                         val categoryResult = categoryService.getCategoryById(task.categoryId)
                         val category = if (categoryResult is Result.Success) {
@@ -79,6 +80,7 @@ class HomeViewModel(
                 }
             }
             .onError { error ->
+                Log.d("TAG", "getAllTasks: $error")
                 _homeUiState.update { currentState ->
                     currentState.copy(isLoading = false, errorMessage = error)
                 }

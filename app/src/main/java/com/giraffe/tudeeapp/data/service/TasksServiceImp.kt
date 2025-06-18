@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.data.service
 
 import TaskDao
+import android.util.Log
 import com.giraffe.tudeeapp.data.mapper.toEntity
 import com.giraffe.tudeeapp.data.mapper.toTask
 import com.giraffe.tudeeapp.data.util.safeCall
@@ -13,6 +14,7 @@ import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.atTime
 
 class TasksServiceImp(
     private val taskDao: TaskDao,
@@ -20,7 +22,8 @@ class TasksServiceImp(
     ) : TasksService {
     override fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
-            taskDao.getTasksByDate(date.toString())
+            Log.d("TAG", "getTasksByDate: ${date.toString()}")
+            taskDao.getTasksByDate(date.date.atTime(0, 0).toString())
                 .map { list -> list.map { it.toTask() } }
         }
     }
