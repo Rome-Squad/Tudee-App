@@ -6,7 +6,10 @@ import androidx.compose.ui.unit.sp
 import com.giraffe.tudeeapp.design_system.theme.Theme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    isDarkTheme: Boolean = false,
+    onThemeSwitchToggle: () -> Unit = {},
+) {
     Text(
         text = "Home Screen",
         color = Theme.color.title,
