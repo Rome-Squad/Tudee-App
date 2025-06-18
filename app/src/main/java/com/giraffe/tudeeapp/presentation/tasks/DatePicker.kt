@@ -39,6 +39,7 @@ data class DayData(
     val dayNumber: Int
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
@@ -80,7 +81,10 @@ fun DatePicker(
                     dayNumber = dayData.dayNumber,
                     dayName = dayData.dayName,
                     isSelected = dayData.date == selectedDate,
-                    onClick = { selectedDate = dayData.date }
+                    onClick = {
+                        selectedDate = dayData.date
+                        setDate(convertToLocalDateTime(selectedDate))
+                    }
                 )
             }
         }

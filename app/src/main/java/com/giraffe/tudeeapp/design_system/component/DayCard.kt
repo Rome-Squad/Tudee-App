@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -36,7 +37,8 @@ fun DayCard(
             .background(
                 brush = Brush.verticalGradient(backgroundColor),
                 shape = RoundedCornerShape(16.dp)
-            ),
+            )
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
