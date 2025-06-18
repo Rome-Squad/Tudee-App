@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -42,7 +43,7 @@ fun CardOverView(
                 .size(38.dp),
             painter = painterResource(id = R.drawable.overview_card_background),
             tint = Theme.color.onPrimary,
-            contentDescription = "calendar_icon",
+            contentDescription = stringResource(R.string.calendar_icon),
         )
         Column(
             modifier = Modifier
@@ -53,7 +54,7 @@ fun CardOverView(
                     .size(38.dp),
                 painter = icon,
                 tint = Theme.color.onPrimary,
-                contentDescription = "card overview icon",
+                contentDescription = stringResource(R.string.card_overview_icon),
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),

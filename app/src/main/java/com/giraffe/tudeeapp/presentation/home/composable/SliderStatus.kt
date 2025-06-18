@@ -20,7 +20,7 @@ fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
                 image = painterResource(R.drawable.tudee_slider_image),
                 title = stringResource(R.string.nothing_on_your_list),
                 subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
-                status = painterResource(R.drawable.tudde_emoji_empty_tasks),
+                status = painterResource(R.drawable.nothing_in_list_emoji),
             )
             return
         }
@@ -31,7 +31,7 @@ fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
                 image = painterResource(R.drawable.tudee_zero_progress),
                 title = stringResource(R.string.title_zero_progress),
                 subtitle = stringResource(R.string.subtitle_zero_progress),
-                status = painterResource(R.drawable.tudee_emoji_zero_progress),
+                status = painterResource(R.drawable.zero_progress_emoji),
             )
             return
         }
@@ -42,7 +42,7 @@ fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
                 image = painterResource(R.drawable.tudee_image_great_work),
                 title = stringResource(R.string.title_great_work),
                 subtitle = stringResource(R.string.subtitle_great_work),
-                status = painterResource(R.drawable.tudee_emoji_great_work),
+                status = painterResource(R.drawable.great_work_emoji),
             )
             return
         }
@@ -57,7 +57,7 @@ fun SliderStatus(state: TasksUiState,modifier: Modifier = Modifier) {
                     state.doneTasksCount,
                     state.toDoTasksCount
                 ),
-                status = painterResource(R.drawable.tudee_status_partially_completed),
+                status = painterResource(R.drawable.stay_working_emoji),
             )
             return
         }
