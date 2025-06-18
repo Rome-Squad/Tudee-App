@@ -115,23 +115,21 @@ fun OnboardingScreen(
                         contentDescription = null,
                     )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 32.dp)
-                            .background(
-                                color = Theme.color.onPrimaryCard,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = Theme.color.onPrimaryStroke,
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .padding(top = 24.dp, bottom = 48.dp, start = 16.dp, end = 16.dp)
-                    ) {
                         Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 32.dp)
+                                .background(
+                                    color = Theme.color.onPrimaryCard,
+                                    shape = RoundedCornerShape(32.dp)
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = Theme.color.onPrimaryStroke,
+                                    shape = RoundedCornerShape(32.dp)
+                                )
+                                .padding(top = 24.dp, bottom = 48.dp, start = 16.dp, end = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
@@ -156,7 +154,7 @@ fun OnboardingScreen(
                                 maxLines = 3,
                             )
                         }
-                    }
+
                 }
             }
 
