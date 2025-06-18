@@ -144,7 +144,7 @@ fun HomeContent(
                                     .fillMaxWidth()
                                     .background(Theme.color.surface)
                             ) {
-                                if (state.allTasksCount == 1) {
+                                if (state.allTasksCount == 0) {
                                     NoTask(
                                         modifier = Modifier
                                             .offset(y = -7.dp)
