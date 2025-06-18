@@ -6,9 +6,6 @@ import com.giraffe.tudeeapp.data.service.TasksServiceImp
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.SplashService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.presentation.home.HomeViewModel
-import com.giraffe.tudeeapp.presentation.home.addedittask.TaskEditorViewModel
-import com.giraffe.tudeeapp.presentation.home.taskdetails.TaskDetailsViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -24,4 +21,8 @@ val appModule = module {
     viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
     viewModel { (taskId: Long?) -> TaskEditorViewModel(taskId, get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
+    viewModel { CategoryViewModel(get()) }
+    viewModel { (handle: SavedStateHandle) ->
+        TasksByCategoryViewModel(get(), get(), handle)
+    }
 }
