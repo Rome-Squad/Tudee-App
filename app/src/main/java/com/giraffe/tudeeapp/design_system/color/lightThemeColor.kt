@@ -29,5 +29,5 @@ val lightThemeColor = TudeeColors(
     purpleVariant = Color(0xFFEEEDF7),
     error = Color(0xFFE55C5C),
     errorVariant = Color(0xFFFCE8E8),
-    overlay = Color(0x5249BAF2)
+    overlay = Color(0x5149BAF2)
 )
