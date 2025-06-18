@@ -96,10 +96,10 @@ fun TasksByCategoryContent(
                             taskIcon = rememberAsyncImagePainter(
                                 ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(data = task.categoryIcon)
+                                    .data(data = state.selectedCategory?.imageUri)
                                     .build()
                             ),
-                            blurColor = Theme.color.error,
+                            categoryName = state.selectedCategory?.name ?: "",
                             priority = task.taskPriority,
                             taskTitle = task.title,
                             date = task.createdAt.toString(),

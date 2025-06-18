@@ -1,7 +1,5 @@
 package com.giraffe.tudeeapp.di
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,7 +9,6 @@ import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.database.TudeeDatabase
 import com.giraffe.tudeeapp.data.mapper.toEntity
 import com.giraffe.tudeeapp.data.util.Constants.DATABASE_NAME
-import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,29 +16,25 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-@Composable
-fun getColorForCategoryIcon(categoryName: String): Color {
-    return when (categoryName) {
-        "Education" -> Theme.color.purpleAccent
-        "Adoration" -> Theme.color.primary
-        "Family & friend" -> Theme.color.secondary
-        "Cooking" -> Theme.color.pinkAccent
-        "Traveling" -> Theme.color.yellowAccent
-        "Coding" -> Theme.color.purpleAccent
-        "Fixing bugs" -> Theme.color.pinkAccent
-        "Medical" -> Theme.color.primary
-        "Shopping" -> Theme.color.secondary
-        "Agriculture" -> Theme.color.greenAccent
-        "Entertainment" -> Theme.color.yellowAccent
-        "Gym" -> Theme.color.primary
-        "Cleaning" -> Theme.color.greenAccent
-        "Work" -> Theme.color.secondary
-        "Event" -> Theme.color.pinkAccent
-        "Budgeting" -> Theme.color.purpleAccent
-        "Self-care" -> Theme.color.yellowAccent
-        else -> Theme.color.purpleAccent
-    }
-}
+val defaultCategoryNames = listOf(
+    "Education",
+    "Adoration",
+    "Family & friend",
+    "Cooking",
+    "Traveling",
+    "Coding",
+    "Fixing bugs",
+    "Medical",
+    "Shopping",
+    "Agriculture",
+    "Entertainment",
+    "Gym",
+    "Cleaning",
+    "Work",
+    "Event",
+    "Budgeting",
+    "Self-care"
+)
 
 fun getCategoryIcon(categoryName: String): Int {
     return when (categoryName) {
@@ -67,38 +60,17 @@ fun getCategoryIcon(categoryName: String): Int {
 }
 
 suspend fun addDefaultCategories(dao: CategoryDao) {
-    val categories = listOf(
-        Category(
-            name = "coding",
-            imageUri = ("android.resource://com.giraffe.tudeeapp/${R.drawable.developer}".toUri()).toString(),
+    defaultCategoryNames.forEach { name ->
+        val res = getCategoryIcon(name)
+        val category = Category(
+            name = name,
+            imageUri = ("android.resource://com.giraffe.tudeeapp/$res".toUri()).toString(),
             isEditable = false,
             taskCount = 0
-        ),
-        Category(
-            name = "bugs",
-            imageUri = ("android.resource://com.giraffe.tudeeapp/${R.drawable.bug_01}".toUri()).toString(),
-            isEditable = false,
-            taskCount = 0
-        ),
-        Category(
-            name = "gym",
-            imageUri = ("android.resource://com.giraffe.tudeeapp/${R.drawable.body_part_muscle}".toUri()).toString(),
-            isEditable = false,
-            taskCount = 0
-        ),
-        Category(
-            name = "travel",
-            imageUri = ("android.resource://com.giraffe.tudeeapp/${R.drawable.airplane_01}".toUri()).toString(),
-            isEditable = false,
-            taskCount = 0
-        ),
-    )
-    categories.forEach {
-        dao.createCategory(it.toEntity())
+        ).toEntity()
+        dao.createCategory(category)
     }
-
 }
-
 
 val dataModule = module {
     single {
