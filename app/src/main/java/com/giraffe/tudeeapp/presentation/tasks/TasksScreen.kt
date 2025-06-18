@@ -68,8 +68,6 @@ fun TaskScreenContent(
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
     ) {
-
-        val hidingTaskIds = remember { mutableStateListOf<Long>() }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,7 +79,8 @@ fun TaskScreenContent(
 
             TabsBar(
                 onTabSelected = actions::selectTab,
-                tasks = state.tasks.mapValues { (_, value) -> value.size })
+                tasks = state.tasks.mapValues { (_, value) -> value.size }
+            )
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -91,7 +90,6 @@ fun TaskScreenContent(
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
                 val selectedTasks = state.tasks[state.selectedTab]
-//                val selectedTasks = listOf(dummyTask(), dummyTask(), dummyTask())
                 val selectedTasksSize = selectedTasks?.size ?: 0
                 if (selectedTasksSize == 0) {
                     item {
@@ -112,21 +110,14 @@ fun TaskScreenContent(
                         actions.getCategoryById(selectedTasks?.get(index)?.categoryId ?: 0L)
                     val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
 
-                    val isVisible = !hidingTaskIds.contains(taskUi.id)
+                    SwipableTask(
+                        taskUi = taskUi,
+                        action = {
+                            actions.setDeleteBottomSheetVisibility(true)
+                            actions.setSelectedTaskId(taskUi.id)
+                        }
+                    )
 
-                    AnimatedVisibility(
-                        visible = isVisible,
-                        exit = slideOutHorizontally { fullWidth -> fullWidth } + fadeOut()
-                    ) {
-                        SwipableTask(
-                            taskUi = taskUi,
-                            action = {
-                                actions.setDeleteBottomSheetVisibility(true)
-                                actions.setSelectedTaskId(taskUi.id)
-                            },
-                            onDeleteClick = { actions.deleteTask(it.id) }
-                        )
-                    }
                 }
             }
 
@@ -175,21 +166,6 @@ fun TaskScreenContent(
             )
         }
     }
-}
-
-
-fun dummyTask(): Task {
-    return Task(
-        id = 1,
-        title = "Sample Task",
-        description = "This is a sample task description.",
-        taskPriority = TaskPriority.MEDIUM,
-        status = TaskStatus.TODO,
-        dueDate = LocalDateTime(2023, 10, 1, 12, 0),
-        categoryId = 1L,
-        createdAt = LocalDateTime(2023, 9, 1, 12, 0),
-        updatedAt = LocalDateTime(2023, 9, 1, 12, 0)
-    )
 }
 
 

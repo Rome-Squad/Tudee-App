@@ -102,6 +102,9 @@ class TasksViewModel(
                             snackBarMsg = "Deleted task successfully.",
                             isSnackBarVisible = true,
                             isDeleteBottomSheetVisible = false,
+                            tasks = it.tasks.mapValues { entry ->
+                                entry.value.filter { task -> task.id != taskId }
+                            }
                         )
                     }
                     delay(3000)

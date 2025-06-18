@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -43,8 +44,7 @@ fun SwipableTask(
     isRevealed: Boolean = false,
     onExpanded: () -> Unit = {},
     onCollapsed: () -> Unit = {},
-    action: () -> Unit = { },
-    onDeleteClick: (TaskUi) -> Unit = {}
+    action: () -> Unit = { }
 ) {
 
     val buttonWidth = 130f
@@ -69,6 +69,7 @@ fun SwipableTask(
         Row(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier
+                .padding(1.dp)
                 .clip(shape = RoundedCornerShape(16.dp))
                 .fillMaxWidth()
                 .background(Theme.color.errorVariant)
