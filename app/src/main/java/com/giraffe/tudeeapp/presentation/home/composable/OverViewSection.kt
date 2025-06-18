@@ -49,7 +49,7 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, top = 8.dp),
+            .padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         cardsData.forEach { cardData ->

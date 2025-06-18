@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,24 +33,22 @@ fun CardOverView(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
-            .height(112.dp)
             .background(color)
     ) {
         Icon(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(38.dp),
+                .align(Alignment.TopEnd),
             painter = painterResource(id = R.drawable.overview_card_background),
             tint = Theme.color.onPrimary,
             contentDescription = stringResource(R.string.calendar_icon),
         )
         Column(
             modifier = Modifier
-                .padding(start = 12.dp, top = 12.dp),
+                .padding(start = 12.dp, top = 12.dp, bottom = 12.dp),
         ) {
             Icon(
                 modifier = Modifier
-                    .size(38.dp),
+                    .size(40.dp),
                 painter = icon,
                 tint = Theme.color.onPrimary,
                 contentDescription = stringResource(R.string.card_overview_icon),

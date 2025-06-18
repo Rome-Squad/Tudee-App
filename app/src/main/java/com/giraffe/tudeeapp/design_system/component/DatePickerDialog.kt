@@ -59,6 +59,8 @@ fun DatePickerDialog(
                             containerColor = Theme.color.surface,
                             selectedDayContainerColor = Theme.color.primary,
                             selectedDayContentColor = Theme.color.onPrimary,
+                            selectedYearContentColor = Theme.color.onPrimary,
+                            selectedYearContainerColor = Theme.color.primary,
                             todayContentColor = Theme.color.primary,
                             todayDateBorderColor = Theme.color.primary,
                             dayContentColor = Theme.color.title,
@@ -85,7 +87,6 @@ fun DatePickerDialog(
 
 
                     Row(
-                      //  modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         TextButton(

@@ -73,7 +73,8 @@ fun TaskEditorBottomSheetContent(
 
     DatePickerDialog(
         showDialog = showDatePickerDialog,
-        onDismissRequest = { showDatePickerDialog = false },
+        onDismissRequest = {
+            showDatePickerDialog = false },
         onDateSelected = { selectedDateMillis ->
             onDueDateChange(selectedDateMillis)
             showDatePickerDialog = false
@@ -125,7 +126,8 @@ fun TaskEditorBottomSheetContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Box(
-                    modifier = Modifier.clickable { showDatePickerDialog = true }
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { showDatePickerDialog = true }
                 ) {
                     DefaultTextField(
                         textValue = taskState.dueDate.date.toString(),

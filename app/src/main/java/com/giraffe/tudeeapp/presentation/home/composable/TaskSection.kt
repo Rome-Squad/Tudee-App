@@ -36,7 +36,7 @@ fun TaskSection(
     tasks: List<TaskUi> = emptyList(),
     onTaskClick: (Long) -> Unit
 ) {
-    Column(modifier = modifier.padding(top = 24.dp)) {
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
