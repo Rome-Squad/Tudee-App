@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
+package com.giraffe.tudeeapp.presentation.tasks_by_category
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -36,8 +36,7 @@ class TasksByCategoryViewModel(
     }
 
     private fun getCategoryById(categoryId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.getCategoryById(categoryId)
+        viewModelScope.launch(Dispatchers.IO) {            categoriesService.getCategoryById(categoryId)
                 .onSuccess { category ->
                     _state.update { state ->
                         state.copy(

@@ -8,7 +8,7 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.SplashService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.categories.viewmodel.CategoryViewModel
-import com.giraffe.tudeeapp.presentation.categories.tasks_by_category.TasksByCategoryViewModel
+import com.giraffe.tudeeapp.presentation.tasks_by_category.TasksByCategoryViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel

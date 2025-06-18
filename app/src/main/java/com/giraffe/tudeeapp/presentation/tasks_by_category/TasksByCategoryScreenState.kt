@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
+package com.giraffe.tudeeapp.presentation.tasks_by_category
 
 import androidx.core.net.toUri
 import com.giraffe.tudeeapp.R
