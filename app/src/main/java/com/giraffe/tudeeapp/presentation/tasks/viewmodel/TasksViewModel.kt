@@ -57,9 +57,15 @@ class TasksViewModel(
         }
     }
 
-    fun setBottomSheetVisibility(isVisible: Boolean) {
+    fun setAddBottomSheetVisibility(isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(isBottomSheetVisible = isVisible) }
+            _state.update { it.copy(isAddBottomSheetVisible = isVisible) }
+        }
+    }
+
+    fun setDeleteBottomSheetVisibility(isVisible: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(isDeleteBottomSheetVisible = isVisible) }
         }
     }
 
@@ -89,7 +95,7 @@ class TasksViewModel(
                         it.copy(
                             snackBarMsg = "Deleted task successfully.",
                             isSnackBarVisible = true,
-                            isBottomSheetVisible = false,
+                            isDeleteBottomSheetVisible = false,
                         )
                     }
                     delay(3000)
@@ -100,7 +106,7 @@ class TasksViewModel(
                         it.copy(
                             error = error,
                             isSnackBarVisible = true,
-                            isBottomSheetVisible = false,
+                            isDeleteBottomSheetVisible = false,
                         )
                     }
                     delay(3000)

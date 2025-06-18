@@ -28,9 +28,9 @@ import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
@@ -73,9 +73,13 @@ fun TaskScreenContent(
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface)
+                    .padding(8.dp)
             ) {
-                val selectedTasks = state.tasks[state.selectedTab]
+//                val selectedTasks = state.tasks[state.selectedTab]
+                val selectedTasks = listOf(dummyTask(), dummyTask(), dummyTask())
                 val selectedTasksSize = selectedTasks?.size ?: 0
                 if (selectedTasksSize == 0) {
                     item {
@@ -97,15 +101,24 @@ fun TaskScreenContent(
                     val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
                     SwipableTask(
                         taskUi = taskUi,
-                        action = actions::setBottomSheetVisibility,
+                        action = { actions.setDeleteBottomSheetVisibility(true) },
                         onDeleteClick = { actions.deleteTask(it.id) }
                     )
                 }
             }
 
-            if (state.isBottomSheetVisible) {
+            if (state.isDeleteBottomSheetVisible) {
                 ModalBottomSheet(
-                    onDismissRequest = { actions.setBottomSheetVisibility(false) },
+                    onDismissRequest = { actions.setDeleteBottomSheetVisibility(false) },
+                    modifier = Modifier.fillMaxHeight(0.95f)
+                ) {
+                    // Replace with your  delete task content
+                }
+            }
+
+            if (state.isAddBottomSheetVisible) {
+                ModalBottomSheet(
+                    onDismissRequest = { actions.setAddBottomSheetVisibility(false) },
                     modifier = Modifier.fillMaxHeight(0.95f)
                 ) {
                     // Replace with your  add task content
@@ -118,7 +131,7 @@ fun TaskScreenContent(
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 8.dp), // adjust bottom padding as needed
             icon = painterResource(R.drawable.add_task),
-            onClick = { actions.setBottomSheetVisibility(true) }
+            onClick = { actions.setAddBottomSheetVisibility(true) }
         )
 
         AnimatedVisibility(state.isSnackBarVisible) {
@@ -135,18 +148,18 @@ fun TaskScreenContent(
     }
 }
 
-@Composable
-fun dummyTask(): TaskUi {
-    return TaskUi(
+
+fun dummyTask(): Task {
+    return Task(
         id = 1,
         title = "Sample Task",
         description = "This is a sample task description.",
-        priorityType = TaskPriority.MEDIUM,
+        taskPriority = TaskPriority.MEDIUM,
         status = TaskStatus.TODO,
         dueDate = LocalDateTime(2023, 10, 1, 12, 0),
-        categoryName = "Work",
-        icon = R.drawable.chef,
-        color = Theme.color.pinkAccent,
+        categoryId = 1L,
+        createdAt = LocalDateTime(2023, 9, 1, 12, 0),
+        updatedAt = LocalDateTime(2023, 9, 1, 12, 0)
     )
 }
 

@@ -25,15 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.PriorityType
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
@@ -46,8 +43,8 @@ fun SwipableTask(
     isRevealed: Boolean = false,
     onExpanded: () -> Unit = {},
     onCollapsed: () -> Unit = {},
-    action: (Boolean) -> Unit = { },
-    onDeleteClick: (TaskUi) -> Unit={}
+    action: () -> Unit = { },
+    onDeleteClick: (TaskUi) -> Unit = {}
 ) {
 
     val buttonWidth = 130f
@@ -78,7 +75,7 @@ fun SwipableTask(
                 .background(Theme.color.errorVariant)
         ) {
             TaskDeleteButton(
-                onClick = {onDeleteClick(taskUi)},
+                onClick = action,
                 modifier = Modifier
                     .fillMaxHeight()
             )
@@ -142,7 +139,7 @@ fun SwipableTaskPreview() {
             id = 1,
             title = "Sample Task",
             description = "This is a sample task description.",
-            priorityType = PriorityType.MEDIUM,
+            priorityType = TaskPriority.MEDIUM,
             status = TaskStatus.TODO,
             dueDate = LocalDateTime(2023, 10, 1, 12, 0),
             categoryName = "Work",
