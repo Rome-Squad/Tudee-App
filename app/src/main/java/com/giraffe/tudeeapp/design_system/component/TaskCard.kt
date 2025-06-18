@@ -67,7 +67,7 @@ fun TaskCard(
                 Image(
                     painter = taskIcon,
                     contentDescription = stringResource(R.string.task_icon),
-                    Modifier.align(Alignment.Center)
+                    Modifier.size(32.dp).align(Alignment.Center)
                 )
             }
             Row(
