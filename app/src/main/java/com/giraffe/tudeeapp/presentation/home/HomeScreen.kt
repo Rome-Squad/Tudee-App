@@ -92,10 +92,14 @@ fun HomeContent(
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.color.surface)
+        modifier = Modifier.fillMaxSize()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(127.dp)
+                .background(Theme.color.primary),
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -126,13 +130,6 @@ fun HomeContent(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(55.dp)
-                                    .background(Theme.color.primary),
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .offset(y = (-55).dp)
-                                    .fillMaxWidth()
                                     .padding(start = 16.dp, end = 16.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(Theme.color.surfaceHigh)
@@ -157,26 +154,25 @@ fun HomeContent(
                                 if (state.allTasksCount == 0) {
                                     NoTask(
                                         modifier = Modifier
-                                            .offset(y = (-7).dp)
-                                            .padding(start = 15.dp, end = 15.dp)
+                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
                                     )
                                 } else {
                                     TaskSection(
-                                        modifier = Modifier.offset(y = (-31).dp),
+                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasksCount.toString(),
                                         tasks = state.inProgressTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.offset(y = (-7).dp),
+                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.toDoTasksCount.toString(),
                                         tasks = state.todoTasks,
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 17.dp),
+                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasksCount.toString(),
                                         tasks = state.doneTasks,
