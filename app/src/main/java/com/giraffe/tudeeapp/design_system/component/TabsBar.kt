@@ -33,14 +33,13 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 fun TabsBar(
     modifier: Modifier = Modifier,
     onTabSelected: (TaskStatus) -> Unit = {},
-    todoTasksCount: Int = 0,
-    inProgressTasksCount: Int = 14,
-    doneTasksCount: Int = 0,
+    tasks: Map<TaskStatus, Int> = mapOf()
 ) {
     val startTab = TaskStatus.IN_PROGRESS
     var selectedTab by rememberSaveable { mutableIntStateOf(startTab.ordinal) }
     PrimaryTabRow(
         modifier = modifier,
+        containerColor = Theme.color.surfaceHigh,
         selectedTabIndex = selectedTab,
         indicator = {
             TabRowDefaults.PrimaryIndicator(
@@ -51,17 +50,18 @@ fun TabsBar(
             )
         }
     ) {
-        TaskStatus.entries.forEachIndexed { index, tab ->
-            val tasksCount = when (tab) {
-                TaskStatus.TODO -> todoTasksCount
-                TaskStatus.IN_PROGRESS -> inProgressTasksCount
-                TaskStatus.DONE -> doneTasksCount
+        tasks.forEach { tab ->
+            val title = when (tab.key) {
+                TaskStatus.TODO -> "To Do"
+                TaskStatus.IN_PROGRESS -> "In progress"
+                TaskStatus.DONE -> "Done"
             }
+            val index = tab.key.ordinal
             Tab(
                 selected = selectedTab == index,
                 onClick = {
                     selectedTab = index
-                    onTabSelected(tab)
+                    onTabSelected(tab.key)
                 },
                 selectedContentColor = Theme.color.title,
                 unselectedContentColor = Theme.color.hint,
@@ -74,13 +74,13 @@ fun TabsBar(
                             modifier = Modifier
                                 .weight(.73f),
                             textAlign = TextAlign.Center,
-                            text = tab.name,
+                            text = title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = if (selectedTab == index) Theme.textStyle.label.medium else Theme.textStyle.label.small,
                         )
 
-                        if (tasksCount != 0) {
+                        if (tab.value != 0) {
                             Box(
                                 modifier = Modifier
                                     .weight(.27f)
@@ -90,7 +90,7 @@ fun TabsBar(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = tasksCount.toString(),
+                                    text = tab.value.toString(),
                                     style = Theme.textStyle.label.medium,
                                     color = Theme.color.body
                                 )
