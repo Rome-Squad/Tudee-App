@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,18 +50,18 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
+import com.giraffe.tudeeapp.domain.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
     title: String = "Add new category",
-    categoryToEdit: CategoryUi? = null,
+    categoryToEdit: Category? = null,
     onVisibilityChange: (Boolean) -> Unit = {},
-    onAddClick: (CategoryUi) -> Unit = {},
-    onEditClick: (CategoryUi) -> Unit = {},
-    onDeleteClick: (CategoryUi) -> Unit = {},
+    onAddClick: (Category) -> Unit = {},
+    onEditClick: (Category) -> Unit = {},
+    onDeleteClick: (Category) -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var categoryTitle by remember { mutableStateOf(categoryToEdit?.name ?: "") }
@@ -79,11 +80,15 @@ fun CategoryBottomSheet(
     ) {
 
         Column {
-            Box(
-                modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    modifier = Modifier.align(Alignment.CenterStart),
+                    modifier = Modifier,
                     text = title,
                     style = Theme.textStyle.title.large,
                     color = Theme.color.title
@@ -91,7 +96,6 @@ fun CategoryBottomSheet(
                 if (categoryToEdit != null) {
                     Text(
                         modifier = Modifier
-                            .align(Alignment.CenterEnd)
                             .clickable(onClick = { onDeleteClick(categoryToEdit) }),
                         text = "Delete",
                         style = Theme.textStyle.label.large,
@@ -219,7 +223,7 @@ fun CategoryBottomSheet(
                         )
                     } else {
                         onAddClick(
-                            CategoryUi(
+                            Category(
                                 name = categoryTitle,
                                 imageUri = photoUri.toString(),
                                 taskCount = 0,

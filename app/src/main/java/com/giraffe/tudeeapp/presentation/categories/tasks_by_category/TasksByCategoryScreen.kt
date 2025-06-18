@@ -12,19 +12,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TabsBar
+import com.giraffe.tudeeapp.design_system.component.TaskCard
+import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.categories.CategoryBottomSheet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -33,6 +44,20 @@ fun TasksByCategoryScreen(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
+    val lifeCycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifeCycleOwner.lifecycle) {
+        lifeCycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            withContext(Dispatchers.Main.immediate) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        is TasksByCategoryEvents.CategoryDeleted -> {
+                            navController.popBackStack()
+                        }
+                    }
+                }
+            }
+        }
+    }
     TasksByCategoryContent(state, viewModel, navController)
 }
 
@@ -49,12 +74,15 @@ fun TasksByCategoryContent(
     ) {
         Column {
             TudeeTopBar(
-                title = state.selectedCategory.name,
-                withOption = state.selectedCategory.isEditable,
+                title = state.selectedCategory?.name ?: "",
+                withOption = state.selectedCategory?.isEditable == true,
                 onClickBack = { navController.popBackStack() },
                 onClickEdit = { actions.setBottomSheetVisibility(true) }
             )
-            TabsBar(onTabSelected = actions::selectTab)
+            TabsBar(
+                tasks = state.tasks.mapValues { (_, value) -> value.size },
+                onTabSelected = actions::selectTab
+            )
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -64,20 +92,20 @@ fun TasksByCategoryContent(
             ) {
                 state.tasks[state.selectedTab]?.let { tasks ->
                     items(tasks) { task ->
-                        /*TaskCard(
+                        TaskCard(
                             taskIcon = rememberAsyncImagePainter(
                                 ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(data = task.ca)
+                                    .data(data = task.categoryIcon)
                                     .build()
                             ),
-                            blurColor = getColorForCategoryIcon("Education"),
-                            priority = PriorityType.MEDIUM,
-                            taskTitle = "Organize Study Desk",
-                            date = "12-03-2025",
-                            taskDescription = "Review cell structure and functions for tomorrow...",
+                            blurColor = Theme.color.error,
+                            priority = task.taskPriority,
+                            taskTitle = task.title,
+                            date = task.createdAt.toString(),
+                            taskDescription = task.description,
                             taskCardType = TaskCardType.CATEGORY
-                        )*/
+                        )
                     }
                 }
 
@@ -88,14 +116,15 @@ fun TasksByCategoryContent(
                     title = "Edit category",
                     onVisibilityChange = actions::setBottomSheetVisibility,
                     categoryToEdit = state.selectedCategory,
-                    onEditClick = actions::editCategory
+                    onEditClick = actions::editCategory,
+                    onDeleteClick = actions::deleteCategory
                 )
             }
 
         }
         AnimatedVisibility(state.showSuccessSnackBar) {
             TudeeSnackBar(
-                message = if (state.error == null) "Edited category successfully." else "Some error happened",
+                message = if (state.error == null) state.snackBarMsg else "Some error happened",
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,

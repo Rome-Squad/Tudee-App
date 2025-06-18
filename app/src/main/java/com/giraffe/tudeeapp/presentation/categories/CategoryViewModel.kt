@@ -2,14 +2,12 @@ package com.giraffe.tudeeapp.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
 import com.giraffe.tudeeapp.presentation.categories.uistates.CategoriesScreenUiState
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
-import com.giraffe.tudeeapp.presentation.utils.toCategory
-import com.giraffe.tudeeapp.presentation.utils.toUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -43,7 +41,7 @@ class CategoryViewModel(
                     flow.collect { categories ->
                         _categoriesUiState.update { currentState ->
                             currentState.copy(
-                                categories = categories.map { category -> category.toUiState() },
+                                categories = categories.map { category -> category },
                                 isLoading = false,
                                 error = null
                             )
@@ -66,9 +64,9 @@ class CategoryViewModel(
         _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
     }
 
-    override fun addCategory(category: CategoryUi) {
+    override fun addCategory(category: Category) {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.createCategory(category.toCategory())
+            categoriesService.createCategory(category)
                 .onSuccess {
                     _categoriesUiState.update {
                         it.copy(

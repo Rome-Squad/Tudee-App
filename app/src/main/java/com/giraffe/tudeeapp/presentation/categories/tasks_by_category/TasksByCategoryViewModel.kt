@@ -3,19 +3,19 @@ package com.giraffe.tudeeapp.presentation.categories.tasks_by_category
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoryUi
 import com.giraffe.tudeeapp.presentation.navigation.Screen
-import com.giraffe.tudeeapp.presentation.utils.toCategory
-import com.giraffe.tudeeapp.presentation.utils.toUiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -26,6 +26,9 @@ class TasksByCategoryViewModel(
 ) : ViewModel(), TasksByCategoryScreenActions {
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
+
+    private val _events = Channel<TasksByCategoryEvents>()
+    val events = _events.receiveAsFlow()
 
     init {
         getCategoryById(savedStateHandle.get<Long>(Screen.TasksByCategoryScreen.CATEGORY_ID) ?: 0L)
@@ -38,7 +41,7 @@ class TasksByCategoryViewModel(
                 .onSuccess { category ->
                     _state.update { state ->
                         state.copy(
-                            selectedCategory = category.toUiState(),
+                            selectedCategory = category,
                         )
                     }
                 }
@@ -49,25 +52,7 @@ class TasksByCategoryViewModel(
     }
 
     private fun getTasks() {
-        viewModelScope.launch(Dispatchers.IO) {
-            tasksService.getTasksByCategory(_state.value.selectedCategory.id)
-                .onSuccess { flow ->
-                    flow.collect { tasks ->
-                        _state.update { state ->
-                            state.copy(
-                                tasks = mapOf(
-                                    TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
-                                    TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
-                                    TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
-                                )
-                            )
-                        }
-                    }
-                }
-                .onError { error ->
-                    _state.update { it.copy(error = error) }
-                }
-        }
+        viewModelScope.launch(Dispatchers.IO) {}
     }
 
     override fun setBottomSheetVisibility(isVisible: Boolean) {
@@ -82,20 +67,58 @@ class TasksByCategoryViewModel(
         }
     }
 
-    override fun editCategory(category: CategoryUi) {
+    override fun editCategory(category: Category) {
         viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.updateCategory(category = category.toCategory())
+            categoriesService.updateCategory(category = category)
                 .onSuccess {
                     _state.update {
                         it.copy(
+                            selectedCategory = category,
+                            snackBarMsg = "Edited category successfully.",
                             showSuccessSnackBar = true,
-                            isBottomSheetVisible = false
+                            isBottomSheetVisible = false,
                         )
                     }
                     delay(3000)
                     _state.update { it.copy(showSuccessSnackBar = false) }
                 }.onError { error ->
-                    _state.update { it.copy(error = error) }
+                    _state.update {
+                        it.copy(
+                            error = error,
+                            showSuccessSnackBar = true,
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(showSuccessSnackBar = false) }
+                }
+        }
+    }
+
+    override fun deleteCategory(category: Category) {
+        viewModelScope.launch(Dispatchers.IO) {
+            categoriesService.deleteCategory(category.id)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            snackBarMsg = "Deleted category successfully.",
+                            showSuccessSnackBar = true,
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(showSuccessSnackBar = false) }
+                    _events.send(TasksByCategoryEvents.CategoryDeleted())
+                }.onError { error ->
+                    _state.update {
+                        it.copy(
+                            error = error,
+                            showSuccessSnackBar = true,
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                    delay(3000)
+                    _state.update { it.copy(showSuccessSnackBar = false) }
                 }
         }
     }
