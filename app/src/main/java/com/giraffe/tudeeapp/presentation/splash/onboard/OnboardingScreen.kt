@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -89,23 +88,18 @@ fun OnboardingScreen(
                 color = Theme.color.primary
             )
         }
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 238.5.dp)
         ) {
+
             Box {
                 HorizontalPager(
                     state = pagerState, modifier = Modifier
-                        .fillMaxWidth()
-                        .height(500.dp)
                 ) { page ->
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
                             .padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -113,7 +107,7 @@ fun OnboardingScreen(
                         Image(
                             painter = painterResource(id = pages[page].imageRes),
                             contentDescription = null,
-                            modifier = Modifier.padding(top = 36.dp)
+                            modifier = Modifier.padding(top = 46.dp)
                         )
 
                         Text(
@@ -140,48 +134,55 @@ fun OnboardingScreen(
                         )
                     }
                 }
+
+            }
+
+            Column(Modifier.padding(top = 337.dp)) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .height(192.dp)
-                        .background(
-                            color = Theme.color.onPrimaryCard, shape = RoundedCornerShape(32.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Theme.color.onPrimaryStroke,
-                            shape = RoundedCornerShape(32.dp)
-                        )
-                )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth().padding(horizontal = 16.dp)
+                            .height(192.dp)
+                            .background(
+                                color = Theme.color.onPrimaryCard, shape = RoundedCornerShape(32.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Theme.color.onPrimaryStroke,
+                                shape = RoundedCornerShape(32.dp)
+                            )
+                    )
 
-                TudeeFabButton(
-                    modifier = Modifier
-                        .offset(y = 35.dp)
-                        .align(Alignment.BottomCenter),
-                    isLoading = false,
-                    isDisable = false,
-                    icon = painterResource(R.drawable.arrow_right_double),
-                    onClick = {
-                        scope.launch {
-                            if (pagerState.currentPage < pages.lastIndex) {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            } else {
-                                viewModel.setOnboardingShown(true)
-                                onFinish()
+                    TudeeFabButton(
+                        modifier = Modifier
+                            .offset(y = 35.dp)
+                            .align(Alignment.BottomCenter),
+                        isLoading = false,
+                        isDisable = false,
+                        icon = painterResource(R.drawable.arrow_right_double),
+                        onClick = {
+                            scope.launch {
+                                if (pagerState.currentPage < pages.lastIndex) {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                } else {
+                                    viewModel.setOnboardingShown(true)
+                                    onFinish()
+                                }
                             }
-                        }
-                    })
+                        })
+                }
+
+                DotsIndicator(
+                    totalDots = pages.size,
+                    selectedIndex = pagerState.currentPage,
+                    modifier = Modifier
+                        .padding(top = 59.dp, bottom = 24.dp)
+                )
             }
 
-
-            DotsIndicator(
-                totalDots = pages.size,
-                selectedIndex = pagerState.currentPage,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 59.dp, bottom = 24.dp)
-            )
         }
     }
 }
