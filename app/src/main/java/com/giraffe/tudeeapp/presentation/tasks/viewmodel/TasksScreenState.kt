@@ -13,7 +13,7 @@ data class TasksScreenState(
     val pickedDate: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
-    val tasks: Map<TaskStatus, List<Task>> = mapOf(
+    val tasks: Map<TaskStatus, List<TaskUi>> = mapOf(
         TaskStatus.TODO to emptyList(),
         TaskStatus.IN_PROGRESS to emptyList(),
         TaskStatus.DONE to emptyList()

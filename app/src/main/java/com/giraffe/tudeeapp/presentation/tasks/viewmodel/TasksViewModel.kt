@@ -6,6 +6,7 @@ import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
+import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import com.giraffe.tudeeapp.domain.util.Result
 
 
 class TasksViewModel(
@@ -31,22 +33,36 @@ class TasksViewModel(
 
     private fun getTasks(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = tasksService.getTasksByDate(date)
-            result.onSuccess { flow ->
-                flow.collect { tasks ->
-                    _state.update {
-                        it.copy(
-                            tasks = mapOf(
-                                TaskStatus.TODO to tasks.filter { it.status == TaskStatus.TODO },
-                                TaskStatus.IN_PROGRESS to tasks.filter { it.status == TaskStatus.IN_PROGRESS },
-                                TaskStatus.DONE to tasks.filter { it.status == TaskStatus.DONE },
-                            )
-                        )
+            tasksService.getTasksByDate(date)
+                .onSuccess { flow ->
+                    flow.collect { tasks ->
+                        try {
+                            val tasksUiList = tasks.map { task ->
+                                val categoryResult =
+                                    categoryService.getCategoryById(task.categoryId)
+                                val category = if (categoryResult is Result.Success) {
+                                    categoryResult.data
+                                } else {
+                                    null
+                                }
+                                task.toTaskUi(category ?: throw Exception())
+                            }.groupBy { it.status }
+
+                            _state.update { currentState ->
+                                currentState.copy(
+                                    tasks = tasksUiList,
+                                    pickedDate = date,
+                                    error = null
+                                )
+                            }
+                        } catch (e: Exception) {
+                            _state.update { it.copy(error = NotFoundError()) }
+                        }
                     }
                 }
-            }.onError { error ->
-                _state.update { it.copy(error = error) }
-            }
+                .onError { error ->
+                    _state.update { it.copy(error = error) }
+                }
         }
     }
 
@@ -75,18 +91,6 @@ class TasksViewModel(
         }
     }
 
-    override fun getCategoryById(categoryId: Long): Category {
-        var category: Category? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            categoryService.getCategoryById(categoryId)
-                .onSuccess { category = it }
-                .onError { }
-        }
-        return category ?: Category(
-            id = 0, name = "Unknown", imageUri = "", isEditable = false, taskCount = 0
-        )
-    }
-
     override fun showSnackBarMessage(message: String, hasError: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update {
@@ -97,7 +101,13 @@ class TasksViewModel(
                 )
             }
             delay(3000)
-            _state.update { it.copy(snackBarMsg = "", isSnackBarVisible = false , snackBarHasError = false) }
+            _state.update {
+                it.copy(
+                    snackBarMsg = "",
+                    isSnackBarVisible = false,
+                    snackBarHasError = false
+                )
+            }
         }
     }
 

@@ -97,9 +97,7 @@ fun TaskScreenContent(
                     }
                 } else {
                     items(selectedTasksSize) { index ->
-                        val category =
-                            actions.getCategoryById(selectedTasks?.get(index)?.categoryId ?: 0L)
-                        val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
+                        val taskUi = selectedTasks?.get(index)!!
 
                         SwipableTask(
                             taskUi = taskUi,
@@ -110,8 +108,6 @@ fun TaskScreenContent(
                         )
                     }
                 }
-
-
             }
 
             if (state.isDeleteBottomSheetVisible) {

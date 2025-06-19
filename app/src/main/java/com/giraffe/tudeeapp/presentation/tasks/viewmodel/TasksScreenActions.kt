@@ -15,8 +15,6 @@ interface TasksScreenActions {
 
     fun setSelectedTaskId(id: Long)
 
-    fun getCategoryById(categoryId: Long): Category
-
     fun showSnackBarMessage(message: String, hasError: Boolean = false)
 
     fun deleteTask(id: Long)
