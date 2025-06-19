@@ -35,9 +35,19 @@ class TaskEditorViewModel(
     private val _events = Channel<TaskEditorEvent>()
     val events = _events.receiveAsFlow()
 
+    private var currentTaskId: Long? = taskId
+
+
     init {
         loadCategories()
         taskId?.let { loadTask(it) }
+    }
+
+    fun setTaskId(taskId: Long?, forceReload: Boolean = false) {
+        if (forceReload || taskId != currentTaskId) {
+            currentTaskId = taskId
+            if (taskId != null) loadTask(taskId) else clearTask()
+        }
     }
 
 

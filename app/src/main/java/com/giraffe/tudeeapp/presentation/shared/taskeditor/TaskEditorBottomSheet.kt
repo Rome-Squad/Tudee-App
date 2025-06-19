@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,10 +41,15 @@ fun TaskEditorBottomSheet(
         }
     }
 
+
     val viewModel: TaskEditorViewModel = koinViewModel(
         viewModelStoreOwner = owner,
         parameters = { parametersOf(taskId) }
     )
+
+    LaunchedEffect(taskId) {
+        viewModel.setTaskId(taskId, forceReload = true)
+    }
 
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
