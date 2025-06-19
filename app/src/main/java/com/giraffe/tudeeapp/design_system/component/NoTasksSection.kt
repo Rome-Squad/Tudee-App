@@ -6,8 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,13 +15,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -33,74 +35,25 @@ fun NoTasksSection(
     title: String = "No tasks here!",
     description: String = "Tap the + button to add your first one."
 ) {
-    Box(
+    Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(180.dp)
-
     ) {
-
-
-
-
-        // Image Overlay Circle
-        Box(
-            modifier = Modifier
-                .offset(x = 204.dp, y = 20.dp)
-                .size(136.dp)
-                .background(
-                    color =Theme.color.overlay,
-                    shape = CircleShape
-                )
-        )
-
-        // Image Background Circle
-        Box(
-            modifier = Modifier
-                .offset(x = 191.dp, y = 8.dp)
-                .size(144.dp)
-                .border(
-                    width = 1.dp,
-                    color = Theme.color.overlay,
-                    shape = CircleShape
-                )
-        )
-
-
-        // Ellipse Progress Indicator
-        Box(
-            modifier = Modifier
-                .offset(x = 210.dp, y = 73.dp)
-        ) {
-            EllipseDot(size = 14.dp, offsetY = 0.dp)
-            EllipseDot(size = 8.dp, offsetY = 17.dp)
-            EllipseDot(size = 4.dp, offsetY = 30.dp)
-        }
-
-        // Oval Copy small
-        Box(
-            modifier = Modifier
-                .offset(x = 213.dp, y = 130.dp)
-                .size(14.4.dp)
-                .background(Theme.color.overlay, shape = CircleShape)
-                .border(1.dp, Theme.color.overlay, shape = CircleShape)
-        )
-
-        // Robot Image
-        Image(
-            painter = painterResource(id = R.drawable.no_tasks_robot),
-            contentDescription = "No tasks robot",
-            modifier = Modifier
-                .offset(x = 233.dp, y = 53.dp)
-                .size(width = 107.dp, height = 100.dp)
-        )
-
-        // Message Container
         Column(
             modifier = Modifier
-                .offset(x = 10.dp, y = (-4).dp)
                 .width(203.dp)
-                .height(74.dp)
+                .offset(x = 16.dp)
+                .zIndex(1f)
+                .shadow(
+                    elevation = 12.dp,
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomEnd = 2.dp,
+                        bottomStart = 16.dp
+                    ),
+                    ambientColor = Color.Black.copy(.4f),
+                    spotColor = Color.Black.copy(.4f),
+                )
                 .clip(
                     RoundedCornerShape(
                         topStart = 16.dp,
@@ -115,18 +68,15 @@ fun NoTasksSection(
         ) {
             Text(
                 text = title,
-                style = Theme.textStyle.title.small
-                , color = Theme.color.body
+                style = Theme.textStyle.title.small, color = Theme.color.body
 
             )
             Text(
                 text = description,
-                style = Theme.textStyle.body.small
-                , color = Theme.color.hint
+                style = Theme.textStyle.body.small, color = Theme.color.hint
             )
         }
-
-
+        RobotWithCircles(modifier = Modifier.padding(top = 35.dp))
     }
 }
 
@@ -137,17 +87,74 @@ fun NoTasksSectionPreview() {
         NoTasksSection()
     }
 }
+
 @Composable
-fun EllipseDot(size: Dp, offsetY: Dp) {
+fun RobotWithCircles(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .offset(y = offsetY)
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(136.dp)
+                .background(
+                    color = Theme.color.overlay,
+                    shape = CircleShape
+                )
+        )
+
+        Box(
+            modifier = Modifier
+                .size(144.dp)
+                .border(
+                    width = 1.dp,
+                    color = Theme.color.overlay,
+                    shape = CircleShape
+                )
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            EllipseDot(modifier = Modifier.padding(horizontal = 8.dp), size = 14.dp)
+            EllipseDot(modifier = Modifier.padding(horizontal = 4.dp), size = 8.dp)
+            EllipseDot(modifier = Modifier, size = 4.dp)
+        }
+
+        Box(
+            modifier = Modifier
+                .size(14.4.dp)
+                .background(Theme.color.overlay, shape = CircleShape)
+                .border(1.dp, Theme.color.overlay, shape = CircleShape)
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.no_tasks_robot),
+            contentDescription = "No tasks robot",
+            modifier = Modifier
+                .size(width = 107.dp, height = 100.dp)
+                .align(Alignment.BottomEnd)
+        )
+    }
+}
+
+@Composable
+fun EllipseDot(
+    modifier: Modifier,
+    size: Dp
+) {
+    Box(
+        modifier = modifier
             .size(size)
-            .background(color = Theme.color.surfaceLow, shape = CircleShape)
+            .background(color = Theme.color.surfaceHigh, shape = CircleShape)
             .shadow(
                 elevation = 4.dp,
                 shape = CircleShape,
-                ambientColor =Theme.color.surfaceHigh ,
+                ambientColor = Theme.color.surfaceHigh,
                 spotColor = Theme.color.surfaceHigh
             )
     )
