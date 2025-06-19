@@ -25,7 +25,7 @@
     <string name="category">Category\n</string>
     <string name="add">Add\n</string>
     <string name="save">Save</string>
-    <string name="periorty">Periorty</string>
+    <string name="priority">Priority</string>
     <string name="due_date_hint">Due Date Hint</string>
     <string name="clear_button">Clear</string>
     <string name="cancel_button">Cancel</string>
