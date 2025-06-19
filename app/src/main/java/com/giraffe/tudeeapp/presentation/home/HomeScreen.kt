@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,21 +65,25 @@ fun HomeScreen(
             HomeEvent.DismissSnackBar -> {
                 snackBarData = null
             }
+
             is HomeEvent.Error -> {
                 snackBarData = TudeeSnackBarState(
                     message = errorToMessage(event.error),
                     isError = true
                 )
             }
+
             is HomeEvent.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
             }
+
             HomeEvent.TaskAddedSuccess -> {
                 snackBarData = TudeeSnackBarState(
                     message = context.getString(R.string.task_added_successfully),
                     isError = false
                 )
             }
+
             HomeEvent.TaskEditedSuccess -> {
                 snackBarData = TudeeSnackBarState(
                     message = context.getString(R.string.task_edited_successfully),
@@ -129,12 +132,9 @@ fun HomeContent(
     onChangeSnackBarState: (TudeeSnackBarState) -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = false
     systemUiController.setStatusBarColor(
         color = Theme.color.primary,
-        darkIcons = useDarkIcons
     )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -243,11 +243,11 @@ fun HomeContent(
 
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
-                TaskDetailsBottomSheet(
-                    taskId = state.currentTaskId,
-                    onnDismiss = onDismissTaskDetails,
-                    onEditTask = onEditTaskClick
-                )
+            TaskDetailsBottomSheet(
+                taskId = state.currentTaskId,
+                onnDismiss = onDismissTaskDetails,
+                onEditTask = onEditTaskClick
+            )
 
         }
 

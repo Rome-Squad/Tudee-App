@@ -14,9 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,17 +27,14 @@ import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
-import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -60,6 +55,10 @@ fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
     actions: TasksScreenActions,
 ) {
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        color = Theme.color.surfaceHigh,
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +71,7 @@ fun TaskScreenContent(
             HeaderContent("Tasks")
 
             DatePicker(actions::setPickedDate)
-            Log.d("tab tab", "TaskScreenContent: "+ state.selectedTab)
+            Log.d("tab tab", "TaskScreenContent: " + state.selectedTab)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::selectTab,
