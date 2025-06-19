@@ -38,6 +38,9 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheetContent
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorUiState
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
@@ -49,10 +52,13 @@ import org.koin.androidx.compose.koinViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskScreen(
-    viewModel: TasksViewModel = koinViewModel()
+    viewModel: TasksViewModel = koinViewModel(),
+    addViewModel: TaskEditorViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    TaskScreenContent(state, viewModel)
+    val stateAdd by addViewModel.taskEditorUiState.collectAsState()
+    TaskScreenContent(state, viewModel, stateAdd, addViewModel)
+
 }
 
 
@@ -61,7 +67,9 @@ fun TaskScreen(
 @Composable
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
-    actions: TasksViewModel
+    actions: TasksViewModel,
+    stateAdd: TaskEditorUiState = TaskEditorUiState(),
+    addAction: TaskEditorViewModel,
 ) {
     Box(
         modifier = Modifier
@@ -136,13 +144,20 @@ fun TaskScreenContent(
             }
 
             if (state.isAddBottomSheetVisible) {
-                ModalBottomSheet(
-                    onDismissRequest = { actions.setAddBottomSheetVisibility(false) },
-                    modifier = Modifier.fillMaxHeight(0.95f)
-                ) {
-
-                    // Replace with add task
-                }
+                TaskEditorBottomSheetContent(
+                    taskEditorUiState = stateAdd,
+                    onTitleChange = addAction::onChangeTaskTitleValue,
+                    onDescriptionChange = addAction::onChangeTaskDescriptionValue,
+                    onPriorityChange = addAction::onChangeTaskPriorityValue,
+                    onCategoryChange = addAction::onChangeTaskCategoryValue,
+                    onDueDateChange = addAction::onChangeTaskDueDateValue,
+                    onSaveClick = addAction::saveTask,
+                    onCancelClick = {
+                        addAction.cancel()
+                        actions.setAddBottomSheetVisibility(false)
+                    },
+                    isNewTask = true
+                )
             }
         }
 

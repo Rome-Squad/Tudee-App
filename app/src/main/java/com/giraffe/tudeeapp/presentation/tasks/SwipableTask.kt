@@ -32,6 +32,8 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
+import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
+import com.giraffe.tudeeapp.presentation.utils.getColorForCategoryIcon
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
@@ -119,8 +121,8 @@ fun SwipableTask(
             shadowElevation = 0.dp
         ) {
             TaskCard(
-                taskIcon = painterResource(id = taskUi.icon),
-                blurColor = taskUi.color,
+                taskIcon = painterResource(getCategoryIcon( taskUi.category.name)),
+                blurColor = getColorForCategoryIcon(taskUi.category.name),
                 priority = taskUi.priorityType,
                 taskTitle = taskUi.title,
                 taskDescription = taskUi.description,
@@ -130,7 +132,7 @@ fun SwipableTask(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun SwipableTaskPreview() {
@@ -142,10 +144,10 @@ fun SwipableTaskPreview() {
             priorityType = TaskPriority.MEDIUM,
             status = TaskStatus.TODO,
             dueDate = LocalDateTime(2023, 10, 1, 12, 0),
-            categoryName = "Work",
+            category = "Work",
             icon = R.drawable.chef,
             color = Theme.color.pinkAccent,
         ),
         action = {}
     )
-}
+}*/

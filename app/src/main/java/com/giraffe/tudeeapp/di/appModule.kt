@@ -10,6 +10,7 @@ import com.giraffe.tudeeapp.domain.service.SplashService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.shared.MainViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -24,5 +25,6 @@ val appModule = module {
 
     viewModel { SplashViewModel(get()) }
     viewModel{TasksViewModel(get(),get())}
+    viewModel { TaskEditorViewModel(get(),get(),get()) }
     viewModel { MainViewModel(get()) }
 }
