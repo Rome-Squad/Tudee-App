@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -69,9 +68,7 @@ fun TaskScreenContent(
                 .fillMaxSize()
         ) {
             HeaderContent("Tasks")
-
             DatePicker(actions::setPickedDate)
-            Log.d("tab tab", "TaskScreenContent: " + state.selectedTab)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::selectTab,
