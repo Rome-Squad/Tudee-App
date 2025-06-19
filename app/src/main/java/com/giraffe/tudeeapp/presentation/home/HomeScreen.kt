@@ -29,12 +29,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.home.composable.NoTask
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
@@ -196,10 +196,11 @@ fun HomeContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(Theme.color.surface),
-                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                                verticalArrangement = Arrangement.spacedBy(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 if (state.allTasks.isEmpty()) {
-                                    NoTask(
+                                    NoTasksSection(
                                         modifier = Modifier
                                             .padding(top = 48.dp, start = 15.dp, end = 15.dp)
                                     )

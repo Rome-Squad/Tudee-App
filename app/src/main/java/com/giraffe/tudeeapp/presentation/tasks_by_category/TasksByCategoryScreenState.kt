@@ -12,8 +12,8 @@ data class TasksByCategoryScreenState(
     val categoryToDelete: Category? = null,
     val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
     val tasks: Map<TaskStatus, List<TaskUiModel>> = mapOf(
-        TaskStatus.TODO to List(3) { TaskUiModel(categoryIcon = ("android.resource://com.giraffe.tudeeapp/${R.drawable.airplane_01}".toUri()).toString()) },
-        TaskStatus.IN_PROGRESS to List(5) { TaskUiModel() },
+        TaskStatus.TODO to emptyList(),//List(3) { TaskUiModel(categoryIcon = ("android.resource://com.giraffe.tudeeapp/${R.drawable.airplane_01}".toUri()).toString()) },
+        TaskStatus.IN_PROGRESS to emptyList(),//List(5) { TaskUiModel() },
         TaskStatus.DONE to List(10) { TaskUiModel(categoryIcon = ("android.resource://com.giraffe.tudeeapp/${R.drawable.developer}".toUri()).toString()) },
     ),
     val isAlertBottomSheetVisible: Boolean = false,

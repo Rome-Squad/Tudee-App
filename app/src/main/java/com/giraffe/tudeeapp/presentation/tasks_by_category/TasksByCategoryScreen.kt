@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +29,8 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
+import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
+import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
@@ -34,7 +38,6 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -97,21 +100,33 @@ fun TasksByCategoryContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 state.tasks[state.selectedTab]?.let { tasks ->
-                    items(tasks) { task ->
-                        TaskCard(
-                            taskIcon = rememberAsyncImagePainter(
-                                ImageRequest
-                                    .Builder(LocalContext.current)
-                                    .data(data = state.selectedCategory?.imageUri)
-                                    .build()
-                            ),
-                            categoryName = state.selectedCategory?.name ?: "",
-                            priority = task.taskPriority,
-                            taskTitle = task.title,
-                            date = task.createdAt.toString(),
-                            taskDescription = task.description,
-                            taskCardType = TaskCardType.CATEGORY
-                        )
+                    if (tasks.isNotEmpty()) {
+                        items(tasks) { task ->
+                            TaskCard(
+                                taskIcon = rememberAsyncImagePainter(
+                                    ImageRequest
+                                        .Builder(LocalContext.current)
+                                        .data(data = state.selectedCategory?.imageUri)
+                                        .build()
+                                ),
+                                categoryName = state.selectedCategory?.name ?: "",
+                                priority = task.taskPriority,
+                                taskTitle = task.title,
+                                date = task.createdAt.toString(),
+                                taskDescription = task.description,
+                                taskCardType = TaskCardType.CATEGORY
+                            )
+                        }
+                    }else{
+                        item{
+                            Box(
+                                modifier = Modifier
+                                    .fillParentMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ){
+                                NoTasksSection()
+                            }
+                        }
                     }
                 }
 
