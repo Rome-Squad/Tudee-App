@@ -66,5 +66,5 @@ fun SliderStatus(state: HomeUiState, modifier: Modifier = Modifier) {
 @Preview(widthDp = 360)
 @Composable
 fun Preview() {
-    HomeContent(state = HomeUiState())
+    HomeContent(state = HomeUiState(), onTasksLinkClick = viewModel::onTasksLinkClick)
 }

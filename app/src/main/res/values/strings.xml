@@ -54,4 +54,6 @@
     <string name="add">Add</string>
     <string name="save">Save</string>
     <string name="add_task">Add Task</string>
+    <string name="task_added_successfully">Task Added Successfully</string>
+    <string name="task_edited_successfully">Task Edited Successfully</string>
 </resources>

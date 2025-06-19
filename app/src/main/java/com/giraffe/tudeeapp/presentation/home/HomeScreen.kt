@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
@@ -42,6 +41,8 @@ import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -50,28 +51,65 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
+    navigateToTasksScreen: (tabIndex: Int) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.homeUiState.collectAsState()
+    var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
+
+    EventListener(
+        events = viewModel.events
+    ) { event ->
+        when (event) {
+            HomeEvent.DismissSnackBar -> {
+                snackBarData = null
+            }
+            is HomeEvent.Error -> {
+                snackBarData = TudeeSnackBarState(
+                    message = errorToMessage(event.error),
+                    isError = true
+                )
+            }
+            is HomeEvent.NavigateToTasksScreen -> {
+                navigateToTasksScreen(event.tabIndex)
+            }
+            HomeEvent.TaskAddedSuccess -> {
+                snackBarData = TudeeSnackBarState(
+                    message = context.getString(R.string.task_added_successfully),
+                    isError = false
+                )
+            }
+            HomeEvent.TaskEditedSuccess -> {
+                snackBarData = TudeeSnackBarState(
+                    message = context.getString(R.string.task_edited_successfully),
+                    isError = false
+                )
+            }
+        }
+    }
+    LaunchedEffect(snackBarData) {
+        if (snackBarData != null) {
+            delay(3000)
+            viewModel.dismissSnackBar()
+        }
+    }
+
     HomeContent(
         state = state,
-        onDismissTaskDetails = viewModel::closeTaskDetails,
-        onAddEditTask = {
-            viewModel.openAddEditTaskBottomSheet(it)
-        },
-        onDismissAddEditTask = viewModel::closeAddEditTaskBottomSheet,
-        onSuccessSave = {
-            Log.d("TAG", "HomeScreen: ")
-            viewModel.showSnackBarSuccess()
-        },
-        onErrorSave = {
-            viewModel.showSnackBarError(it)
-        },
+        snackBarState = snackBarData,
+        onTasksLinkClick = viewModel::onTasksLinkClick,
+        onTaskClick = viewModel::onTaskClick,
+        onEditTaskClick = viewModel::onEditTaskClick,
+        onAddTaskClick = viewModel::onAddTaskClick,
+        onDismissTaskDetails = viewModel::dismissTaskDetails,
+        onDismissTaskEditor = viewModel::dismissTaskEditor,
         onThemeSwitchToggle = onThemeSwitchToggle,
-        isDarkTheme = isDarkTheme
-    ) { taskId ->
-        viewModel.openTaskDetails(taskId)
-    }
+        isDarkTheme = isDarkTheme,
+        onChangeSnackBarState = {
+            snackBarData = it
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,11 +119,13 @@ fun HomeContent(
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
     onDismissTaskDetails: () -> Unit = {},
-    onDismissAddEditTask: () -> Unit = {},
-    onAddEditTask: (Long?) -> Unit = {},
-    onSuccessSave: () -> Unit = {},
-    onErrorSave: (String?) -> Unit = {},
+    onDismissTaskEditor: () -> Unit = {},
     onTaskClick: (Long) -> Unit = {},
+    onTasksLinkClick: (Int) -> Unit,
+    onEditTaskClick: (Long?) -> Unit,
+    onAddTaskClick: () -> Unit,
+    snackBarState: TudeeSnackBarState?,
+    onChangeSnackBarState: (TudeeSnackBarState) -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = false
@@ -156,7 +196,7 @@ fun HomeContent(
                                     .fillMaxWidth()
                                     .background(Theme.color.surface)
                             ) {
-                                if (state.allTasksCount == 0) {
+                                if (state.allTasks.isEmpty()) {
                                     NoTask(
                                         modifier = Modifier
                                             .padding(top = 48.dp, start = 15.dp, end = 15.dp)
@@ -164,23 +204,26 @@ fun HomeContent(
                                 } else {
                                     TaskSection(
                                         modifier = Modifier.padding(top = 24.dp),
-                                        taskStatus = stringResource(R.string.in_progress_tasks),
-                                        numberOfTasks = state.inProgressTasksCount.toString(),
-                                        tasks = state.inProgressTasks,
+                                        taskStatus = stringResource(R.string.to_do_tasks),
+                                        numberOfTasks = state.todoTasks.size.toString(),
+                                        tasks = state.todoTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(0) },
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
                                         modifier = Modifier.padding(top = 24.dp),
-                                        taskStatus = stringResource(R.string.to_do_tasks),
-                                        numberOfTasks = state.toDoTasksCount.toString(),
-                                        tasks = state.todoTasks,
+                                        taskStatus = stringResource(R.string.in_progress_tasks),
+                                        numberOfTasks = state.inProgressTasks.size.toString(),
+                                        tasks = state.inProgressTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(1) },
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
                                         modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.done_tasks),
-                                        numberOfTasks = state.doneTasksCount.toString(),
+                                        numberOfTasks = state.doneTasks.size.toString(),
                                         tasks = state.doneTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(2) },
                                         onTaskClick = onTaskClick
                                     )
                                 }
@@ -196,50 +239,38 @@ fun HomeContent(
                 .align(Alignment.BottomEnd)
                 .padding(end = 12.dp, bottom = 10.dp),
             icon = painterResource(R.drawable.add_task_icon),
-            onClick = {
-                onAddEditTask(null)
-            }
+            onClick = onAddTaskClick
         )
 
 
-        if (state.isOpenTaskDetailsBottomSheet && state.currentTaskId != null) {
+        if (state.isTaskDetailsVisible && state.currentTaskId != null) {
             key(state.currentTaskId) {
                 TaskDetailsBottomSheet(
                     taskId = state.currentTaskId,
                     onnDismiss = onDismissTaskDetails,
-                    onEditTask = onAddEditTask
+                    onEditTask = onEditTaskClick
                 )
             }
         }
 
-        var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
-
-        if (state.isOpenAddEditTaskBottomSheet) {
+        if (state.isTaskEditorVisible) {
             TaskEditorBottomSheet(
                 taskId = state.currentTaskId,
-                onDismissRequest = onDismissAddEditTask,
+                onDismissRequest = onDismissTaskEditor,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSuccess = { message ->
-                    snackBarData = TudeeSnackBarState(
-                        message = message,
-                        iconRes = R.drawable.ic_success,
-                        isError = false
-                    )
+                    onChangeSnackBarState(TudeeSnackBarState(message = message, isError = false))
                 },
                 onError = { error ->
-                    snackBarData = TudeeSnackBarState(
-                        message = error,
-                        iconRes = R.drawable.ic_error,
-                        isError = true
-                    )
+                    onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
                 }
             )
         }
 
-        snackBarData?.let {
+        snackBarState?.let {
             TudeeSnackBar(
                 message = it.message,
-                iconRes = it.iconRes,
+                iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
                 iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
                 iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
                 modifier = Modifier
@@ -247,17 +278,5 @@ fun HomeContent(
                     .align(Alignment.TopCenter)
             )
         }
-        LaunchedEffect(snackBarData) {
-            if (snackBarData != null) {
-                delay(3000)
-                snackBarData = null
-            }
-        }
     }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun Home() {
-    HomeContent(state = HomeUiState())
 }
