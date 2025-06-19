@@ -136,7 +136,7 @@ fun TaskEditorBottomSheetContent(
 
             Text(
                 //
-                text = stringResource(R.string.periorty),
+                text = stringResource(R.string.priority),
                 color = Theme.color.title,
                 style = Theme.textStyle.title.medium,
                 modifier = Modifier.padding(bottom = 8.dp)

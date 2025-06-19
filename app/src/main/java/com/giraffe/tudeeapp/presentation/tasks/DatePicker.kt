@@ -28,6 +28,7 @@ import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import kotlinx.datetime.LocalDateTime
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -47,12 +48,13 @@ fun DatePicker(
     modifier: Modifier = Modifier
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
     var isDialogVisible by remember { mutableStateOf(false) }
 
-    val displayedDays by remember(selectedDate) {
+    val displayedDays by remember(currentMonth) {
         mutableStateOf(
-            (-15..15).map {
-                val date = selectedDate.plusDays(it.toLong())
+            (1..currentMonth.lengthOfMonth()).map { day ->
+                val date = currentMonth.atDay(day)
                 DayData(
                     date = date,
                     dayName = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH),
