@@ -80,7 +80,7 @@ fun TabsBar(
                             style = if (selectedTab == index) Theme.textStyle.label.medium else Theme.textStyle.label.small,
                         )
 
-                        if (tab.value != 0) {
+                        if (tab.value != 0 && selectedTab == index) {
                             Box(
                                 modifier = Modifier
                                     .weight(.27f)

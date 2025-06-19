@@ -16,26 +16,27 @@ fun Priority(
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var icon: Int
-    var label: String
-    when (priorityType) {
-        TaskPriority.HIGH -> {
-            icon = R.drawable.flag_icon; label = stringResource(R.string.high)
-        }
 
-        TaskPriority.MEDIUM -> {
-            icon = R.drawable.alert_icon; label = stringResource(R.string.medium)
-        }
-
-        TaskPriority.LOW -> {
-            icon = R.drawable.trade_down_icon; label = stringResource(R.string.low)
-        }
+    var label: String = when (priorityType) {
+        TaskPriority.HIGH -> stringResource(R.string.high)
+        TaskPriority.MEDIUM -> stringResource(R.string.medium)
+        TaskPriority.LOW -> stringResource(R.string.low)
+    }
+    var icon: Int = when (priorityType) {
+        TaskPriority.HIGH -> R.drawable.flag_icon
+        TaskPriority.MEDIUM ->R.drawable.alert_icon
+        TaskPriority.LOW -> R.drawable.trade_down_icon
+    }
+    val backgroundColor = when (priorityType) {
+        TaskPriority.HIGH -> Theme.color.pinkAccent
+        TaskPriority.MEDIUM -> Theme.color.yellowAccent
+        TaskPriority.LOW -> Theme.color.greenAccent
     }
 
     LabelIconBox(
         icon = painterResource(icon),
         label = label,
-        backgroundColor = if (isSelected) Theme.color.pinkAccent else Theme.color.surfaceLow,
+        backgroundColor = if (isSelected) backgroundColor else Theme.color.surfaceLow,
         contentColor = if (isSelected) Theme.color.onPrimary else Theme.color.hint,
         modifier = modifier
     )
@@ -46,7 +47,7 @@ fun Priority(
 @Composable
 fun PriorityPreview() {
     Priority(
-        priorityType = TaskPriority.HIGH,
+        priorityType = TaskPriority.LOW,
         isSelected = true
     )
 }

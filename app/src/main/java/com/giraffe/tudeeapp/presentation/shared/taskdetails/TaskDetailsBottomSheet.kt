@@ -118,6 +118,12 @@ fun TaskDetailsBottomSheet(
                 color = Theme.color.stroke
             )
 
+            var statusBackground = when (task?.status) {
+                TaskStatus.TODO -> Theme.color.yellowVariant
+                TaskStatus.IN_PROGRESS -> Theme.color.purpleVariant
+                TaskStatus.DONE -> Theme.color.greenVariant
+                else -> Theme.color.purpleVariant
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -125,7 +131,7 @@ fun TaskDetailsBottomSheet(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(100.dp))
-                        .background(Theme.color.purpleVariant)
+                        .background(statusBackground)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(5.dp),
                     verticalAlignment = Alignment.CenterVertically
