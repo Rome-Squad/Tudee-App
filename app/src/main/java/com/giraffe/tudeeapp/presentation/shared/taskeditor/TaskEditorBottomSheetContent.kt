@@ -39,7 +39,6 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.presentation.utils.millisToLocalDateTime
 import kotlinx.datetime.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)

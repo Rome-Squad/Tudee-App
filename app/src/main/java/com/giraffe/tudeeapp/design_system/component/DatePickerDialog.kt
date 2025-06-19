@@ -46,7 +46,8 @@ fun DatePickerDialog(
     if (showDialog) {
         var selectedDate by remember { mutableStateOf(LocalDate.now()) }
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
+            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant()
+                .toEpochMilli()
         )
 
         Dialog(
@@ -56,7 +57,7 @@ fun DatePickerDialog(
             Surface(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 color = Theme.color.surface
             ) {
@@ -79,50 +80,50 @@ fun DatePickerDialog(
                         )
                     )
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
 
+                        TextButton(
+                            modifier = Modifier,
+                            onClick = { datePickerState.selectedDateMillis = null },
+                            text = stringResource(R.string.clear_button),
+                            isLoading = false,
+                            isDisable = false,
+                        )
+
+
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
                             TextButton(
-                                modifier = modifier,
-                                onClick = { datePickerState.selectedDateMillis = null },
-                                text = stringResource(R.string.clear_button),
+                                modifier = Modifier,
+                                onClick = { onDismissRequest() },
+                                text = stringResource(R.string.cancel_button),
                                 isLoading = false,
                                 isDisable = false,
                             )
 
-
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        TextButton(
-                            modifier = modifier,
-                            onClick = { onDismissRequest() },
-                            text = stringResource(R.string.cancel_button),
-                            isLoading = false,
-                            isDisable = false,
-                        )
-
-                        TextButton(
-                            modifier = modifier,
-                            onClick = {
-                                datePickerState.selectedDateMillis?.let { millis ->
-                                    selectedDate = Instant.ofEpochMilli(millis)
-                                        .atZone(ZoneId.of("UTC"))
-                                        .toLocalDate()
-                                    onDateSelected(convertToLocalDateTime(selectedDate))
-                                }
-                                onDismissRequest()
-                            },
-                            text = stringResource(R.string.ok_button),
-                            isLoading = false,
-                            isDisable = false,
-                        )
+                            TextButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    datePickerState.selectedDateMillis?.let { millis ->
+                                        selectedDate = Instant.ofEpochMilli(millis)
+                                            .atZone(ZoneId.of("UTC"))
+                                            .toLocalDate()
+                                        onDateSelected(convertToLocalDateTime(selectedDate))
+                                    }
+                                    onDismissRequest()
+                                },
+                                text = stringResource(R.string.ok_button),
+                                isLoading = false,
+                                isDisable = false,
+                            )
+                        }
                     }
-                }
                 }
             }
         }
