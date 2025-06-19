@@ -41,7 +41,6 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -128,6 +127,8 @@ fun TaskDetailsBottomSheet(
                         .clip(RoundedCornerShape(100.dp))
                         .background(Theme.color.purpleVariant)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
@@ -139,7 +140,7 @@ fun TaskDetailsBottomSheet(
                     Text(
                         text = task?.status?.name?.lowercase().toString(),
                         style = Theme.textStyle.body.small,
-                        color = Theme.color.body
+                        color = Theme.color.purpleAccent
                     )
                 }
 
