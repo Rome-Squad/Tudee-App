@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -42,6 +43,7 @@ import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -244,6 +246,12 @@ fun HomeContent(
                     .padding(16.dp)
                     .align(Alignment.TopCenter)
             )
+        }
+        LaunchedEffect(snackBarData) {
+            if (snackBarData != null) {
+                delay(3000)
+                snackBarData = null
+            }
         }
     }
 }

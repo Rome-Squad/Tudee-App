@@ -9,11 +9,15 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsViewModel
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import kotlinx.coroutines.launch
@@ -27,9 +31,20 @@ fun TaskEditorBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     onSuccess: (String) -> Unit = {},
-    onError: (String) -> Unit = {},
-    viewModel: TaskEditorViewModel = koinViewModel { parametersOf(taskId) },
+    onError: (String) -> Unit = {}
 ) {
+    val storeOwner = remember (taskId) { ViewModelStore() }
+    val owner = remember(taskId) {
+        object : ViewModelStoreOwner {
+            override val viewModelStore = storeOwner
+        }
+    }
+
+    val viewModel: TaskEditorViewModel = koinViewModel(
+        viewModelStoreOwner = owner,
+        parameters = { parametersOf(taskId) }
+    )
+
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
     EventListener(
