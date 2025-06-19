@@ -4,10 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Slider
-import com.giraffe.tudeeapp.presentation.home.HomeContent
 import com.giraffe.tudeeapp.presentation.home.HomeUiState
 
 @Composable
