@@ -47,7 +47,3 @@ fun NavController.navigateToTaskScreen(tabIndex: Int) {
 fun NavController.navigateToTaskByCategoryScreen(categoryId: Long) {
     navigate("${Screen.TasksByCategoryScreen.route}/${categoryId}")
 }
-
-fun NavController.navigateToTaskScreen() {
-    navigate(Screen.TaskScreen.route)
-}

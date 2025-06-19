@@ -47,19 +47,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel(),
-    currentTabIndex: Int
 ) {
     val state by viewModel.state.collectAsState()
-    LaunchedEffect(Unit) {
-        viewModel.selectTab(
-            when (currentTabIndex) {
-                0 -> TaskStatus.TODO
-                1 -> TaskStatus.IN_PROGRESS
-                2 -> TaskStatus.DONE
-                else -> TaskStatus.IN_PROGRESS
-            }
-        )
-    }
     TaskScreenContent(state, viewModel)
 }
 
@@ -180,6 +169,6 @@ fun TaskScreenContent(
 @Composable
 fun TaskScreenPreview() {
     TudeeTheme(isDarkTheme = true) {
-        TaskScreen(currentTabIndex = 1)
+        TaskScreen()
     }
 }

@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.Category
@@ -18,17 +19,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import com.giraffe.tudeeapp.domain.util.Result
+import com.giraffe.tudeeapp.presentation.tasks.TasksArgs
 
 
 class TasksViewModel(
     private val tasksService: TasksService,
-    private val categoryService: CategoriesService
+    private val categoryService: CategoriesService,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), TasksScreenActions {
 
     private val _state = MutableStateFlow(TasksScreenState())
     val state = _state.asStateFlow()
 
     init {
+        val tabIndex = TasksArgs(savedStateHandle).tabIndex
+        selectTab(TaskStatus.entries[tabIndex])
+        Log.d("tab tab", "$tabIndex ::"  + " ${TaskStatus.entries[tabIndex]}")
         getTasks(_state.value.pickedDate)
     }
 

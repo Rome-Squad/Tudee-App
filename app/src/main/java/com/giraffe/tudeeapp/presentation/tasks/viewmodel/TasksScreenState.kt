@@ -12,7 +12,7 @@ import kotlinx.datetime.toLocalDateTime
 data class TasksScreenState(
     val pickedDate: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val selectedTab: TaskStatus = TaskStatus.IN_PROGRESS,
+    val selectedTab: TaskStatus = TaskStatus.DONE,
     val tasks: Map<TaskStatus, List<TaskUi>> = mapOf(
         TaskStatus.TODO to emptyList(),
         TaskStatus.IN_PROGRESS to emptyList(),
