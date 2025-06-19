@@ -87,7 +87,7 @@ fun DatePickerDialog(
 
                             TextButton(
                                 modifier = modifier,
-                                onClick = { onDismissRequest() },
+                                onClick = { datePickerState.selectedDateMillis = null },
                                 text = stringResource(R.string.clear_button),
                                 isLoading = false,
                                 isDisable = false,
