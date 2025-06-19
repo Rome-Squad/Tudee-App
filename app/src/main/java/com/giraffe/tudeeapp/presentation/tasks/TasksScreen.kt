@@ -98,7 +98,6 @@ fun TaskScreenContent(
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
                 val selectedTasks = state.tasks[state.selectedTab] ?: emptyList()
-                Log.d("AAA", "TaskScreenContent: $selectedTasks ")
                 if (selectedTasks.isEmpty()) {
                     item {
                         Box(

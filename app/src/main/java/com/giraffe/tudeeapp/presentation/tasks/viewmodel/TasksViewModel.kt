@@ -54,7 +54,6 @@ class TasksViewModel(
                                 TaskStatus.DONE to tasksUiList.filter { it.status == TaskStatus.DONE },
                             )
 
-                            Log.d("AAA", "View model: $tasksMap ")
                             _state.update { currentState ->
                                 currentState.copy(
                                     tasks = tasksMap,
