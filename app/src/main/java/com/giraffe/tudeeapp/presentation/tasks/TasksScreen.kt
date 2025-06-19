@@ -3,24 +3,17 @@ package com.giraffe.tudeeapp.presentation.tasks
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,19 +28,12 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
-import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheetContent
-import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorUiState
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
-import kotlinx.coroutines.delay
-import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -79,7 +65,6 @@ fun TaskScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 100.dp)
         ) {
             HeaderContent("Tasks")
 
@@ -110,23 +95,23 @@ fun TaskScreenContent(
                             NoTasksSection()
                         }
                     }
-                    return@LazyColumn
+                } else {
+                    items(selectedTasksSize) { index ->
+                        val category =
+                            actions.getCategoryById(selectedTasks?.get(index)?.categoryId ?: 0L)
+                        val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
+
+                        SwipableTask(
+                            taskUi = taskUi,
+                            action = {
+                                actions.setDeleteBottomSheetVisibility(true)
+                                actions.setSelectedTaskId(taskUi.id)
+                            }
+                        )
+                    }
                 }
 
-                items(selectedTasksSize) { index ->
-                    val category =
-                        actions.getCategoryById(selectedTasks?.get(index)?.categoryId ?: 0L)
-                    val taskUi = selectedTasks?.get(index)?.toTaskUi(category)!!
 
-                    SwipableTask(
-                        taskUi = taskUi,
-                        action = {
-                            actions.setDeleteBottomSheetVisibility(true)
-                            actions.setSelectedTaskId(taskUi.id)
-                        }
-                    )
-
-                }
             }
 
             if (state.isDeleteBottomSheetVisible) {
@@ -190,5 +175,3 @@ fun TaskScreenPreview() {
         TaskScreen()
     }
 }
-
-
