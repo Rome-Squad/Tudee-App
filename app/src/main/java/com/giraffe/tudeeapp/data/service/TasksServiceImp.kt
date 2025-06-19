@@ -22,7 +22,6 @@ class TasksServiceImp(
     ) : TasksService {
     override fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
-            Log.d("TAG", "getTasksByDate: ${date.toString()}")
             taskDao.getTasksByDate(date.date.atTime(0, 0).toString())
                 .map { list -> list.map { it.toTask() } }
         }

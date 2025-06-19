@@ -25,7 +25,6 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 @Composable
@@ -34,7 +33,8 @@ fun TaskSection(
     taskStatus: String = "In Progress",
     numberOfTasks: String = "0",
     tasks: List<TaskUi> = emptyList(),
-    onTaskClick: (Long) -> Unit
+    onTaskClick: (Long) -> Unit,
+    onTasksLinkClick: () -> Unit
 ) {
     Column(modifier = modifier) {
         Row(
@@ -56,7 +56,11 @@ fun TaskSection(
                 )
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                        .clickable {
+                            onTasksLinkClick()
+                        },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
@@ -96,15 +100,3 @@ fun TaskSection(
     }
 }
 
-
-@Preview
-@Composable
-fun TaskSectionComponentPreview() {
-    Box(
-        modifier = Modifier
-            .background(Color.White)
-            .fillMaxWidth()
-    ) {
-        TaskSection() {}
-    }
-}
