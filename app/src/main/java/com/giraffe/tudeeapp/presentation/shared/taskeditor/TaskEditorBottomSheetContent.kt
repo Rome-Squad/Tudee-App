@@ -1,4 +1,5 @@
 package com.giraffe.tudeeapp.presentation.shared.taskeditor
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,7 +59,8 @@ fun TaskEditorBottomSheetContent(
     DatePickerDialog(
         showDialog = showDatePickerDialog,
         onDismissRequest = {
-            showDatePickerDialog = false },
+            showDatePickerDialog = false
+        },
         onDateSelected = { selectedDateMillis ->
             onDueDateChange(millisToLocalDateTime(selectedDateMillis))
             showDatePickerDialog = false
@@ -111,18 +113,16 @@ fun TaskEditorBottomSheetContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Box(
+            DefaultTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { showDatePickerDialog = true }
-            ) {
-                DefaultTextField(
-                    textValue =  taskUi.dueDate.date.toString(),
-                    onValueChange = { },
-                    hint = stringResource(R.string.due_date_hint),
-                    iconRes = R.drawable.calendar
-                )
-            }
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { showDatePickerDialog = true },
+                isReadOnly = true,
+                textValue = taskUi.dueDate.date.toString(),
+                hint = stringResource(R.string.due_date_hint),
+                iconRes = R.drawable.calendar
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -140,7 +140,7 @@ fun TaskEditorBottomSheetContent(
                 TaskPriority.entries.reversed().forEach { priority ->
                     Priority(
                         priorityType = priority,
-                        isSelected =  taskUi.priorityType == priority,
+                        isSelected = taskUi.priorityType == priority,
                         modifier = Modifier
                             .clickable { onPriorityChange(priority) }
                     )

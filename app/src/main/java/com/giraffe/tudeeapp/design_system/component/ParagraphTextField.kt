@@ -40,6 +40,7 @@ fun ParagraphTextField(
             ),
     ) {
         TextField(
+            interactionSource = interactionSource,
             modifier = Modifier.fillMaxSize(),
             value = textValue,
             onValueChange = onValueChange,
