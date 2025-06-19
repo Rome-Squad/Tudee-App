@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.home.composable.NoTask
@@ -38,7 +39,7 @@ import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.shared.addedittask.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
@@ -196,6 +197,7 @@ fun HomeContent(
             }
         )
 
+
         if (state.isOpenTaskDetailsBottomSheet && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
@@ -204,31 +206,37 @@ fun HomeContent(
             )
         }
 
+        var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
+
         if (state.isOpenAddEditTaskBottomSheet) {
             TaskEditorBottomSheet(
                 taskId = state.currentTaskId,
                 onDismissRequest = onDismissAddEditTask,
-                headerTitle = if (state.currentTaskId == null) "Add Task" else "Edit Task",
-                saveButtonText = "Save",
-                onSuccessSave = {
-                    Log.d("TAG", "HomeScreen: 000000")
-                    onSuccessSave()
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onSuccess = { message ->
+                    snackBarData = TudeeSnackBarState(
+                        message = message,
+                        iconRes = R.drawable.ic_success,
+                        isError = false
+                    )
                 },
-                onError = {
-                    onErrorSave(it)
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                onError = { error ->
+                    snackBarData = TudeeSnackBarState(
+                        message = error,
+                        iconRes = R.drawable.ic_error,
+                        isError = true
+                    )
+                }
             )
         }
 
-        AnimatedVisibility(state.isShowSnakbar) {
+        snackBarData?.let {
             TudeeSnackBar(
-                message = if (state.errorMessage != null && state.addEditBottomSheetToAdd) "Some error happened" else if (state.errorMessage == null && !state.addEditBottomSheetToAdd) "Edited Task successfully." else "Added Task Successfully.",
-                iconRes = if (state.errorMessage == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.errorMessage == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.errorMessage == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
+                message = it.message,
+                iconRes = it.iconRes,
+                iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
+                iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
+                modifier = Modifier.padding(16.dp).align(Alignment.TopCenter)
             )
         }
     }
