@@ -24,6 +24,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
@@ -38,6 +41,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -49,12 +53,25 @@ fun TaskDetailsBottomSheet(
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
+    val storeOwner = remember (taskId) { ViewModelStore() }
+    val owner = remember(taskId) {
+        object : ViewModelStoreOwner {
+            override val viewModelStore = storeOwner
+        }
+    }
+
+    val viewModel: TaskDetailsViewModel = koinViewModel(
+        viewModelStoreOwner = owner,
+        parameters = { parametersOf(taskId) }
+    )
+
     val task = viewModel.taskDetailsState.task
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = onnDismiss,
+        onDismissRequest = {
+            onnDismiss()
+        },
         modifier = modifier,
         containerColor = Theme.color.surface
     ) {

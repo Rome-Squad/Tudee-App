@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.presentation.home
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,8 +39,8 @@ import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
@@ -93,7 +93,9 @@ fun HomeContent(
     )
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
     ) {
         Box(
             modifier = Modifier
@@ -199,11 +201,13 @@ fun HomeContent(
 
 
         if (state.isOpenTaskDetailsBottomSheet && state.currentTaskId != null) {
-            TaskDetailsBottomSheet(
-                taskId = state.currentTaskId,
-                onnDismiss = onDismissTaskDetails,
-                onEditTask = onAddEditTask
-            )
+            key(state.currentTaskId) {
+                TaskDetailsBottomSheet(
+                    taskId = state.currentTaskId,
+                    onnDismiss = onDismissTaskDetails,
+                    onEditTask = onAddEditTask
+                )
+            }
         }
 
         var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
@@ -236,7 +240,9 @@ fun HomeContent(
                 iconRes = it.iconRes,
                 iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
                 iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
-                modifier = Modifier.padding(16.dp).align(Alignment.TopCenter)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.TopCenter)
             )
         }
     }
