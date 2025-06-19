@@ -5,18 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,9 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
 import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
@@ -82,15 +76,16 @@ fun TaskEditorBottomSheetContent(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Theme.color.surface)
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 120.dp, top = 16.dp)
-                .align(Alignment.TopCenter)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
             Text(
                 text = if (isNewTask) stringResource(R.string.add_task) else stringResource(R.string.edit_task),
@@ -122,7 +117,7 @@ fun TaskEditorBottomSheetContent(
                     .clickable { showDatePickerDialog = true }
             ) {
                 DefaultTextField(
-                    textValue = taskUi.dueDate.date.toString(),
+                    textValue =  taskUi.dueDate.date.toString(),
                     onValueChange = { },
                     hint = stringResource(R.string.due_date_hint),
                     iconRes = R.drawable.calendar
@@ -145,10 +140,8 @@ fun TaskEditorBottomSheetContent(
                 TaskPriority.entries.reversed().forEach { priority ->
                     Priority(
                         priorityType = priority,
-                        isSelected = taskUi.priorityType == priority,
+                        isSelected =  taskUi.priorityType == priority,
                         modifier = Modifier
-                            .height(28.dp)
-                            .width(56.dp)
                             .clickable { onPriorityChange(priority) }
                     )
                 }
@@ -163,33 +156,43 @@ fun TaskEditorBottomSheetContent(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 328.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
+            val chunkedCategories = taskEditorUiState.categories.chunked(3)
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                items(items = taskEditorUiState.categories, key = { it.id }) { category ->
-                    val painter = painterResource(R.drawable.book_open_icon)
-                    CategoryItem(
-                        icon = painter,
-                        categoryName = category.name,
-                        isSelected = taskUi.category.id == category.id,
-                        count = 0,
-                        isShowCount = false,
-                        onClick = { onCategoryChange(category.id) }
-                    )
+                chunkedCategories.forEach { rowItems ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        rowItems.forEach { category ->
+                            val painter = rememberAsyncImagePainter(model = category.imageUri)
+
+                            CategoryItem(
+                                icon = painter,
+                                categoryName = category.name,
+                                isSelected = taskUi.category.id == category.id,
+                                count = 0,
+                                isShowCount = false,
+                                onClick = { onCategoryChange(category.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        repeat(3 - rowItems.size) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
+
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .background(Theme.color.surfaceHigh)
                 .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
         ) {
@@ -215,4 +218,5 @@ fun TaskEditorBottomSheetContent(
             )
         }
     }
+
 }
