@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,20 +39,19 @@ fun CategoryItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            Modifier
-                .clickable(onClick = onClick)
-        ) {
+        Box {
             Box(
                 Modifier
                     .clip(RoundedCornerShape(100.dp))
-                    .background(LocalTudeeColors.current.surfaceHigh),
+                    .background(LocalTudeeColors.current.surfaceHigh)
+                    .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = icon,
                     contentDescription = stringResource(R.string.category_icon),
-                    modifier = Modifier.padding(23.dp)
+                    modifier = Modifier.padding(23.dp).size(32.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
             if (isSelected) {

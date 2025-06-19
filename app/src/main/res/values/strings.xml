@@ -20,4 +20,9 @@
     <string name="splash_background">Splash Background</string>
     <string name="skip">Skip</string>
     <string name="splash_logo">Splash Logo</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="added_category_successfully">Added category successfully.</string>
+    <string name="some_error_happened">Some error happened</string>
+    <string name="categories">Categories</string>
+    <string name="edit_category">Edit category</string>
 </resources>
