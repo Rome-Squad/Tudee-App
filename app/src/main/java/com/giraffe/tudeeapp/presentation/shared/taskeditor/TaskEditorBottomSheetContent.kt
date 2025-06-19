@@ -1,4 +1,6 @@
 package com.giraffe.tudeeapp.presentation.shared.taskeditor
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +42,7 @@ import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.millisToLocalDateTime
 import kotlinx.datetime.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
     taskEditorUiState: TaskEditorUiState,
@@ -60,7 +63,7 @@ fun TaskEditorBottomSheetContent(
         onDismissRequest = {
             showDatePickerDialog = false },
         onDateSelected = { selectedDateMillis ->
-            onDueDateChange(millisToLocalDateTime(selectedDateMillis))
+            onDueDateChange(selectedDateMillis)
             showDatePickerDialog = false
         }
     )

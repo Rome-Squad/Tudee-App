@@ -51,7 +51,7 @@ data class DayData(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
-    setDate: (LocalDateTime) -> Unit = {},
+    onDateSelected: (LocalDateTime) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -95,7 +95,7 @@ fun DatePicker(
                     isSelected = dayData.date == selectedDate,
                     onClick = {
                         selectedDate = dayData.date
-                        setDate(convertToLocalDateTime(selectedDate))
+                        onDateSelected(convertToLocalDateTime(selectedDate))
                     }
                 )
             }
@@ -124,7 +124,7 @@ fun DatePicker(
                             selectedDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.of("UTC"))
                                 .toLocalDate()
-                            setDate(convertToLocalDateTime(selectedDate))
+                            onDateSelected(convertToLocalDateTime(selectedDate))
                         }
                         isDialogVisible = false
                     }
