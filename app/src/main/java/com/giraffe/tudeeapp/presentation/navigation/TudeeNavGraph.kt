@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -12,6 +14,7 @@ import com.giraffe.tudeeapp.presentation.splash.splashscreen.splashRoute
 import com.giraffe.tudeeapp.presentation.tasks.tasksRoute
 import com.giraffe.tudeeapp.presentation.tasks_by_category.tasksByCategoryRoute
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TudeeNavGraph(
     modifier: Modifier = Modifier,
@@ -39,4 +42,8 @@ fun TudeeNavGraph(
 
 fun NavController.navigateToTaskByCategoryScreen(categoryId: Long) {
     navigate("${Screen.TasksByCategoryScreen.route}/${categoryId}")
+}
+
+fun NavController.navigateToTaskScreen() {
+    navigate(Screen.TaskScreen.route)
 }
