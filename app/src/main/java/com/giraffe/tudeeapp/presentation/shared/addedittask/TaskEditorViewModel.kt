@@ -15,10 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 class TaskEditorViewModel(
-    private val taskId: Long? = null,
+    private val initialTaskId: Long? = null,
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
 ) : ViewModel() {
@@ -26,12 +27,21 @@ class TaskEditorViewModel(
     private val _taskState = MutableStateFlow(TaskEditorBottomSheetUiState())
     val taskState: StateFlow<TaskEditorBottomSheetUiState> = _taskState
 
+    private var currentTaskId: Long? = initialTaskId
+
     init {
         loadCategories()
-        taskId?.let { loadTask(it) }
+        currentTaskId?.let { loadTask(it) }
     }
 
-    private fun loadCategories() {
+    fun setTaskId(taskId: Long?, forceReload: Boolean = false) {
+        if (forceReload || taskId != currentTaskId) {
+            currentTaskId = taskId
+            if (taskId != null) loadTask(taskId) else clearCurrentTask()
+        }
+    }
+
+    fun loadCategories() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
 
@@ -55,7 +65,7 @@ class TaskEditorViewModel(
         }
     }
 
-    private fun loadTask(id: Long) {
+    fun loadTask(id: Long) {
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
 
@@ -66,6 +76,7 @@ class TaskEditorViewModel(
                         title = task.title,
                         description = task.description,
                         dueDate = task.dueDate,
+                        dueDateMillis = task.dueDate.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
                         taskPriority = task.taskPriority,
                         taskStatus = task.status,
                         categoryId = task.categoryId,
@@ -75,6 +86,23 @@ class TaskEditorViewModel(
             }.onError { error ->
                 updateState { copy(isLoading = false, errorMessage = error.toString()) }
             }
+        }
+    }
+
+    fun resetFieldsWith(task: Task) {
+        updateState {
+            copy(
+                id = task.id,
+                title = task.title,
+                description = task.description,
+                dueDate = task.dueDate,
+                dueDateMillis = task.dueDate.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
+                taskPriority = task.taskPriority,
+                taskStatus = task.status,
+                categoryId = task.categoryId,
+                isSuccessSave = false,
+                errorMessage = null
+            )
         }
     }
 
@@ -98,8 +126,6 @@ class TaskEditorViewModel(
             )
         }
     }
-
-
 
     fun onPriorityChange(priority: TaskPriority) {
         updateState { copy(taskPriority = priority) }
@@ -131,7 +157,7 @@ class TaskEditorViewModel(
                 updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             )
 
-            val result = if (taskId == null) {
+            val result = if (currentTaskId == null) {
                 tasksService.createTask(task)
             } else {
                 tasksService.updateTask(task)
@@ -141,12 +167,10 @@ class TaskEditorViewModel(
                 clearCurrentTask()
                 updateState { copy(isSuccessSave = true, isLoading = false) }
             }.onError { error ->
-                clearCurrentTask()
                 updateState { copy(isLoading = false, errorMessage = error.toString()) }
             }
         }
     }
-
 
     private fun updateState(update: TaskEditorBottomSheetUiState.() -> TaskEditorBottomSheetUiState) {
         val updated = _taskState.value.update()

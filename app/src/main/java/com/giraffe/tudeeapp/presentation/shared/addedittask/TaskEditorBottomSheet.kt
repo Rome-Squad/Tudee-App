@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,7 +30,7 @@ fun TaskEditorBottomSheet(
     modifier: Modifier = Modifier,
     onSuccessSave: () -> Unit = {},
     onError: (String?) -> Unit = {},
-    viewModel: TaskEditorViewModel = koinViewModel { parametersOf(taskId) },
+    viewModel: TaskEditorViewModel = koinViewModel  { parametersOf(null) },
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val maxSheetHeight = screenHeight - 72.dp
@@ -39,10 +40,11 @@ fun TaskEditorBottomSheet(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (taskState.isSuccessSave) {
-        Log.d("TAG", "TaskEditorBottomSheet: 1111111")
         onSuccessSave()
     }
-
+    LaunchedEffect(taskId) {
+        viewModel.setTaskId(taskId, forceReload = true)
+    }
     if (taskState.errorMessage != null) {
         onError(taskState.errorMessage)
     }
