@@ -51,4 +51,7 @@
     <string name="card_overview_icon">card overview icon</string>
     <string name="slider_subtitle_for_empty_tasks">Fill your day with something \nawesome.</string>
     <string name="edit_task">Edit Task</string>
+    <string name="add">Add</string>
+    <string name="save">Save</string>
+    <string name="add_task">Add Task</string>
 </resources>

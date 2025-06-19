@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.util
+package com.giraffe.tudeeapp.presentation.utils
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone

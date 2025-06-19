@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.util.getTodayDate
+import com.giraffe.tudeeapp.presentation.utils.getTodayDate
 
 @Composable
 fun TopSlider(modifier: Modifier = Modifier) {

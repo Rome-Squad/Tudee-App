@@ -13,7 +13,7 @@ interface TaskEditorActions {
     fun onChangeTaskDescriptionValue(description: String)
     fun onChangeTaskDueDateValue(dueDate: LocalDateTime)
     fun onChangeTaskPriorityValue(priority: TaskPriority)
-    fun onChangeTaskCategoryValue(category: Category)
+    fun onChangeTaskCategoryValue(categoryId: Long)
     fun onChangeTaskStatusValue(status: TaskStatus)
 
 }

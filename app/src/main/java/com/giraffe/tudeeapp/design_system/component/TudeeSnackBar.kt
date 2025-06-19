@@ -97,6 +97,13 @@ fun TudeeSnackBar(
 }
 
 
+data class TudeeSnackBarState(
+    val message: String,
+    val iconRes: Int,
+    val isError: Boolean = false
+)
+
+
 @Preview(showBackground = true)
 @Composable
 fun TudeeSnackBarPreview() {

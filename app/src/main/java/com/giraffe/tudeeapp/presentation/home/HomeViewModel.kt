@@ -10,7 +10,7 @@ import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
-import com.giraffe.tudeeapp.presentation.util.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

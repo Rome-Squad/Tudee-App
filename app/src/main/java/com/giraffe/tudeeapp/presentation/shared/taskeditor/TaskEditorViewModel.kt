@@ -11,6 +11,7 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import com.giraffe.tudeeapp.presentation.uimodel.toTask
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.channels.Channel
@@ -18,7 +19,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class TaskEditorViewModel(
     private val taskId: Long? = null,
@@ -80,7 +84,8 @@ class TaskEditorViewModel(
                     taskEditorUiState.update {
                         it.copy(
                             taskUi = task.toTaskUi(category),
-                            isLoading = false
+                            isLoading = false,
+                            isValidTask = isValidTask()
                         )
                     }
                 } else {
@@ -109,12 +114,21 @@ class TaskEditorViewModel(
     }
 
     override fun saveTask() {
-        taskEditorUiState.value.taskUi?.toTask()?.let { task ->
-            if (taskId == null) {
-                addTask(task)
-            } else {
-                editTask(task)
-            }
+        val task = taskEditorUiState.value.taskUi.toTask()
+
+        if (taskId == null) {
+            addTask(
+                task.copy(
+                    createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                    updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            )
+        } else {
+            editTask(
+                task.copy(
+                    updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            )
         }
     }
 
@@ -180,6 +194,13 @@ class TaskEditorViewModel(
 
     override fun cancel() {
         viewModelScope.launch {
+            taskEditorUiState.update {
+                it.copy(
+                    taskUi = TaskUi(),
+                    isLoading = false,
+                    isValidTask = false
+                )
+            }
             _events.send(TaskEditorEvent.DismissTaskEditor)
         }
     }
@@ -187,7 +208,8 @@ class TaskEditorViewModel(
     override fun onChangeTaskTitleValue(title: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi?.copy(title = title)
+                taskUi = it.taskUi.copy(title = title),
+                isValidTask = isValidTask()
             )
         }
     }
@@ -195,7 +217,8 @@ class TaskEditorViewModel(
     override fun onChangeTaskDescriptionValue(description: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi?.copy(description = description)
+                taskUi = it.taskUi.copy(description = description),
+                isValidTask = isValidTask()
             )
         }
     }
@@ -203,7 +226,8 @@ class TaskEditorViewModel(
     override fun onChangeTaskDueDateValue(dueDate: LocalDateTime) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi?.copy(dueDate = dueDate)
+                taskUi = it.taskUi.copy(dueDate = dueDate),
+                isValidTask = isValidTask()
             )
         }
     }
@@ -211,24 +235,48 @@ class TaskEditorViewModel(
     override fun onChangeTaskPriorityValue(priority: TaskPriority) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi?.copy(priorityType = priority)
+                taskUi = it.taskUi.copy(priorityType = priority),
+                isValidTask = isValidTask()
             )
         }
     }
 
-    override fun onChangeTaskCategoryValue(category: Category) {
-        taskEditorUiState.update {
-            it.copy(
-                taskUi = it.taskUi?.copy(category = category)
-            )
+    override fun onChangeTaskCategoryValue(categoryId: Long) {
+        viewModelScope.launch {
+            val category = getCategoryById(categoryId)
+            if (category != null) {
+                taskEditorUiState.update {
+                    it.copy(
+                        taskUi = it.taskUi.copy(category = category),
+                        isLoading = false,
+                        isValidTask = isValidTask()
+                    )
+                }
+            } else {
+                taskEditorUiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+                _events.send(TaskEditorEvent.Error(NotFoundError()))
+            }
         }
     }
 
     override fun onChangeTaskStatusValue(status: TaskStatus) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi?.copy(status = status)
+                taskUi = it.taskUi.copy(status = status),
+                isValidTask = isValidTask()
             )
         }
+    }
+
+    private fun isValidTask(): Boolean {
+        return !(taskEditorUiState.value.taskUi.title.isBlank() ||
+                taskEditorUiState.value.taskUi.description.isBlank() ||
+                taskEditorUiState.value.taskUi.category.name.isBlank() ||
+                taskEditorUiState.value.taskUi.category.imageUri.isBlank()
+                )
     }
 }

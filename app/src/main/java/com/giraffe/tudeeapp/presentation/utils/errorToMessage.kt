@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.util
+package com.giraffe.tudeeapp.presentation.utils
 
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.NotFoundError
