@@ -32,8 +32,10 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -111,7 +113,7 @@ fun DatePicker(
 
     if (isDialogVisible) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.toEpochDay() * 24 * 60 * 60 * 1000
+            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
         )
         DatePickerDialog(
             onDismissRequest = { isDialogVisible = false },
@@ -119,8 +121,8 @@ fun DatePicker(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            selectedDate = java.time.Instant.ofEpochMilli(millis)
-                                .atZone(java.time.ZoneId.systemDefault())
+                            selectedDate = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.of("UTC"))
                                 .toLocalDate()
                             setDate(convertToLocalDateTime(selectedDate))
                         }
