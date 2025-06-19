@@ -20,7 +20,7 @@ import kotlinx.datetime.LocalDateTime
 class TasksViewModel(
     private val tasksService: TasksService,
     private val categoryService: CategoriesService
-) : ViewModel() {
+) : ViewModel(), TasksScreenActions {
 
     private val _state = MutableStateFlow(TasksScreenState())
     val state = _state.asStateFlow()
@@ -50,32 +50,32 @@ class TasksViewModel(
         }
     }
 
-    fun setPickedDate(date: LocalDateTime) {
+    override fun setPickedDate(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(pickedDate = date) }
             getTasks(date)
         }
     }
 
-    fun setAddBottomSheetVisibility(isVisible: Boolean) {
+    override fun setAddBottomSheetVisibility(isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isAddBottomSheetVisible = isVisible) }
         }
     }
 
-    fun setDeleteBottomSheetVisibility(isVisible: Boolean) {
+    override fun setDeleteBottomSheetVisibility(isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isDeleteBottomSheetVisible = isVisible) }
         }
     }
 
-    fun selectTab(tab: TaskStatus) {
+    override fun selectTab(tab: TaskStatus) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedTab = tab) }
         }
     }
 
-    fun getCategoryById(categoryId: Long): Category {
+    override fun getCategoryById(categoryId: Long): Category {
         var category: Category? = null
         viewModelScope.launch(Dispatchers.IO) {
             categoryService.getCategoryById(categoryId)
@@ -87,13 +87,27 @@ class TasksViewModel(
         )
     }
 
-    fun setSelectedTaskId(taskId: Long) {
+    override fun showSnackBarMessage(message: String, hasError: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update {
+                it.copy(
+                    snackBarMsg = message,
+                    isSnackBarVisible = true,
+                    snackBarHasError = hasError
+                )
+            }
+            delay(3000)
+            _state.update { it.copy(snackBarMsg = "", isSnackBarVisible = false , snackBarHasError = false) }
+        }
+    }
+
+    override fun setSelectedTaskId(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedTaskId = taskId) }
         }
     }
 
-    fun deleteTask(taskId: Long) {
+    override fun deleteTask(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             tasksService.deleteTask(taskId)
                 .onSuccess {

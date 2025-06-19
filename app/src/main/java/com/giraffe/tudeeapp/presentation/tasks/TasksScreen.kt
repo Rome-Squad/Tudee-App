@@ -38,9 +38,11 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheetContent
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorUiState
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
+import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
@@ -57,7 +59,7 @@ fun TaskScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val stateAdd by addViewModel.taskEditorUiState.collectAsState()
-    TaskScreenContent(state, viewModel, stateAdd, addViewModel)
+    TaskScreenContent(state, viewModel)
 
 }
 
@@ -67,9 +69,7 @@ fun TaskScreen(
 @Composable
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
-    actions: TasksViewModel,
-    stateAdd: TaskEditorUiState = TaskEditorUiState(),
-    addAction: TaskEditorViewModel,
+    actions: TasksScreenActions,
 ) {
     Box(
         modifier = Modifier
@@ -144,19 +144,17 @@ fun TaskScreenContent(
             }
 
             if (state.isAddBottomSheetVisible) {
-                TaskEditorBottomSheetContent(
-                    taskEditorUiState = stateAdd,
-                    onTitleChange = addAction::onChangeTaskTitleValue,
-                    onDescriptionChange = addAction::onChangeTaskDescriptionValue,
-                    onPriorityChange = addAction::onChangeTaskPriorityValue,
-                    onCategoryChange = addAction::onChangeTaskCategoryValue,
-                    onDueDateChange = addAction::onChangeTaskDueDateValue,
-                    onSaveClick = addAction::saveTask,
-                    onCancelClick = {
-                        addAction.cancel()
+                TaskEditorBottomSheet(
+                    taskId = null,
+                    onDismissRequest = { actions.setAddBottomSheetVisibility(false) },
+                    onSuccess = { successMsg ->
                         actions.setAddBottomSheetVisibility(false)
+                        actions.showSnackBarMessage(successMsg, hasError = false)
                     },
-                    isNewTask = true
+                    onError = { errorMsg ->
+                        actions.setAddBottomSheetVisibility(false)
+                        actions.showSnackBarMessage(errorMsg, hasError = true)
+                    }
                 )
             }
         }
@@ -171,10 +169,10 @@ fun TaskScreenContent(
 
         AnimatedVisibility(state.isSnackBarVisible) {
             TudeeSnackBar(
-                message = if (state.error == null) state.snackBarMsg else "Some error happened",
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
+                message = if (state.error == null && !state.snackBarHasError) state.snackBarMsg else "Some error happened",
+                iconRes = if (state.error == null && !state.snackBarHasError) R.drawable.ic_success else R.drawable.ic_error,
+                iconTintColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenAccent else Theme.color.error,
+                iconBackgroundColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenVariant else Theme.color.errorVariant,
                 modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.TopCenter)

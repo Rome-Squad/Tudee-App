@@ -24,4 +24,5 @@ data class TasksScreenState(
     val error: DomainError? = null,
     val isSnackBarVisible: Boolean = false,
     val snackBarMsg: String = "",
+    val snackBarHasError: Boolean = false,
 )
