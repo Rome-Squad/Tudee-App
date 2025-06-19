@@ -149,6 +149,7 @@ class TaskEditorViewModel(
                     }
                     _events.send(TaskEditorEvent.TaskAddedSuccess)
                     _events.send(TaskEditorEvent.DismissTaskEditor)
+                    clearTask()
                 }
                 .onError {
                     taskEditorUiState.update {
@@ -158,7 +159,9 @@ class TaskEditorViewModel(
                     }
                     _events.send(TaskEditorEvent.Error(it))
                     _events.send(TaskEditorEvent.DismissTaskEditor)
+                    clearTask()
                 }
+
         }
     }
 
@@ -179,6 +182,7 @@ class TaskEditorViewModel(
                     }
                     _events.send(TaskEditorEvent.TaskEditedSuccess)
                     _events.send(TaskEditorEvent.DismissTaskEditor)
+                    clearTask()
                 }
                 .onError {
                     taskEditorUiState.update {
@@ -188,19 +192,14 @@ class TaskEditorViewModel(
                     }
                     _events.send(TaskEditorEvent.Error(it))
                     _events.send(TaskEditorEvent.DismissTaskEditor)
+                    clearTask()
                 }
         }
     }
 
     override fun cancel() {
         viewModelScope.launch {
-            taskEditorUiState.update {
-                it.copy(
-                    taskUi = TaskUi(),
-                    isLoading = false,
-                    isValidTask = false
-                )
-            }
+            clearTask()
             _events.send(TaskEditorEvent.DismissTaskEditor)
         }
     }
@@ -278,5 +277,17 @@ class TaskEditorViewModel(
                 taskEditorUiState.value.taskUi.category.name.isBlank() ||
                 taskEditorUiState.value.taskUi.category.imageUri.isBlank()
                 )
+    }
+
+    private fun clearTask() {
+        taskEditorUiState.update {
+            it.copy(
+                taskUi = TaskUi(),
+                isLoading = false,
+                isValidTask = false,
+                isSuccessAdded = false,
+                isSuccessEdited = false
+            )
+        }
     }
 }
