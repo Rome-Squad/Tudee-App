@@ -26,8 +26,8 @@ val darkThemeColor = TudeeColors(
     greenAccent = Color(0xFF76C499),
     greenVariant = Color(0xFFE4F2EA),
     purpleAccent = Color(0xFF9887F5),
-    purpleVariant = Color(0xFFEEEDF7),
+    purpleVariant = Color(0xFF1C1A33),
     error = Color(0xFFE55C5C),
-    errorVariant = Color(0xFFFCE8E8),
+    errorVariant = Color(0xFF1F1111),
     overlay = Color(0x5102151E)
 )
