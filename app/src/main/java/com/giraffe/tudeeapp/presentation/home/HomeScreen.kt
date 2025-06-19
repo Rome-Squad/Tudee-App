@@ -244,7 +244,6 @@ fun HomeContent(
 
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
-
                 TaskDetailsBottomSheet(
                     taskId = state.currentTaskId,
                     onnDismiss = onDismissTaskDetails,

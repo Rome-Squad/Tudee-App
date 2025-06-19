@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus

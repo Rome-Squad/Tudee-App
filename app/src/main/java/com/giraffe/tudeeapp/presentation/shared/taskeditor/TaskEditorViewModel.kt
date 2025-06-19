@@ -16,6 +16,7 @@ import com.giraffe.tudeeapp.presentation.uimodel.toTask
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,12 +37,15 @@ class TaskEditorViewModel(
     val events = _events.receiveAsFlow()
 
     init {
-        loadCategories()
-        taskId?.let { loadTask(it) }
+        viewModelScope.launch {
+            loadCategories()
+
+            taskId?.let { loadTask(it) }
+        }
     }
 
 
-    private fun loadCategories() = viewModelScope.launch {
+    private suspend fun loadCategories() {
         taskEditorUiState.update {
             it.copy(
                 isLoading = true
@@ -50,14 +54,14 @@ class TaskEditorViewModel(
 
         categoriesService.getAllCategories()
             .onSuccess { flow ->
-                flow.collect { categories ->
+                val categories = flow.first()
                     taskEditorUiState.update {
                         it.copy(
                             categories = categories,
                             isLoading = false
                         )
                     }
-                }
+
             }
             .onError { error ->
                 taskEditorUiState.update {
@@ -70,7 +74,7 @@ class TaskEditorViewModel(
 
     }
 
-    private fun loadTask(id: Long) = viewModelScope.launch {
+    private suspend fun loadTask(id: Long) {
         taskEditorUiState.update {
             it.copy(
                 isLoading = true
@@ -89,6 +93,7 @@ class TaskEditorViewModel(
                         )
                     }
                 } else {
+
                     taskEditorUiState.update {
                         it.copy(
                             isLoading = false
