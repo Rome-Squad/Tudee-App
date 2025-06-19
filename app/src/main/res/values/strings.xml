@@ -20,4 +20,14 @@
     <string name="splash_background">Splash Background</string>
     <string name="skip">Skip</string>
     <string name="splash_logo">Splash Logo</string>
+    <string name="add_task">Add Task</string>
+    <string name="edit_task">Edit Task\n</string>
+    <string name="category">Category\n</string>
+    <string name="add">Add\n</string>
+    <string name="save">Save</string>
+    <string name="periorty">Periorty</string>
+    <string name="due_date_hint">Due Date Hint</string>
+    <string name="clear_button">Clear</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="ok_button">Ok</string>
 </resources>
