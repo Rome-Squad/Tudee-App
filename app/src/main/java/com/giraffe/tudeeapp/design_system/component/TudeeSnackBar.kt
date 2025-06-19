@@ -49,14 +49,14 @@ fun TudeeSnackBar(
     LaunchedEffect (Unit) {
         delay(durationMillis)
         visible = false
-        delay(300)
+        delay(800)
         onDismiss()
     }
 
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(animationSpec = tween(durationMillis = 300)),
-        exit = fadeOut(animationSpec = tween(durationMillis = 300))
+        enter = fadeIn(animationSpec = tween(durationMillis = 800)),
+        exit = fadeOut(animationSpec = tween(durationMillis = 800))
     ) {
         Row(
             modifier = modifier

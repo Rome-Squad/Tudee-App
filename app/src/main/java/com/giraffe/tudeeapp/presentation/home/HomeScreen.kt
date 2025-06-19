@@ -244,13 +244,13 @@ fun HomeContent(
 
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
-            key(state.currentTaskId) {
+
                 TaskDetailsBottomSheet(
                     taskId = state.currentTaskId,
                     onnDismiss = onDismissTaskDetails,
                     onEditTask = onEditTaskClick
                 )
-            }
+
         }
 
         if (state.isTaskEditorVisible) {
