@@ -31,6 +31,7 @@ fun CategoryItem(
     categoryName: String,
     modifier: Modifier = Modifier,
     count: Int = 0,
+    isShowCount : Boolean = true,
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -70,19 +71,22 @@ fun CategoryItem(
                     )
                 }
             } else {
-                Box(
-                    Modifier
-                        .clip(RoundedCornerShape(100.dp))
-                        .background(LocalTudeeColors.current.surfaceLow)
-                        .padding(vertical = 2.dp, horizontal = 10.5.dp)
-                        .align(Alignment.TopEnd),
-                ) {
-                    Text(
-                        text = count.toString(),
-                        style = Theme.textStyle.label.small,
-                        color = LocalTudeeColors.current.hint,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                if (isShowCount) {
+
+                    Box(
+                        Modifier
+                            .clip(RoundedCornerShape(100.dp))
+                            .background(LocalTudeeColors.current.surfaceLow)
+                            .padding(vertical = 2.dp, horizontal = 10.5.dp)
+                            .align(Alignment.TopEnd),
+                    ) {
+                        Text(
+                            text = count.toString(),
+                            style = Theme.textStyle.label.small,
+                            color = LocalTudeeColors.current.hint,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
             }
         }

@@ -29,7 +29,9 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun TextButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.
+    height(56.dp)
+        .fillMaxWidth(),
     text: String,
     isLoading:Boolean=false,
     isDisable:Boolean=false,
@@ -47,9 +49,7 @@ fun TextButton(
         enabled = !isDisable,
         shape = shape,
         modifier = modifier
-            .height(56.dp)
-            .widthIn(min = animatedWidth)
-            .fillMaxWidth(),
+            .widthIn(min = animatedWidth),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = content,

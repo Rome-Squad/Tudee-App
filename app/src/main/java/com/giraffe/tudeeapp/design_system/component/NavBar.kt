@@ -39,7 +39,7 @@ fun NavBar(modifier: Modifier = Modifier, navController: NavController) {
             iconUnSelected = R.drawable.home_unselected
         ),
         NavigationItem(
-            route = Screen.TaskScreen.route,
+            route = "${Screen.TaskScreen.route}/${0}",
             iconSelected = R.drawable.task_selected,
             iconUnSelected = R.drawable.tasks_unselected
         ),
