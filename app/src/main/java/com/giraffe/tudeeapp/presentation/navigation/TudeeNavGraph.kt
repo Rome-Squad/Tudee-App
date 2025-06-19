@@ -37,6 +37,10 @@ fun TudeeNavGraph(
     }
 }
 
+fun NavController.navigateToTaskScreen(tabIndex: Int) {
+    navigate("${Screen.TaskScreen.route}/$tabIndex")
+}
+
 fun NavController.navigateToTaskByCategoryScreen(categoryId: Long) {
     navigate("${Screen.TasksByCategoryScreen.route}/${categoryId}")
 }

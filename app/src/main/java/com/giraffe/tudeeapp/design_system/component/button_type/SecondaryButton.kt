@@ -32,11 +32,10 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 fun SecondaryButton(
     modifier: Modifier = Modifier,
     text: String,
-    isLoading: Boolean=false,
-    isDisable: Boolean=false,
+    isLoading: Boolean = false,
+    isDisable: Boolean = false,
     icon: Painter? = null,
     onClick: () -> Unit,
-
     ) {
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
@@ -66,7 +65,7 @@ fun SecondaryButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text, style = Theme.textStyle.label.large)
-            if (isLoading && icon!=null) {
+            if (isLoading && icon != null) {
                 Icon(
                     painterResource(R.drawable.loading),
                     "contentDescription",

@@ -1,19 +1,280 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
+import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.home.composable.NoTask
+import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
+import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
+import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
+import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
+import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
+    navigateToTasksScreen: (tabIndex: Int) -> Unit = {},
+    viewModel: HomeViewModel = koinViewModel()
 ) {
-    Text(
-        text = "Home Screen",
-        color = Theme.color.title,
-        fontSize = 20.sp
+    val context = LocalContext.current
+    val state by viewModel.homeUiState.collectAsState()
+    var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
+
+    EventListener(
+        events = viewModel.events
+    ) { event ->
+        when (event) {
+            HomeEvent.DismissSnackBar -> {
+                snackBarData = null
+            }
+            is HomeEvent.Error -> {
+                snackBarData = TudeeSnackBarState(
+                    message = errorToMessage(event.error),
+                    isError = true
+                )
+            }
+            is HomeEvent.NavigateToTasksScreen -> {
+                navigateToTasksScreen(event.tabIndex)
+            }
+            HomeEvent.TaskAddedSuccess -> {
+                snackBarData = TudeeSnackBarState(
+                    message = context.getString(R.string.task_added_successfully),
+                    isError = false
+                )
+            }
+            HomeEvent.TaskEditedSuccess -> {
+                snackBarData = TudeeSnackBarState(
+                    message = context.getString(R.string.task_edited_successfully),
+                    isError = false
+                )
+            }
+        }
+    }
+    LaunchedEffect(snackBarData) {
+        if (snackBarData != null) {
+            delay(3000)
+            viewModel.dismissSnackBar()
+        }
+    }
+
+    HomeContent(
+        state = state,
+        snackBarState = snackBarData,
+        onTasksLinkClick = viewModel::onTasksLinkClick,
+        onTaskClick = viewModel::onTaskClick,
+        onEditTaskClick = viewModel::onEditTaskClick,
+        onAddTaskClick = viewModel::onAddTaskClick,
+        onDismissTaskDetails = viewModel::dismissTaskDetails,
+        onDismissTaskEditor = viewModel::dismissTaskEditor,
+        onThemeSwitchToggle = onThemeSwitchToggle,
+        isDarkTheme = isDarkTheme,
+        onChangeSnackBarState = {
+            snackBarData = it
+        }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeContent(
+    state: HomeUiState,
+    isDarkTheme: Boolean = false,
+    onThemeSwitchToggle: () -> Unit = {},
+    onDismissTaskDetails: () -> Unit = {},
+    onDismissTaskEditor: () -> Unit = {},
+    onTaskClick: (Long) -> Unit = {},
+    onTasksLinkClick: (Int) -> Unit,
+    onEditTaskClick: (Long?) -> Unit,
+    onAddTaskClick: () -> Unit,
+    snackBarState: TudeeSnackBarState?,
+    onChangeSnackBarState: (TudeeSnackBarState) -> Unit
+) {
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = false
+    systemUiController.setStatusBarColor(
+        color = Theme.color.primary,
+        darkIcons = useDarkIcons
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.color.surface)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(127.dp)
+                .background(Theme.color.primary),
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            var width by remember { mutableIntStateOf(0) }
+            val heightInDp = with(LocalDensity.current) { (width * 0.2f).toDp() }
+
+            TudeeAppBar(
+                modifier = Modifier
+                    .onGloballyPositioned {
+                        width = it.size.width
+                    }
+                    .height(heightInDp),
+                isDarkTheme = isDarkTheme,
+                onThemeSwitchToggle = onThemeSwitchToggle
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Theme.color.surfaceHigh)
+                                    .padding(top = 8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                    SliderStatus(
+                                        state,
+                                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                                    )
+                                    OverViewSection(tasksState = state)
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Theme.color.surface),
+                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                            ) {
+                                if (state.allTasks.isEmpty()) {
+                                    NoTask(
+                                        modifier = Modifier
+                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
+                                    )
+                                } else {
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.to_do_tasks),
+                                        numberOfTasks = state.todoTasks.size.toString(),
+                                        tasks = state.todoTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(0) },
+                                        onTaskClick = onTaskClick
+                                    )
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.in_progress_tasks),
+                                        numberOfTasks = state.inProgressTasks.size.toString(),
+                                        tasks = state.inProgressTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(1) },
+                                        onTaskClick = onTaskClick
+                                    )
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.done_tasks),
+                                        numberOfTasks = state.doneTasks.size.toString(),
+                                        tasks = state.doneTasks,
+                                        onTasksLinkClick = { onTasksLinkClick(2) },
+                                        onTaskClick = onTaskClick
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FabButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 12.dp, bottom = 10.dp),
+            icon = painterResource(R.drawable.add_task_icon),
+            onClick = onAddTaskClick
+        )
+
+
+        if (state.isTaskDetailsVisible && state.currentTaskId != null) {
+                TaskDetailsBottomSheet(
+                    taskId = state.currentTaskId,
+                    onnDismiss = onDismissTaskDetails,
+                    onEditTask = onEditTaskClick
+                )
+
+        }
+
+        if (state.isTaskEditorVisible) {
+            TaskEditorBottomSheet(
+                taskId = state.currentTaskId,
+                onDismissRequest = onDismissTaskEditor,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onSuccess = { message ->
+                    onChangeSnackBarState(TudeeSnackBarState(message = message, isError = false))
+                },
+                onError = { error ->
+                    onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
+                }
+            )
+        }
+
+        snackBarState?.let {
+            TudeeSnackBar(
+                message = it.message,
+                iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
+                iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
+                iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.TopCenter)
+            )
+        }
+    }
+}

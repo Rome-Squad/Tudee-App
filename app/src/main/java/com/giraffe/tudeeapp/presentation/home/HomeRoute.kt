@@ -5,16 +5,21 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.giraffe.tudeeapp.presentation.navigation.Screen
+import com.giraffe.tudeeapp.presentation.navigation.navigateToTaskScreen
 
 fun NavGraphBuilder.homeRoute(
-    navController: NavController? = null,
+    navController: NavController,
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
 ) {
     composable(Screen.HomeScreen.route) {
         HomeScreen(
             isDarkTheme = isDarkTheme,
-            onThemeSwitchToggle = onToggleTheme
+            onThemeSwitchToggle = onToggleTheme,
+            navigateToTasksScreen = {
+                navController.navigateToTaskScreen(it)
+            }
+
         )
     }
 }
