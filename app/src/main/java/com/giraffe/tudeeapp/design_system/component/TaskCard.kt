@@ -39,7 +39,7 @@ fun TaskCard(
     date: String? = null,
 ) {
     val bottomPadding = if (taskCardType == TaskCardType.TASK) 24 else 12
-    val blurColor = getColorForCategoryIcon(categoryName)
+    val blurColor = getColorForCategoryIcon(categoryName).copy(alpha = .08f)
     Column(
         modifier
             .clip(RoundedCornerShape(16.dp))
@@ -62,12 +62,13 @@ fun TaskCard(
                         ambientShadowColor = blurColor
                         shadowElevation = with(density) { 50.dp.toPx() }
                     },
-                contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = taskIcon,
                     contentDescription = stringResource(R.string.task_icon),
-                    Modifier.size(32.dp).align(Alignment.Center)
+                    Modifier
+                        .size(32.dp)
+                        .align(Alignment.Center)
                 )
             }
             Row(
@@ -94,7 +95,7 @@ fun TaskCard(
                     )
 
                     TaskPriority.LOW -> Priority(
-                        priorityType = TaskPriority.HIGH,
+                        priorityType = TaskPriority.LOW,
                         isSelected = true
                     )
                 }
