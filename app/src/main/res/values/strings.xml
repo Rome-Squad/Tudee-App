@@ -30,4 +30,9 @@
     <string name="clear_button">Clear</string>
     <string name="cancel_button">Cancel</string>
     <string name="ok_button">Ok</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="added_category_successfully">Added category successfully.</string>
+    <string name="some_error_happened">Some error happened</string>
+    <string name="categories">Categories</string>
+    <string name="edit_category">Edit category</string>
 </resources>

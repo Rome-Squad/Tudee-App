@@ -29,16 +29,17 @@ import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 
 @Composable
 fun TaskCard(
+    modifier: Modifier = Modifier,
     taskIcon: Painter,
-    blurColor: Color,
+    categoryName: String = "",
     priority: TaskPriority,
     taskTitle: String,
     taskDescription: String,
     taskCardType: TaskCardType,
     date: String? = null,
-    modifier: Modifier = Modifier,
 ) {
     val bottomPadding = if (taskCardType == TaskCardType.TASK) 24 else 12
+    val blurColor = getColorForCategoryIcon(categoryName)
     Column(
         modifier
             .clip(RoundedCornerShape(16.dp))
@@ -66,7 +67,7 @@ fun TaskCard(
                 Image(
                     painter = taskIcon,
                     contentDescription = stringResource(R.string.task_icon),
-                    Modifier.align(Alignment.Center)
+                    Modifier.size(32.dp).align(Alignment.Center)
                 )
             }
             Row(
@@ -120,14 +121,36 @@ fun TaskCard(
     }
 }
 
+@Composable
+fun getColorForCategoryIcon(categoryName: String): Color {
+    return when (categoryName) {
+        "Education" -> Theme.color.purpleAccent
+        "Adoration" -> Theme.color.primary
+        "Family & friend" -> Theme.color.secondary
+        "Cooking" -> Theme.color.pinkAccent
+        "Traveling" -> Theme.color.yellowAccent
+        "Coding" -> Theme.color.purpleAccent
+        "Fixing bugs" -> Theme.color.pinkAccent
+        "Medical" -> Theme.color.primary
+        "Shopping" -> Theme.color.secondary
+        "Agriculture" -> Theme.color.greenAccent
+        "Entertainment" -> Theme.color.yellowAccent
+        "Gym" -> Theme.color.primary
+        "Cleaning" -> Theme.color.greenAccent
+        "Work" -> Theme.color.secondary
+        "Event" -> Theme.color.pinkAccent
+        "Budgeting" -> Theme.color.purpleAccent
+        "Self-care" -> Theme.color.yellowAccent
+        else -> Theme.color.purpleAccent
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun TaskCardPreview() {
-    Column() {
+    Column {
         TaskCard(
             taskIcon = painterResource(R.drawable.birthday_cake_icon),
-            blurColor = Theme.color.pinkAccent.copy(alpha = .08f),
             priority = TaskPriority.HIGH,
             taskTitle = "Organize Study Desk",
             taskDescription = "Review cell structure and functions for tomorrow...",

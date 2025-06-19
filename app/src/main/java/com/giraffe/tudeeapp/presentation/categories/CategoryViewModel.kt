@@ -2,30 +2,28 @@ package com.giraffe.tudeeapp.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
-import com.giraffe.tudeeapp.domain.util.Result
-import com.giraffe.tudeeapp.presentation.categories.uiEvent.CategoriesUiEvent
-import com.giraffe.tudeeapp.presentation.categories.uistates.CategoriesScreenUiState
-import com.giraffe.tudeeapp.presentation.categories.uistates.toUiState
+import com.giraffe.tudeeapp.domain.util.onError
+import com.giraffe.tudeeapp.domain.util.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
     private val categoriesService: CategoriesService,
-) : ViewModel(), CategoriesScreenAction {
+) : ViewModel(), CategoriesScreenActions {
 
-    private var _categoriesUiState = MutableStateFlow(CategoriesScreenUiState())
-    val categoriesUiState: StateFlow<CategoriesScreenUiState> = _categoriesUiState.asStateFlow()
+    private var _categoriesUiState = MutableStateFlow(CategoriesScreenState())
+    val categoriesUiState: StateFlow<CategoriesScreenState> = _categoriesUiState.asStateFlow()
 
-    private val _events = Channel<CategoriesUiEvent>()
+    private val _events = Channel<CategoriesScreenEvents>()
     val events = _events.receiveAsFlow()
 
 
@@ -34,46 +32,51 @@ class CategoryViewModel(
     }
 
     private fun getAllCategories() {
-        _categoriesUiState.update { it.copy(isLoading = true, error = null) }
-
-        categoriesService.getAllCategories().onEach { result ->
-            _categoriesUiState.update { currentState ->
-                when (result) {
-                    is Result.Success -> {
-                        currentState.copy(
-                            categories = result.data.map { category ->
-                                category.toUiState(getTaskCountForCategory(category.id))
-                            },
-                            isLoading = false,
-                            error = null
-                        )
+        viewModelScope.launch(Dispatchers.IO) {
+            _categoriesUiState.update { it.copy(isLoading = true, error = null) }
+            categoriesService.getAllCategories()
+                .onSuccess { flow ->
+                    flow.collect { categories ->
+                        _categoriesUiState.update { currentState ->
+                            currentState.copy(
+                                categories = categories.map { category -> category },
+                                isLoading = false,
+                                error = null
+                            )
+                        }
                     }
-
-                    is Result.Error -> {
-                        currentState.copy(
-                            isLoading = false,
-                            error = result.error
-                        )
-                    }
+                }.onError { error ->
+                    _categoriesUiState.update { it.copy(isLoading = false, error = error) }
                 }
-            }
-        }.launchIn(viewModelScope)
-    }
 
-    private fun getTaskCountForCategory(categoryId: Long): Int {
-        return 0
+        }
     }
-
 
     override fun selectCategory(categoryId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _events.send(CategoriesUiEvent.NavigateToTasksByCategoryScreen(categoryId))
+            _events.send(CategoriesScreenEvents.NavigateToTasksByCategoryScreen(categoryId))
         }
     }
 
     override fun setBottomSheetVisibility(isVisible: Boolean) {
+        _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
+    }
+
+    override fun addCategory(category: Category) {
         viewModelScope.launch(Dispatchers.IO) {
-            _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
+            categoriesService.createCategory(category)
+                .onSuccess {
+                    _categoriesUiState.update {
+                        it.copy(
+                            showSuccessSnackBar = true,
+                            isBottomSheetVisible = false
+                        )
+                    }
+                    delay(3000)
+                    _categoriesUiState.update { it.copy(showSuccessSnackBar = false) }
+                }.onError { error ->
+                    _categoriesUiState.update { it.copy(error = error) }
+                }
         }
     }
 }
