@@ -207,26 +207,25 @@ class TaskEditorViewModel(
     override fun onChangeTaskTitleValue(title: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(title = title),
-                isValidTask = isValidTask()
+                taskUi = it.taskUi.copy(title = title)
             )
         }
+        validateTask()
     }
 
     override fun onChangeTaskDescriptionValue(description: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(description = description),
-                isValidTask = isValidTask()
+                taskUi = it.taskUi.copy(description = description)
             )
         }
+        validateTask()
     }
 
     override fun onChangeTaskDueDateValue(dueDate: LocalDateTime) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(dueDate = dueDate),
-                isValidTask = isValidTask()
+                taskUi = it.taskUi.copy(dueDate = dueDate)
             )
         }
     }
@@ -234,8 +233,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskPriorityValue(priority: TaskPriority) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(priorityType = priority),
-                isValidTask = isValidTask()
+                taskUi = it.taskUi.copy(priorityType = priority)
             )
         }
     }
@@ -251,6 +249,7 @@ class TaskEditorViewModel(
                         isValidTask = isValidTask()
                     )
                 }
+                validateTask()
             } else {
                 taskEditorUiState.update {
                     it.copy(
@@ -265,8 +264,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskStatusValue(status: TaskStatus) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(status = status),
-                isValidTask = isValidTask()
+                taskUi = it.taskUi.copy(status = status)
             )
         }
     }
@@ -277,6 +275,14 @@ class TaskEditorViewModel(
                 taskEditorUiState.value.taskUi.category.name.isBlank() ||
                 taskEditorUiState.value.taskUi.category.imageUri.isBlank()
                 )
+    }
+
+    private fun validateTask() {
+        taskEditorUiState.update {
+            it.copy(
+                isValidTask = isValidTask()
+            )
+        }
     }
 
     private fun clearTask() {
