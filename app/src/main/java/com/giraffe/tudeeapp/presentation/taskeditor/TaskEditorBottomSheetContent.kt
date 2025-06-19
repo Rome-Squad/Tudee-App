@@ -183,7 +183,6 @@ fun TaskEditorBottomSheetContent(
                         categoryName = category.name,
                         isSelected = taskUi.category.id == category.id,
                         count = 0,
-                        isShowCount = false,
                         onClick = { onCategoryChange(category.id) }
                     )
                 }

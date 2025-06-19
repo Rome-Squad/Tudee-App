@@ -21,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
@@ -32,8 +35,6 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
-import com.giraffe.tudeeapp.presentation.utils.getCategoryIcon
-import com.giraffe.tudeeapp.presentation.utils.getColorForCategoryIcon
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
@@ -121,8 +122,12 @@ fun SwipableTask(
             shadowElevation = 0.dp
         ) {
             TaskCard(
-                taskIcon = painterResource(getCategoryIcon( taskUi.category.name)),
-                blurColor = getColorForCategoryIcon(taskUi.category.name),
+                taskIcon = rememberAsyncImagePainter(
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(data = taskUi.category.imageUri)
+                        .build()
+                ),
                 priority = taskUi.priorityType,
                 taskTitle = taskUi.title,
                 taskDescription = taskUi.description,

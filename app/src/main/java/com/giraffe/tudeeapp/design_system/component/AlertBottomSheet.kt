@@ -54,8 +54,7 @@ fun AlertBottomSheet(
             showBottomSheet = false
             onBlueBtnClick()
         },
-        sheetState = sheetState,
-        containerColor = Theme.color.surface
+        sheetState = sheetState
     ) {
         Column {
             Text(
