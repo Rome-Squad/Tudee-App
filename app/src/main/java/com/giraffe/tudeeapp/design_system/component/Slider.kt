@@ -9,15 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -30,61 +28,64 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 @Composable
 fun Slider(
     modifier: Modifier = Modifier,
-    image: Painter = painterResource(R.drawable.tudee_slider_image),
-    title: String = stringResource(R.string.tudee_slider_title),
-    subtitle: String = stringResource(R.string.tudee_slider_subtitle),
-    status: Painter = painterResource(R.drawable.tudee_status),
+    slider: Slider,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(
-                Color.White,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .height(95.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(
-                start = 12.dp,
-                top = 12.dp
-            )
+            modifier = Modifier
+                .align(Alignment.CenterStart)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = title,
+                    text = slider.title,
                     style = Theme.textStyle.title.small,
                     color = Theme.color.title
                 )
                 Image(
                     modifier = Modifier
                         .size(20.dp),
-                    painter = status,
+                    painter = slider.status,
                     contentDescription = "tudee status icon"
                 )
             }
             Text(
-                text = subtitle,
+                text = slider.subtitle,
                 style = Theme.textStyle.body.small,
                 color = Theme.color.body,
                 maxLines = 2,
             )
         }
         Image(
-            painter = image, contentDescription = "tudee image",
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .width(72.61.dp)
-                .height(108.dp)
-                .offset(y = (-15).dp)
-                .padding(end = 8.39.dp)
+                .size(65.dp)
+                .alpha(0.16f),
+            painter = painterResource(R.drawable.blue_circle),
+            contentDescription = "blue circle"
+        )
+        Image(
+            painter = slider.image, contentDescription = "tudee image",
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(7.dp)
+                .size(width = 61.dp, height = 92.dp)
         )
     }
 }
+
+data class Slider(
+    val image: Painter,
+    val title: String,
+    val subtitle: String,
+    val status: Painter
+)
 
 
 @Preview(showSystemUi = true, showBackground = true)
@@ -96,7 +97,12 @@ fun SliderPreview() {
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(60.dp))
-        Slider()
+        Slider(
+            image = painterResource(R.drawable.tudee_slider_image),
+            title = stringResource(R.string.nothing_on_your_list),
+            subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
+            status = painterResource(R.drawable.tudde_emoji_empty_tasks),
+        )
         Spacer(modifier = Modifier.height(20.dp))
     }
 }

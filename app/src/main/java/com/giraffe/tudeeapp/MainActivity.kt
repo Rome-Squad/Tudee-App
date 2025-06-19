@@ -27,7 +27,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val mainViewModel = koinViewModel<MainViewModel>()
-            TudeeTheme {
+            TudeeTheme(
+                isDarkTheme = mainViewModel.isDarkTheme
+            ) {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route

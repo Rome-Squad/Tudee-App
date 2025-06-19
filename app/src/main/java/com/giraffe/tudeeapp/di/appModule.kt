@@ -11,6 +11,9 @@ import com.giraffe.tudeeapp.domain.service.SplashService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.categories.CategoryViewModel
 import com.giraffe.tudeeapp.presentation.shared.MainViewModel
+import com.giraffe.tudeeapp.presentation.home.HomeViewModel
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorViewModel
+import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
@@ -28,7 +31,9 @@ val appModule = module {
 
     viewModel { SplashViewModel(get()) }
     viewModel{TasksViewModel(get(),get())}
-    viewModel { TaskEditorViewModel(tasksService = get(), categoriesService = get()) }
+    viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
+    viewModel { (taskId: Long?) -> TaskEditorViewModel(taskId, get(), get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { MainViewModel(get()) }
     viewModel { CategoryViewModel(get()) }
     viewModel { (handle: SavedStateHandle) ->
