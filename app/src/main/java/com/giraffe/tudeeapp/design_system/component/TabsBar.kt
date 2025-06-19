@@ -32,10 +32,10 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 @Composable
 fun TabsBar(
     modifier: Modifier = Modifier,
+    startTab : TaskStatus = TaskStatus.IN_PROGRESS,
     onTabSelected: (TaskStatus) -> Unit = {},
     tasks: Map<TaskStatus, Int> = mapOf()
 ) {
-    val startTab = TaskStatus.IN_PROGRESS
     var selectedTab by rememberSaveable { mutableIntStateOf(startTab.ordinal) }
     PrimaryTabRow(
         modifier = modifier,

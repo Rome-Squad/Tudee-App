@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.Category
@@ -46,11 +47,17 @@ class TasksViewModel(
                                     null
                                 }
                                 task.toTaskUi(category ?: throw Exception())
-                            }.groupBy { it.status }
+                            }
+                            val tasksMap = mapOf(
+                                TaskStatus.TODO to tasksUiList.filter { it.status == TaskStatus.TODO },
+                                TaskStatus.IN_PROGRESS to tasksUiList.filter { it.status == TaskStatus.IN_PROGRESS },
+                                TaskStatus.DONE to tasksUiList.filter { it.status == TaskStatus.DONE },
+                            )
 
+                            Log.d("AAA", "View model: $tasksMap ")
                             _state.update { currentState ->
                                 currentState.copy(
-                                    tasks = tasksUiList,
+                                    tasks = tasksMap,
                                     pickedDate = date,
                                     error = null
                                 )

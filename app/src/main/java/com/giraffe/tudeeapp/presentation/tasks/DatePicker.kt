@@ -55,7 +55,7 @@ fun DatePicker(
     modifier: Modifier = Modifier
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var currentMonth by remember { mutableStateOf(YearMonth.from(selectedDate)) }
+    val currentMonth = YearMonth.from(selectedDate)
     var isDialogVisible by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()

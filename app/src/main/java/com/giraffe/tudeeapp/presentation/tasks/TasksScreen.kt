@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -46,14 +50,16 @@ fun TaskScreen(
     currentTabIndex: Int
 ) {
     val state by viewModel.state.collectAsState()
-    viewModel.selectTab(
-        when (currentTabIndex) {
-            0 -> TaskStatus.TODO
-            1 -> TaskStatus.IN_PROGRESS
-            2 -> TaskStatus.DONE
-            else -> TaskStatus.IN_PROGRESS
-        }
-    )
+    LaunchedEffect(Unit) {
+        viewModel.selectTab(
+            when (currentTabIndex) {
+                0 -> TaskStatus.TODO
+                1 -> TaskStatus.IN_PROGRESS
+                2 -> TaskStatus.DONE
+                else -> TaskStatus.IN_PROGRESS
+            }
+        )
+    }
     TaskScreenContent(state, viewModel)
 }
 
@@ -79,6 +85,7 @@ fun TaskScreenContent(
             DatePicker(actions::setPickedDate)
 
             TabsBar(
+                startTab = state.selectedTab,
                 onTabSelected = actions::selectTab,
                 tasks = state.tasks.mapValues { (_, value) -> value.size }
             )
@@ -90,9 +97,9 @@ fun TaskScreenContent(
                     .background(Theme.color.surface)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
-                val selectedTasks = state.tasks[state.selectedTab]
-                val selectedTasksSize = selectedTasks?.size ?: 0
-                if (selectedTasksSize == 0) {
+                val selectedTasks = state.tasks[state.selectedTab] ?: emptyList()
+                Log.d("AAA", "TaskScreenContent: $selectedTasks ")
+                if (selectedTasks.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -104,9 +111,7 @@ fun TaskScreenContent(
                         }
                     }
                 } else {
-                    items(selectedTasksSize) { index ->
-                        val taskUi = selectedTasks?.get(index)!!
-
+                    itemsIndexed(selectedTasks) { index, taskUi ->
                         SwipableTask(
                             taskUi = taskUi,
                             action = {
