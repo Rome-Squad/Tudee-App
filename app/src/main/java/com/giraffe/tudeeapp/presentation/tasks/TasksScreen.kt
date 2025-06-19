@@ -72,7 +72,7 @@ fun TaskScreenContent(
             HeaderContent("Tasks")
 
             DatePicker(actions::setPickedDate)
-
+            Log.d("tab tab", "TaskScreenContent: "+ state.selectedTab)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::selectTab,
