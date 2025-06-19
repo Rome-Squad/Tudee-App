@@ -2,6 +2,7 @@ package com.giraffe.tudeeapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.giraffe.tudeeapp.presentation.categories.categoriesRoute
@@ -32,4 +33,8 @@ fun TudeeNavGraph(
         tasksRoute(navController)
         categoriesRoute(navController)
     }
+}
+
+fun NavController.navigateToTaskScreen(tabIndex: Int) {
+    navigate("${Screen.TaskScreen.route}/$tabIndex")
 }
