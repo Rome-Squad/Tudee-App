@@ -47,9 +47,6 @@ fun TaskEditorBottomSheet(
         parameters = { parametersOf(taskId) }
     )
 
-    LaunchedEffect(taskId) {
-        viewModel.setTaskId(taskId, forceReload = true)
-    }
 
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
