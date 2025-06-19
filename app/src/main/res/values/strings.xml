@@ -56,4 +56,9 @@
     <string name="add_task">Add Task</string>
     <string name="task_added_successfully">Task Added Successfully</string>
     <string name="task_edited_successfully">Task Edited Successfully</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="added_category_successfully">Added category successfully.</string>
+    <string name="some_error_happened">Some error happened</string>
+    <string name="categories">Categories</string>
+    <string name="edit_category">Edit category</string>
 </resources>
