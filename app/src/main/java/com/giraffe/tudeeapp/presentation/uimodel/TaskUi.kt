@@ -29,3 +29,15 @@ fun Task.toTaskUi(category: Category) = TaskUi(
     createdAt = createdAt,
     updatedAt = updatedAt
 )
+
+fun TaskUi.toTask() = Task(
+    id = id,
+    title = title,
+    description = description,
+    taskPriority = priorityType,
+    status = status,
+    categoryId = category.id,
+    dueDate = dueDate,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
