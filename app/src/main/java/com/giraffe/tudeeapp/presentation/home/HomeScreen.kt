@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -194,7 +195,8 @@ fun HomeContent(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Theme.color.surface)
+                                    .background(Theme.color.surface),
+                                verticalArrangement = Arrangement.spacedBy(24.dp)
                             ) {
                                 if (state.allTasks.isEmpty()) {
                                     NoTask(
@@ -203,7 +205,6 @@ fun HomeContent(
                                     )
                                 } else {
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.todoTasks.size.toString(),
                                         tasks = state.todoTasks,
@@ -211,7 +212,6 @@ fun HomeContent(
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasks.size.toString(),
                                         tasks = state.inProgressTasks,
@@ -219,7 +219,6 @@ fun HomeContent(
                                         onTaskClick = onTaskClick
                                     )
                                     TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasks.size.toString(),
                                         tasks = state.doneTasks,

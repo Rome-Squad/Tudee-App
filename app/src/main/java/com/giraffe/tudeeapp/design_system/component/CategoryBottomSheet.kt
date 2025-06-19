@@ -45,8 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton

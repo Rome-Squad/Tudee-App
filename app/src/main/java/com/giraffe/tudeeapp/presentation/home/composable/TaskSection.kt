@@ -37,6 +37,7 @@ fun TaskSection(
     onTasksLinkClick: () -> Unit
 ) {
     Column(modifier = modifier) {
+        if(tasks.isNotEmpty()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,8 +78,9 @@ fun TaskSection(
             }
 
         }
+    }
 
-        tasks.forEach { task ->
+        tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(
                 taskIcon = rememberAsyncImagePainter(
                     ImageRequest
