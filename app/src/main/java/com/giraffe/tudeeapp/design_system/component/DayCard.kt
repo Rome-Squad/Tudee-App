@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ fun DayCard(
     )
     Column(
         modifier = modifier
+            .size(width = 56.dp, height = 65.dp)
             .background(
                 brush = Brush.verticalGradient(backgroundColor),
                 shape = RoundedCornerShape(16.dp)
