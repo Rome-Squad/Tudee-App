@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,8 +29,9 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
-import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
@@ -41,12 +43,18 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel(),
-    addViewModel: TaskEditorViewModel = koinViewModel(),
+    currentTabIndex: Int
 ) {
     val state by viewModel.state.collectAsState()
-    val stateAdd by addViewModel.taskEditorUiState.collectAsState()
+    viewModel.selectTab(
+        when (currentTabIndex) {
+            0 -> TaskStatus.TODO
+            1 -> TaskStatus.IN_PROGRESS
+            2 -> TaskStatus.DONE
+            else -> TaskStatus.IN_PROGRESS
+        }
+    )
     TaskScreenContent(state, viewModel)
-
 }
 
 
@@ -168,6 +176,6 @@ fun TaskScreenContent(
 @Composable
 fun TaskScreenPreview() {
     TudeeTheme(isDarkTheme = true) {
-        TaskScreen()
+        TaskScreen(currentTabIndex = 1)
     }
 }
