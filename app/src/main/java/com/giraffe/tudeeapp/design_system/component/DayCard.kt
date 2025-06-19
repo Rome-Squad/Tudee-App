@@ -1,9 +1,11 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +21,8 @@ fun DayCard(
     modifier: Modifier = Modifier,
     dayNumber: Int = 15,
     dayName: String = "Mon",
-    isSelected: Boolean = true
+    isSelected: Boolean = true,
+    onClick: () -> Unit
 ) {
     val dayNumberColor = if (isSelected) Theme.color.onPrimary else Theme.color.body
     val dayNameColor = if (isSelected) Theme.color.onPrimaryCaption else Theme.color.hint
@@ -31,21 +34,24 @@ fun DayCard(
         Theme.color.surface,
     )
     Column(
-        modifier = modifier.background(
-            brush = Brush.verticalGradient(backgroundColor),
-            shape = RoundedCornerShape(16.dp)
-        ),
+        modifier = modifier
+            .size(width = 56.dp, height = 65.dp)
+            .background(
+                brush = Brush.verticalGradient(backgroundColor),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(top = 12.dp, start = 17.dp, end = 17.dp),
+            modifier = Modifier.padding(start = 17.dp, end = 17.dp, top = 12.dp),
             text = dayNumber.toString(),
             style = Theme.textStyle.title.medium,
             color = dayNumberColor
         )
         Text(
-            modifier = Modifier.padding(bottom = 12.dp, start = 14.dp, end = 14.dp),
+            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 12.dp),
             text = dayName,
             style = Theme.textStyle.body.small,
             color = dayNameColor
@@ -56,5 +62,7 @@ fun DayCard(
 @Preview
 @Composable
 private fun Preview() {
-    DayCard()
+    DayCard(
+        onClick = {}
+    )
 }

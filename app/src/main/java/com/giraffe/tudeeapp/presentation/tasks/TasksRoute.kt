@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -7,7 +9,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.giraffe.tudeeapp.presentation.navigation.Screen
+import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
+import org.koin.androidx.compose.koinViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.tasksRoute(
     navController: NavController
 ) {
@@ -19,14 +24,17 @@ fun NavGraphBuilder.tasksRoute(
             }
         )
     ) { backStackEntry ->
-        TaskScreen(
-            currentTabIndex = TasksArgs(savedStateHandle = backStackEntry.savedStateHandle).tabIndex
-        )
+        val viewModel: TasksViewModel =
+            koinViewModel(
+                viewModelStoreOwner = backStackEntry,
+            )
+        TaskScreen(viewModel)
     }
 }
 
 class TasksArgs(savedStateHandle: SavedStateHandle) {
     val tabIndex: Int = savedStateHandle.get<Int>(TAB_INDEX) ?: 0
+
     companion object {
         const val TAB_INDEX = "TAB_INDEX"
     }

@@ -15,6 +15,7 @@ import com.giraffe.tudeeapp.presentation.home.HomeViewModel
 import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsViewModel
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import com.giraffe.tudeeapp.presentation.tasks_by_category.TasksByCategoryViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -28,6 +29,9 @@ val appModule = module {
 
 
     viewModel { SplashViewModel(get()) }
+    viewModel { (handle: SavedStateHandle) ->
+        TasksViewModel(get(), get(), handle)
+    }
     viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
     viewModel { (taskId: Long?) -> TaskEditorViewModel(taskId, get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
