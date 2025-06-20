@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,25 +43,30 @@ fun SplashScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Theme.color.overlay
-                )
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Theme.color.surface
     ) {
-        Image(
-            painter = painterResource(id = Theme.resources.bacgroundImage),
-            contentDescription = stringResource(R.string.splash_background),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Theme.color.overlay
+                )
+        ) {
+            Image(
+                painter = painterResource(id = Theme.resources.bacgroundImage),
+                contentDescription = stringResource(R.string.splash_background),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+            )
 
-        Image(
-            painter = painterResource(id = Theme.resources.logoImageResId),
-            contentDescription = stringResource(R.string.splash_logo),
-            modifier = Modifier.align(Alignment.Center)
-        )
+            Image(
+                painter = painterResource(id = Theme.resources.logoImageResId),
+                contentDescription = stringResource(R.string.splash_logo),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
