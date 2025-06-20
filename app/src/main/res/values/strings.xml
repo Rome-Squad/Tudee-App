@@ -72,4 +72,7 @@
     <string name="task_title">Task Title</string>
     <string name="description">Description</string>
     <string name="cancel">Cancel</string>
+    <string name="tasks">Tasks</string>
+    <string name="delete_task">Delete task</string>
+    <string name="deleted_task_successfully">Deleted task successfully.</string>
 </resources>

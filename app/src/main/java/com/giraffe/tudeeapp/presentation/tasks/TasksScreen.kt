@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
@@ -75,7 +76,7 @@ fun TaskScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            HeaderContent("Tasks")
+            HeaderContent(stringResource(R.string.tasks))
 
             DatePicker(actions::setPickedDate)
             TabsBar(
@@ -122,11 +123,8 @@ fun TaskScreenContent(
 
             if (state.isDeleteBottomSheetVisible) {
                 AlertBottomSheet(
-                    title = "Delete task",
-                    subTitle = "Are you sure to continue?",
+                    title = stringResource(R.string.delete_task),
                     imgRes = R.drawable.sure_robot,
-                    redBtnTitle = "Delete",
-                    blueBtnTitle = "Cancel",
                     onRedBtnClick = {
                         actions.deleteTask(state.selectedTaskId)
                     },
@@ -168,7 +166,7 @@ fun TaskScreenContent(
 
         AnimatedVisibility(state.isSnackBarVisible) {
             TudeeSnackBar(
-                message = if (state.error == null && !state.snackBarHasError) state.snackBarMsg else "Some error happened",
+                message = if (state.error == null && !state.snackBarHasError) stringResource(R.string.deleted_task_successfully) else stringResource(R.string.some_error_happened),
                 iconRes = if (state.error == null && !state.snackBarHasError) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenVariant else Theme.color.errorVariant,
