@@ -107,7 +107,7 @@ fun TasksByCategoryContent(
                                 categoryName = state.selectedCategory?.name ?: "",
                                 priority = task.priorityType,
                                 taskTitle = task.title,
-                                date = task.createdAt.toString(),
+                                date = task.dueDate.date.toString(),
                                 taskDescription = task.description,
                                 taskCardType = TaskCardType.CATEGORY
                             )
