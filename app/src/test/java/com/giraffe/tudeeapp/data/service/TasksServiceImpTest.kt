@@ -43,7 +43,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTaskById returns Result_Success with mapped Task`() = runTest {
+    fun `returns Task when getTaskById is called`() = runTest {
         val id = 1L
 
         val entity = TaskEntity(
@@ -79,7 +79,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `createTask calls DAO and returns Result_Success with ID`() = runTest {
+    fun `createTask calls DAO and returns Result_Success with ID when create Task`() = runTest {
         // Given
         val task = Task(
             id = 0L,
@@ -94,7 +94,7 @@ class TasksServiceImpTest {
         )
         val entity = mockk<TaskEntity>()
 
-        mockkStatic("com.giraffe.tudeeapp.data.mapper.TaskMapperKt") // Use your actual mapper file path
+        mockkStatic("com.giraffe.tudeeapp.data.mapper.TaskMapperKt")
         every { task.toEntity() } returns entity
         coEvery { taskDao.createTask(entity) } returns 101L
 
@@ -137,7 +137,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByCategory returns ValidationError on exception`() {
+    fun `getTasksByCategory returns ValidationError when DAO throws exception`() {
         every { taskDao.getTasksByCategory(any()) } throws IllegalArgumentException()
 
         val result = service.getTasksByCategory(99L)
@@ -147,7 +147,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `deleteTask calls DAO and returns Result_Success`() = runTest {
+    fun `deleteTask calls DAO and returns Result Success`() = runTest {
         coEvery { taskDao.deleteTask(55L) } just Runs
 
         val result = service.deleteTask(55L)
@@ -169,7 +169,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByDate returns Result_Success with mapped list`() = runTest {
+    fun `getTasksByDate returns Result Success with mapped list`() = runTest {
         // Given
         val dateTime = LocalDateTime(2025, 6, 20, 12, 0)
         val daoDate = dateTime.date.atTime(0, 0).toString()
