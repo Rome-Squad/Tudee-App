@@ -9,9 +9,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -48,11 +51,17 @@ fun FabButton(
         ),
         contentPadding = PaddingValues(0.dp)
     ) {
+
+        val layoutDirection = LocalLayoutDirection.current
+        val isRtl = layoutDirection == LayoutDirection.Rtl
         if (isLoading)
             Icon(
                 painterResource(R.drawable.loading),
                 "contentDescription",
                 modifier = Modifier.size(24.dp)
+                .graphicsLayer {
+                    scaleX = if (isRtl) -1f else 1f
+                }
             )
         else
             Icon(icon, "contentDescription", modifier = Modifier)
