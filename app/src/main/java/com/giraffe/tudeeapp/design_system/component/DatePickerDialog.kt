@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -19,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,13 +55,17 @@ fun DatePickerDialog(
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .graphicsLayer(
+                        scaleX = 0.91f,
+                        scaleY = 0.80f
+                    ),
                 shape = RoundedCornerShape(16.dp),
                 color = Theme.color.surface
             ) {
                 Column(
+                    modifier = Modifier,
                 ) {
                     DatePicker(
                         state = datePickerState,
@@ -78,6 +82,7 @@ fun DatePickerDialog(
                             titleContentColor = Theme.color.title,
                             headlineContentColor = Theme.color.title,
                         )
+
                     )
                     Row(
                         modifier = Modifier
