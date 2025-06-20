@@ -22,9 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -33,7 +31,6 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -45,16 +42,18 @@ fun OnboardingScreen(
     val pages = listOf(
         OnboardingData(
             imageRes = R.drawable.image_container_1,
-            title = stringResource(R.string.overwhelmed_with_tasks),
-            description = stringResource(R.string.let_s_bring_some_order_to_the_chaos_tudee_is_here_to_help_you_sort_plan_and_breathe_easier)
-        ), OnboardingData(
+            title = Theme.strings.overwhelmedWithTasks,
+            description = Theme.strings.letBringOrder
+        ),
+        OnboardingData(
             imageRes = R.drawable.image_container_2,
-            title = stringResource(R.string.uh_oh_procrastinating_again),
-            description = stringResource(R.string.tudee_not_mad_just_a_little_disappointed)
-        ), OnboardingData(
+            title = Theme.strings.procrastinating,
+            description = Theme.strings.disappointed
+        ),
+        OnboardingData(
             imageRes = R.drawable.image_container_3,
-            title = stringResource(R.string.let_s_complete_tasks_and_celebrate_together),
-            description = stringResource(R.string.tudee_will_celebrate_you_on_every_win)
+            title = Theme.strings.celebrateTogether,
+            description = Theme.strings.celebrateProgress
         )
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -71,8 +70,8 @@ fun OnboardingScreen(
     ) {
         Image(
             painter = painterResource(id = Theme.resources.bacgroundImage),
-            contentDescription = stringResource(R.string.splash_background),
-            modifier = Modifier
+            contentDescription = Theme.strings.appTagline,
+                    modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
         )
@@ -88,7 +87,7 @@ fun OnboardingScreen(
                             onFinish()
                         }
                     },
-                text = stringResource(R.string.skip),
+                text = Theme.strings.skip,
                 style = Theme.textStyle.label.large,
                 color = Theme.color.primary
             )
