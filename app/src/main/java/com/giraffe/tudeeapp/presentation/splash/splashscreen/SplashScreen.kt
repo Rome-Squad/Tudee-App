@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,8 +59,7 @@ fun SplashScreen(
                 painter = painterResource(id = Theme.resources.bacgroundImage),
                 contentDescription = stringResource(R.string.splash_background),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(), contentScale = ContentScale.FillWidth
             )
 
             Image(
