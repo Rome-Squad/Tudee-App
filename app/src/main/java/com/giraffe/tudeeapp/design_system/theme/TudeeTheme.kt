@@ -25,13 +25,14 @@ fun TudeeTheme(
     val theme = if (isDarkTheme) darkThemeColor else lightThemeColor
     val resources = if (isDarkTheme) darkResources else lightResources
     val strings = if (isArabic) arStrings else defaultStrings
+    val layoutDirection = if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr
 
     CompositionLocalProvider(
         LocalTudeeColors provides theme,
         LocalTudeeTextStyle provides defaultTextStyle,
         LocalTudeeResources provides resources,
         LocalTudeeStrings provides strings,
-        LocalLayoutDirection provides LayoutDirection.Ltr
+        LocalLayoutDirection provides layoutDirection
     ) {
         content()
     }
