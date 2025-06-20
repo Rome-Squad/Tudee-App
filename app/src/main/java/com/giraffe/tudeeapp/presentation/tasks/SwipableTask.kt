@@ -22,21 +22,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
 
 
@@ -50,13 +45,12 @@ fun SwipableTask(
     action: () -> Unit = { }
 ) {
 
-    val buttonWidth = 130f
+    val buttonWidth = with(LocalDensity.current) { 76.dp.toPx() }
     val offset = remember {
         Animatable(initialValue = 0f)
     }
     val scope = rememberCoroutineScope()
 
-    // Animate the initial offset based on the isRevealed state
     LaunchedEffect(key1 = isRevealed, buttonWidth) {
         if (isRevealed) {
             offset.animateTo(-buttonWidth)
@@ -137,22 +131,3 @@ fun SwipableTask(
         }
     }
 }
-/*
-@Preview
-@Composable
-fun SwipableTaskPreview() {
-    SwipableTask(
-        taskUi = TaskUi(
-            id = 1,
-            title = "Sample Task",
-            description = "This is a sample task description.",
-            priorityType = TaskPriority.MEDIUM,
-            status = TaskStatus.TODO,
-            dueDate = LocalDateTime(2023, 10, 1, 12, 0),
-            category = "Work",
-            icon = R.drawable.chef,
-            color = Theme.color.pinkAccent,
-        ),
-        action = {}
-    )
-}*/
