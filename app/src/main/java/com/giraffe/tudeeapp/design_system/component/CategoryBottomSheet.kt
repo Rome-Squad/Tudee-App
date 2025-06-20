@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,7 +59,7 @@ import com.giraffe.tudeeapp.domain.model.Category
 @Composable
 fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
-    title: String = "Add new category",
+    title: String = stringResource(R.string.add_new_category),
     categoryToEdit: Category? = null,
     onVisibilityChange: (Boolean) -> Unit = {},
     onAddClick: (Category) -> Unit = {},
@@ -106,7 +107,7 @@ fun CategoryBottomSheet(
                     Text(
                         modifier = Modifier
                             .clickable(onClick = { onDeleteClick(categoryToEdit) }),
-                        text = "Delete",
+                        text = stringResource(R.string.delete),
                         style = Theme.textStyle.label.large,
                         color = Theme.color.error
                     )
@@ -117,12 +118,12 @@ fun CategoryBottomSheet(
                 modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                 textValue = categoryTitle,
                 onValueChange = { categoryTitle = it },
-                hint = "Category title",
+                hint = stringResource(R.string.category_title),
                 iconRes = R.drawable.categories_unselected,
             )
             Text(
                 modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
-                text = "Category image",
+                text = stringResource(R.string.category_image),
                 style = Theme.textStyle.title.medium,
                 color = Theme.color.title
             )
@@ -163,7 +164,7 @@ fun CategoryBottomSheet(
                             tint = Theme.color.hint
                         )
                         Text(
-                            text = "Upload",
+                            text = stringResource(R.string.upload),
                             style = Theme.textStyle.label.medium,
                             color = Theme.color.hint
                         )
@@ -206,7 +207,9 @@ fun CategoryBottomSheet(
             ) {
                 PrimaryButton(
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (categoryToEdit != null) "Sava" else "Add",
+                    text = if (categoryToEdit != null) stringResource(R.string.sava) else stringResource(
+                        R.string.add
+                    ),
                     isDisable = categoryTitle.isBlank() || photoUri == null
                 ) {
                     if (categoryToEdit != null) {
@@ -229,7 +232,7 @@ fun CategoryBottomSheet(
                 }
                 SecondaryButton(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Cancel"
+                    text = stringResource(R.string.cancel)
                 ) {
                     onVisibilityChange(false)
                 }

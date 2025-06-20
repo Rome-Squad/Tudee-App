@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
@@ -35,11 +36,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun AlertBottomSheet(
     modifier: Modifier = Modifier,
-    title: String = "Delete category",
-    subTitle: String = "Are you sure to continue?",
+    title: String = stringResource(R.string.delete_category),
+    subTitle: String = stringResource(R.string.are_you_sure_to_continue),
     imgRes: Int = R.drawable.sure_robot,
-    redBtnTitle: String = "Delete",
-    blueBtnTitle: String = "Cancel",
+    redBtnTitle: String = stringResource(R.string.delete),
+    blueBtnTitle: String = stringResource(R.string.cancel),
     onRedBtnClick: () -> Unit = {},
     onBlueBtnClick: () -> Unit = {},
 ) {

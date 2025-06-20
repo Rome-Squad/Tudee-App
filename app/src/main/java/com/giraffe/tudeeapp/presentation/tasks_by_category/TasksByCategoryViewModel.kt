@@ -7,8 +7,11 @@ import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
+import com.giraffe.tudeeapp.domain.util.NotFoundError
+import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -31,7 +34,6 @@ class TasksByCategoryViewModel(
 
     init {
         getCategoryById(CategoriesArgs(savedStateHandle = savedStateHandle).categoryId)
-        getTasks()
     }
 
     private fun getCategoryById(categoryId: Long) {
@@ -43,6 +45,7 @@ class TasksByCategoryViewModel(
                             selectedCategory = category,
                         )
                     }
+                    getTasks()
                 }
                 .onError { error ->
                     _state.update { it.copy(error = error) }
@@ -51,7 +54,42 @@ class TasksByCategoryViewModel(
     }
 
     private fun getTasks() {
-        viewModelScope.launch(Dispatchers.IO) {}
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value.selectedCategory?.id?.let { categoryId ->
+                tasksService.getTasksByCategory(categoryId)
+                    .onSuccess { tasksFlow ->
+                        tasksFlow.collect { tasks ->
+                            try {
+                                val tasksUiList = tasks.map { task ->
+                                    val categoryResult =
+                                        categoriesService.getCategoryById(task.categoryId)
+                                    val category = if (categoryResult is Result.Success)
+                                        categoryResult.data
+                                    else
+                                        null
+                                    task.toTaskUi(
+                                        category ?: throw Exception()
+                                    )
+                                }
+                                _state.update {
+                                    it.copy(
+                                        tasks = mapOf(
+                                            TaskStatus.TODO to tasksUiList.filter { it.status == TaskStatus.TODO },
+                                            TaskStatus.IN_PROGRESS to tasksUiList.filter { it.status == TaskStatus.IN_PROGRESS },
+                                            TaskStatus.DONE to tasksUiList.filter { it.status == TaskStatus.DONE },
+                                        )
+                                    )
+                                }
+                            } catch (_: Exception) {
+                                _state.update { it.copy(error = NotFoundError()) }
+                            }
+                        }
+                    }
+                    .onError { error ->
+                        _state.update { it.copy(error = NotFoundError()) }
+                    }
+            }
+        }
     }
 
     override fun setAlertBottomSheetVisibility(isVisible: Boolean) {
@@ -79,23 +117,19 @@ class TasksByCategoryViewModel(
                     _state.update {
                         it.copy(
                             selectedCategory = category,
-                            snackBarMsg = "Edited category successfully.",
-                            showSuccessSnackBar = true,
                             isBottomSheetVisible = false,
                         )
                     }
-                    delay(3000)
-                    _state.update { it.copy(showSuccessSnackBar = false) }
+                    _events.send(TasksByCategoryEvents.CategoryEdited())
                 }.onError { error ->
                     _state.update {
                         it.copy(
                             error = error,
-                            showSuccessSnackBar = true,
                             isBottomSheetVisible = false,
                         )
                     }
                     delay(3000)
-                    _state.update { it.copy(showSuccessSnackBar = false) }
+                    _state.update { it.copy(error = null) }
                 }
         }
     }
@@ -106,24 +140,19 @@ class TasksByCategoryViewModel(
                 .onSuccess {
                     _state.update {
                         it.copy(
-                            snackBarMsg = "Deleted category successfully.",
-                            showSuccessSnackBar = true,
                             isBottomSheetVisible = false,
                         )
                     }
-                    delay(3000)
-                    _state.update { it.copy(showSuccessSnackBar = false) }
                     _events.send(TasksByCategoryEvents.CategoryDeleted())
                 }.onError { error ->
                     _state.update {
                         it.copy(
                             error = error,
-                            showSuccessSnackBar = true,
                             isBottomSheetVisible = false,
                         )
                     }
                     delay(3000)
-                    _state.update { it.copy(showSuccessSnackBar = false) }
+                    _state.update { it.copy(error = null) }
                 }
         }
     }
@@ -131,6 +160,14 @@ class TasksByCategoryViewModel(
     override fun setCategoryToDelete(category: Category?) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(categoryToDelete = category) }
+        }
+    }
+
+    override fun showSuccessMsg(msg: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(successMsg = msg) }
+            delay(3000)
+            _state.update { it.copy(successMsg = null) }
         }
     }
 }

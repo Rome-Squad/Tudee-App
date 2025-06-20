@@ -10,4 +10,5 @@ interface TasksByCategoryScreenActions {
     fun editCategory(category: Category)
     fun deleteCategory(category: Category)
     fun setCategoryToDelete(category: Category?)
+    fun showSuccessMsg(msg: String)
 }

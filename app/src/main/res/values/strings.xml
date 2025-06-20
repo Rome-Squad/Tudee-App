@@ -61,4 +61,14 @@
     <string name="some_error_happened">Some error happened</string>
     <string name="categories">Categories</string>
     <string name="edit_category">Edit category</string>
+    <string name="category_deleted_successfully">Category deleted successfully</string>
+    <string name="category_updated_successfully">Category updated successfully</string>
+    <string name="delete_category">Delete category</string>
+    <string name="are_you_sure_to_continue">Are you sure to continue?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="category_title">Category title</string>
+    <string name="category_image">Category image</string>
+    <string name="upload">Upload</string>
+    <string name="sava">Sava</string>
 </resources>
