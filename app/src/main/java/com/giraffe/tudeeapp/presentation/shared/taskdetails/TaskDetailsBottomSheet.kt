@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -41,6 +40,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.utils.toStringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -53,7 +53,7 @@ fun TaskDetailsBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
-    val storeOwner = remember (taskId) { ViewModelStore() }
+    val storeOwner = remember(taskId) { ViewModelStore() }
     val owner = remember(taskId) {
         object : ViewModelStoreOwner {
             override val viewModelStore = storeOwner
@@ -79,7 +79,7 @@ fun TaskDetailsBottomSheet(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment =Alignment.Start
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = stringResource(R.string.task_details),
@@ -144,10 +144,11 @@ fun TaskDetailsBottomSheet(
                     )
 
                     Text(
-                        text = task?.status?.name?.lowercase().toString(),
+                        text = (task?.status ?: TaskStatus.DONE).toStringResource(),
                         style = Theme.textStyle.body.small,
                         color = Theme.color.purpleAccent
                     )
+
                 }
 
                 Priority(
@@ -181,7 +182,9 @@ fun TaskDetailsBottomSheet(
                     }
 
                     SecondaryButton(
-                        text = if (task?.status == TaskStatus.TODO) "Move to in progress" else "Move to Done",
+                        text = if (task?.status == TaskStatus.TODO) stringResource(R.string.move_to_in_progress) else stringResource(
+                            R.string.move_to_done
+                        ),
                         modifier = Modifier
                             .padding(start = 8.dp)
                     ) {
@@ -192,11 +195,4 @@ fun TaskDetailsBottomSheet(
 
         }
     }
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun TaskDetailsBottomSheetPreview() {
 }

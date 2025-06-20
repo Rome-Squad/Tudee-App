@@ -30,7 +30,7 @@ fun TopSlider(modifier: Modifier = Modifier) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            text = "today, ${getTodayDate()}",
+            text = stringResource(R.string.today, getTodayDate()),
             color = Theme.color.body,
             style = Theme.textStyle.label.medium
         )

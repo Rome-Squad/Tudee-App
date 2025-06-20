@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.presentation.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +49,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     isDarkTheme: Boolean = false,
@@ -68,7 +71,7 @@ fun HomeScreen(
 
             is HomeEvent.Error -> {
                 snackBarData = TudeeSnackBarState(
-                    message = errorToMessage(event.error),
+                    message = context.errorToMessage(event.error),
                     isError = true
                 )
             }
@@ -116,6 +119,7 @@ fun HomeScreen(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
@@ -250,7 +254,6 @@ fun HomeContent(
                 onnDismiss = onDismissTaskDetails,
                 onEditTask = onEditTaskClick
             )
-
         }
 
         if (state.isTaskEditorVisible) {
