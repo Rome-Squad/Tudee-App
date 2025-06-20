@@ -1,20 +1,19 @@
 package com.giraffe.tudeeapp.design_system.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,22 +23,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.giraffe.tudeeapp.design_system.theme.Theme
 import kotlin.random.Random
 
 @Composable
@@ -51,7 +49,46 @@ fun ThemeSwitch(
     animationSpec: AnimationSpec<Dp> = tween(durationMillis = 1000),
     onClick: () -> Unit
 ) {
-    val offset by animateDpAsState(
+
+    val moonGradientFirstColor by animateColorAsState(
+        targetValue = if (isDarkTheme) Color(0xFFE9EFFF) else Color.White
+    )
+
+    val moonGradientSecondColor by animateColorAsState(
+        targetValue = if (isDarkTheme) Color(0xFFBFD2FF) else Color.White
+    )
+
+    val mediumCircleSize by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .1f else switchSize * .38f,
+        animationSpec = animationSpec
+    )
+
+    val mediumCircleOffsetX by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .65f else switchSize * .78f,
+        animationSpec = animationSpec
+    )
+
+    val mediumCircleOffsetY by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .055f else 0.dp,
+        animationSpec = animationSpec
+    )
+
+    val largeCircleSize by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .21f else switchSize * .25f,
+        animationSpec = animationSpec
+    )
+
+    val largeCircleOffsetX by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .58f else switchSize * .57f,
+        animationSpec = animationSpec
+    )
+
+    val largeCircleOffsetY by animateDpAsState(
+        targetValue = if (isDarkTheme) switchSize * .17f else switchSize * .35f,
+        animationSpec = animationSpec
+    )
+
+    val indicatorOffset by animateDpAsState(
         targetValue = if (isDarkTheme) switchSize / 2 else 0.dp,
         animationSpec = animationSpec
     )
@@ -92,7 +129,7 @@ fun ThemeSwitch(
         Box(
             modifier = Modifier
                 .size(switchSize / 2)
-                .offset(x = offset)
+                .offset(x = indicatorOffset)
                 .padding(padding)
                 .clip(shape = CircleShape)
                 .shadow(
@@ -105,8 +142,8 @@ fun ThemeSwitch(
                     Brush.linearGradient(
                         colors = if (isDarkTheme) {
                             listOf(
-                                Color(0xFFE8E8E8),
-                                Color(0xFFE8E8E8)
+                                Color(0xFFE9F0FF),
+                                Color(0xFFE0E9FE)
                             )
                         } else {
                             listOf(
@@ -114,164 +151,141 @@ fun ThemeSwitch(
                                 Color(0xEFFC9601)
                             )
                         },
-                        start = Offset(0f, 0f),
-                        end = Offset(switchSize.value / 1.5f, switchSize.value / 1.5f)
+                        start = Offset(0f, switchSize.value / 4f),
+                        end = Offset(switchSize.value / 2f, switchSize.value / 4f),
                     )
-
                 )
-        ) {
-
-            AnimatedVisibility(
-                visible = isDarkTheme,
-                enter = fadeIn(),
-                exit = fadeOut() + scaleOut(),
-                modifier = Modifier
-                    .shadow(
-                        elevation = switchSize,
-                        shape = CircleShape,
-                        spotColor = Color(0xFF323297),
-                        ambientColor = Color(0xFF232357)
-                    )
-            ) {
-                Moon(
-                    modifier = Modifier
-                        .fillMaxSize()
-                )
-            }
-
-
-        }
+        )
 
         AnimatedVisibility(
             visible = !isDarkTheme,
-            enter = fadeIn() + scaleIn(
-                initialScale = 3f,
-                animationSpec = tween(durationMillis = 300)
-            ),
-            exit = fadeOut(),
-            modifier = Modifier
-                .fillMaxHeight()
-                .align(Alignment.CenterEnd)
-                .offset(x = switchSize * 0.1f)
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Clouds(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .size(switchSize * .5f)
+                    .offset(
+                        x = switchSize * .7f,
+                        y = switchSize * -.05f
+                    )
+                    .clip(CircleShape)
+                    .background(
+                        color = Color(0xFFE0E0E0)
+                    )
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(switchSize * .35f)
+                    .offset(
+                        x = switchSize * .5f,
+                        y = switchSize * .28f
+                    )
+                    .clip(CircleShape)
+                    .background(
+                        color = Color(0xFFE0E0E0)
+                    )
             )
         }
 
-    }
-}
 
-@Composable
-fun Clouds(
-    color: Color = Theme.color.surfaceHigh,
-    strokeColor: Color = Theme.color.surfaceLow,
-    modifier: Modifier = Modifier
-) {
-    Canvas(modifier = modifier.size(250.dp, 300.dp)) {
-        val radius = size.minDimension / 4f
-        val center1 = Offset(size.width / 2f - radius / 2, size.height / 1.05f)
-        val center2 = Offset(size.width / 1.15f - radius, 0f)
-        val center3 = Offset(size.width / 1.1f - radius, size.height / 1.18f)
-
-        val path1 = Path().apply {
-            addOval(Rect(center1 - Offset(radius, radius), Size(radius * 4, radius * 4)))
+        AnimatedVisibility(
+            visible = !isDarkTheme,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(switchSize * .25f)
+                    .offset(
+                        x = switchSize * .79f,
+                        y = switchSize * .34f
+                    )
+                    .clip(CircleShape)
+                    .background(
+                        color = Color.White
+                    )
+            )
         }
 
-        val path2 = Path().apply {
-            addOval(Rect(center2 - Offset(radius, radius), Size(radius * 5, radius * 5)))
+        AnimatedVisibility(
+            visible = isDarkTheme,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(switchSize * .06f)
+                    .offset(
+                        x = switchSize * .78f,
+                        y = switchSize * .36f
+                    )
+                    .clip(CircleShape)
+                    .background(
+                        color = Color(0xFFBFD2FF)
+                    )
+            )
         }
 
-        val path3 = Path().apply {
-            addOval(Rect(center3 - Offset(radius, radius), Size(radius * 3, radius * 3)))
-        }
 
-        drawPath(path1, color = color)
-        drawPath(path2, color = color)
-
-        drawPath(
-            path = path1,
-            color = strokeColor,
-            style = Stroke(width = 24f)
-        )
-
-        drawPath(
-            path = path2,
-            color = strokeColor,
-            style = Stroke(width = 24f)
-        )
-
-        drawPath(path3, color = Color.White)
-    }
-}
-
-@Composable
-fun Moon(modifier: Modifier = Modifier) {
-    Canvas(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFFE0E9FE),
-                        Color(0xFFE9F0FF),
-                    ),
+        Box(
+            modifier = Modifier
+                .size(largeCircleSize)
+                .offset(
+                    x = largeCircleOffsetX,
+                    y = largeCircleOffsetY
                 )
-            )
-    ) {
-
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFFE9EFFF),
-                    Color(0xFFBFD2FF),
-                ),
-                center = Offset(size.width / 2f, size.height / 4f),
-                radius = size.minDimension * 0.25f
-            ),
-            radius = size.minDimension * 0.15f,
-            center = Offset(size.width * 0.4f, size.height * 0.2f)
+                .clip(CircleShape)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            moonGradientFirstColor,
+                            moonGradientSecondColor
+                        ),
+                        center = Offset(switchSize.value * .4f, switchSize.value * .36f),
+                        radius = switchSize.value / 2f,
+                        tileMode = TileMode.Mirror
+                    )
+                )
         )
 
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFFE9EFFF),
-                    Color(0xFFBFD2FF),
-                ),
-                center = Offset(size.width / 1.8f, size.height / 1.4f),
-                radius = size.minDimension * .6f
-            ),
-            radius = size.minDimension * 0.25f,
-            center = Offset(size.width * 0.35f, size.height * 0.64f)
+
+        Box(
+            modifier = Modifier
+                .size(mediumCircleSize)
+                .offset(
+                    x = mediumCircleOffsetX,
+                    y = mediumCircleOffsetY
+                )
+                .clip(CircleShape)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            moonGradientFirstColor,
+                            moonGradientSecondColor
+                        ),
+                        center = Offset(switchSize.value * .4f, switchSize.value * .36f),
+                        radius = switchSize.value / 2f,
+                        tileMode = TileMode.Mirror
+                    )
+                )
         )
 
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFFE9EFFF),
-                    Color(0xFFBFD2FF),
-                ),
-                center = Offset(size.width / 1.3f, size.height / 1f),
-            ),
-            radius = size.minDimension * 0.08f,
-            center = Offset(size.width * 0.7f, size.height * 0.82f)
-        )
     }
 }
 
 @Composable
 fun NightSkyBackground(
     modifier: Modifier = Modifier,
-    starCount: Int = 50 // Adjust number of stars
+    starCount: Int = 25 // Adjust number of stars
 ) {
     val stars = remember {
         List(starCount) {
             Star(
                 x = Random.nextFloat(),
                 y = Random.nextFloat(),
-                radius = Random.nextFloat() * 2 + 1f
+                radius = Random.nextFloat() * 5 + 1f
             )
         }
     }
@@ -281,8 +295,7 @@ fun NightSkyBackground(
         val height = size.height
 
         stars.forEach { star ->
-            drawCircle(
-                color = Color.White,
+            drawStar(
                 radius = star.radius,
                 center = Offset(star.x * width, star.y * height)
             )
@@ -296,18 +309,41 @@ data class Star(
     val radius: Float
 )
 
+fun DrawScope.drawStar(
+    center: Offset,
+    radius: Float,
+    points: Int = 4
+) {
+    val path = Path()
+    val angle = (2 * PI / points).toFloat()
+    val innerRadius = radius / 2.5f
+
+    for (i in 0 until points * 2) {
+        val r = if (i % 2 == 0) radius else innerRadius
+        val x = (center.x + r * cos(i * angle / 2)).toFloat()
+        val y = (center.y + r * sin(i * angle / 2)).toFloat()
+
+        if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
+    }
+    path.close()
+
+    val gradient = Brush.radialGradient(
+        colors = listOf(Color.White, Color.Transparent),
+        center = center,
+        radius = radius
+    )
+
+    drawPath(path = path, brush = gradient)
+}
+
 @Preview(showBackground = false)
 @Composable
 fun ThemeSwitcherPreview() {
-    Column {
+    var isDarkTheme by remember { mutableStateOf(true) }
+
         ThemeSwitch(
-            isDarkTheme = false,
-            onClick = {}
+            isDarkTheme = isDarkTheme,
+            onClick = {isDarkTheme = !isDarkTheme}
         )
-        Spacer(modifier = Modifier.height(50.dp))
-        ThemeSwitch(
-            isDarkTheme = true,
-            onClick = {}
-        )
-    }
+
 }
