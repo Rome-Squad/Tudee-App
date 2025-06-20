@@ -1,12 +1,11 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -19,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,30 +28,44 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.presentation.tasks.convertToLocalDateTime
+import kotlinx.datetime.LocalDateTime
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
     modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
-    onDateSelected: (Long?) -> Unit
+    onDateSelected: (LocalDateTime) -> Unit
 ) {
     if (showDialog) {
-        val datePickerState = rememberDatePickerState()
+        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant()
+                .toEpochMilli()
+        )
 
         Dialog(
             onDismissRequest = onDismissRequest,
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .graphicsLayer(
+                        scaleX = 0.91f,
+                        scaleY = 0.80f
+                    ),
                 shape = RoundedCornerShape(16.dp),
                 color = Theme.color.surface
             ) {
                 Column(
+                    modifier = Modifier,
                 ) {
                     DatePicker(
                         state = datePickerState,
@@ -68,54 +82,60 @@ fun DatePickerDialog(
                             titleContentColor = Theme.color.title,
                             headlineContentColor = Theme.color.title,
                         )
+
                     )
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
 
+                        TextButton(
+                            modifier = Modifier,
+                            onClick = { datePickerState.selectedDateMillis = null },
+                            text = stringResource(R.string.clear_button),
+                            isLoading = false,
+                            isDisable = false,
+                        )
+
+
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
                             TextButton(
-                                modifier = modifier,
+                                modifier = Modifier,
                                 onClick = { onDismissRequest() },
-                                text = stringResource(R.string.clear_button),
+                                text = stringResource(R.string.cancel_button),
                                 isLoading = false,
                                 isDisable = false,
                             )
 
-
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        TextButton(
-                            modifier = modifier,
-                            onClick = { onDismissRequest() },
-                            text = stringResource(R.string.cancel_button),
-                            isLoading = false,
-                            isDisable = false,
-                        )
-
-                        TextButton(
-                            modifier = modifier,
-                            onClick = {
-                                val selectedDate = datePickerState.selectedDateMillis
-                                onDateSelected(selectedDate)
-                                onDismissRequest()
-                            },
-                            text = stringResource(R.string.ok_button),
-                            isLoading = false,
-                            isDisable = false,
-                        )
+                            TextButton(
+                                modifier = Modifier,
+                                onClick = {
+                                    datePickerState.selectedDateMillis?.let { millis ->
+                                        selectedDate = Instant.ofEpochMilli(millis)
+                                            .atZone(ZoneId.of("UTC"))
+                                            .toLocalDate()
+                                        onDateSelected(convertToLocalDateTime(selectedDate))
+                                    }
+                                    onDismissRequest()
+                                },
+                                text = stringResource(R.string.ok_button),
+                                isLoading = false,
+                                isDisable = false,
+                            )
+                        }
                     }
-                }
                 }
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun TudeeDatePickerDialogPreview() {

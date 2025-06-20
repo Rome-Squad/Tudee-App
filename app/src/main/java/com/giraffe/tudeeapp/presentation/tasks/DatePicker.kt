@@ -11,12 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,15 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -51,7 +44,7 @@ data class DayData(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
-    setDate: (LocalDateTime) -> Unit = {},
+    onDateSelected: (LocalDateTime) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -95,7 +88,7 @@ fun DatePicker(
                     isSelected = dayData.date == selectedDate,
                     onClick = {
                         selectedDate = dayData.date
-                        setDate(convertToLocalDateTime(selectedDate))
+                        onDateSelected(convertToLocalDateTime(selectedDate))
                     }
                 )
             }
@@ -111,32 +104,14 @@ fun DatePicker(
         }
     }
 
-    if (isDialogVisible) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
-        )
-        DatePickerDialog(
-            onDismissRequest = { isDialogVisible = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { millis ->
-                            selectedDate = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.of("UTC"))
-                                .toLocalDate()
-                            setDate(convertToLocalDateTime(selectedDate))
-                        }
-                        isDialogVisible = false
-                    }
-                ) { Text("OK") }
-            },
-            dismissButton = {
-                TextButton(onClick = { isDialogVisible = false }) { Text("Cancel") }
-            }
-        ) {
-            DatePicker(state = datePickerState)
+    DatePickerDialog(
+        showDialog = isDialogVisible,
+        onDismissRequest = { isDialogVisible = false },
+        onDateSelected = {
+            selectedDate = LocalDate.of(it.year, it.monthNumber, it.dayOfMonth)
+            onDateSelected(it)
         }
-    }
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
