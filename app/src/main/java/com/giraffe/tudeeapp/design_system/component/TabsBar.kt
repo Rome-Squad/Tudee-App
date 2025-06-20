@@ -20,11 +20,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 
@@ -52,9 +54,9 @@ fun TabsBar(
     ) {
         tasks.forEach { tab ->
             val title = when (tab.key) {
-                TaskStatus.TODO -> "To Do"
-                TaskStatus.IN_PROGRESS -> "In progress"
-                TaskStatus.DONE -> "Done"
+                TaskStatus.TODO -> stringResource(R.string.to_do)
+                TaskStatus.IN_PROGRESS -> stringResource(R.string.in_progress)
+                TaskStatus.DONE -> stringResource(R.string.done)
             }
             val index = tab.key.ordinal
             Tab(

@@ -86,7 +86,7 @@ class TasksByCategoryViewModel(
                         }
                     }
                     .onError { error ->
-                        _state.update { it.copy(error = NotFoundError()) }
+                        _state.update { it.copy(error = error) }
                     }
             }
         }
@@ -138,12 +138,12 @@ class TasksByCategoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             categoriesService.deleteCategory(category.id)
                 .onSuccess {
+                    _events.send(TasksByCategoryEvents.CategoryDeleted())
                     _state.update {
                         it.copy(
                             isBottomSheetVisible = false,
                         )
                     }
-                    _events.send(TasksByCategoryEvents.CategoryDeleted())
                 }.onError { error ->
                     _state.update {
                         it.copy(
@@ -163,11 +163,11 @@ class TasksByCategoryViewModel(
         }
     }
 
-    override fun showSuccessMsg(msg: String) {
+    override fun showSnakeBarMsg(msg: String) {
         viewModelScope.launch {
-            _state.update { it.copy(successMsg = msg) }
+            _state.update { it.copy(snakeBarMsg = msg) }
             delay(3000)
-            _state.update { it.copy(successMsg = null) }
+            _state.update { it.copy(snakeBarMsg = null) }
         }
     }
 }
