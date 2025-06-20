@@ -37,7 +37,6 @@ class TasksViewModel(
     init {
         val tabIndex = TasksArgs(savedStateHandle).tabIndex
         selectTab(TaskStatus.entries[tabIndex])
-        Log.d("tab tab", "$tabIndex ::" + " ${TaskStatus.entries[tabIndex]}")
         getTasks(_state.value.pickedDate)
     }
 

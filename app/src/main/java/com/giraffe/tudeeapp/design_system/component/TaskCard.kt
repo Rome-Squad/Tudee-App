@@ -69,8 +69,7 @@ fun TaskCard(
                     contentDescription = stringResource(R.string.task_icon),
                     Modifier
                         .size(32.dp)
-                        .align(Alignment.Center)
-                    ,contentScale = ContentScale.Crop
+                        .align(Alignment.Center), contentScale = ContentScale.Crop
                 )
             }
             Row(
@@ -85,22 +84,10 @@ fun TaskCard(
                         label = date
                     )
                 }
-                when (priority) {
-                    TaskPriority.HIGH -> Priority(
-                        priorityType = TaskPriority.HIGH,
-                        isSelected = true
-                    )
-
-                    TaskPriority.MEDIUM -> Priority(
-                        priorityType = TaskPriority.MEDIUM,
-                        isSelected = true
-                    )
-
-                    TaskPriority.LOW -> Priority(
-                        priorityType = TaskPriority.LOW,
-                        isSelected = true
-                    )
-                }
+                Priority(
+                    priorityType = priority,
+                    isSelected = true
+                )
             }
 
 

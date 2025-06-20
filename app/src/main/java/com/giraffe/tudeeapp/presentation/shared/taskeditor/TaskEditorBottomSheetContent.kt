@@ -100,7 +100,7 @@ fun TaskEditorBottomSheetContent(
             DefaultTextField(
                 textValue = taskUi.title,
                 onValueChange = onTitleChange,
-                hint = "Task Title",
+                hint = stringResource(R.string.task_title),
                 iconRes = R.drawable.addeditfield
             )
 
@@ -109,7 +109,7 @@ fun TaskEditorBottomSheetContent(
             ParagraphTextField(
                 textValue = taskUi.description,
                 onValueChange = onDescriptionChange,
-                hint = "Description"
+                hint = stringResource(R.string.description)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -211,7 +211,7 @@ fun TaskEditorBottomSheetContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             SecondaryButton(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 isLoading = false,
                 isDisable = false,
                 onClick = onCancelClick,
