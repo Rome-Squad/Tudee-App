@@ -206,6 +206,7 @@ fun HomeContent(
                                     )
                                 } else {
                                     TaskSection(
+                                        modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.todoTasks.size.toString(),
                                         tasks = state.todoTasks,
