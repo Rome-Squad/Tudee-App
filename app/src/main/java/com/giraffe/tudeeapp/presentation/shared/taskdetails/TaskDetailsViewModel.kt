@@ -41,13 +41,13 @@ class TaskDetailsViewModel(
                     }
                     .onError {
                         taskDetailsState = taskDetailsState.copy(
-                            error = errorToMessage(it)
+                            error = it
                         )
                     }
             }
             .onError {
                 taskDetailsState = taskDetailsState.copy(
-                    error = errorToMessage(it),
+                    error = it,
                     isLoading = false
                 )
             }
@@ -69,7 +69,7 @@ class TaskDetailsViewModel(
                 }
                 .onError {
                     taskDetailsState = taskDetailsState.copy(
-                        error = errorToMessage(it),
+                        error = it,
                         isLoading = false
                     )
                 }

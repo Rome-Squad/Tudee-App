@@ -66,6 +66,7 @@ fun TasksByCategoryContent(
     actions: TasksByCategoryScreenActions,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
         color = Theme.color.surfaceHigh,
@@ -153,7 +154,7 @@ fun TasksByCategoryContent(
         }
         AnimatedVisibility(state.successMsg != null || state.error != null) {
             TudeeSnackBar(
-                message = state.successMsg ?: errorToMessage(state.error!!),
+                message = state.successMsg ?: context.errorToMessage(state.error!!),
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
