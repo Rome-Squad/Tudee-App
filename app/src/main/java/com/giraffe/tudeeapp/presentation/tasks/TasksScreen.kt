@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -13,7 +14,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,14 +29,17 @@ import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
+import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.giraffe.tudeeapp.presentation.tasks.viewmodel.toTaskUi
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -43,7 +49,11 @@ fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    TaskScreenContent(state, viewModel)
+    TaskScreenContent(
+        state = state,
+        actions = viewModel,
+
+    )
 }
 
 
@@ -54,6 +64,7 @@ fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
     actions: TasksScreenActions,
 ) {
+    val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
         color = Theme.color.surfaceHigh,
@@ -68,7 +79,9 @@ fun TaskScreenContent(
                 .fillMaxSize()
         ) {
             HeaderContent("Tasks")
+
             DatePicker(actions::setPickedDate)
+            Log.d("tab tab", "TaskScreenContent: "+ state.selectedTab)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::selectTab,
@@ -101,7 +114,11 @@ fun TaskScreenContent(
                             action = {
                                 actions.setDeleteBottomSheetVisibility(true)
                                 actions.setSelectedTaskId(taskUi.id)
-                            }
+                            },
+                            modifier = Modifier
+                                .clickable{
+                                    actions.onTaskClick(taskUi.id)
+                                }
                         )
                     }
                 }
@@ -120,21 +137,6 @@ fun TaskScreenContent(
                     onBlueBtnClick = { actions.setDeleteBottomSheetVisibility(false) }
                 )
             }
-
-            if (state.isAddBottomSheetVisible) {
-                TaskEditorBottomSheet(
-                    taskId = null,
-                    onDismissRequest = { actions.setAddBottomSheetVisibility(false) },
-                    onSuccess = { successMsg ->
-                        actions.setAddBottomSheetVisibility(false)
-                        actions.showSnackBarMessage(successMsg, hasError = false)
-                    },
-                    onError = { errorMsg ->
-                        actions.setAddBottomSheetVisibility(false)
-                        actions.showSnackBarMessage(errorMsg, hasError = true)
-                    }
-                )
-            }
         }
 
         FabButton(
@@ -142,8 +144,31 @@ fun TaskScreenContent(
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 8.dp),
             icon = painterResource(R.drawable.add_task),
-            onClick = { actions.setAddBottomSheetVisibility(true) }
+            onClick = { actions.onAddTaskClick() }
         )
+
+        if (state.isTaskDetailsVisible && state.currentTaskId != null) {
+            TaskDetailsBottomSheet(
+                taskId = state.currentTaskId,
+                onnDismiss = actions::dismissTaskDetails,
+                onEditTask = actions::onEditTaskClick
+            )
+
+        }
+
+        if (state.isTaskEditorVisible) {
+            TaskEditorBottomSheet(
+                taskId = state.currentTaskId,
+                onDismissRequest = actions::dismissTaskEditor,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onSuccess = { message ->
+                    actions.showSnackBarMessage(context.getString(R.string.task_edited_successfully), hasError = false)
+                },
+                onError = { error ->
+                    actions.showSnackBarMessage(error, hasError = true)
+                }
+            )
+        }
 
         AnimatedVisibility(state.isSnackBarVisible) {
             TudeeSnackBar(

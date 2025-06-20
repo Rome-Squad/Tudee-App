@@ -234,6 +234,7 @@ class TaskEditorViewModel(
                 taskUi = it.taskUi.copy(dueDate = dueDate)
             )
         }
+        validateTask()
     }
 
     override fun onChangeTaskPriorityValue(priority: TaskPriority) {
@@ -242,6 +243,7 @@ class TaskEditorViewModel(
                 taskUi = it.taskUi.copy(priorityType = priority)
             )
         }
+        validateTask()
     }
 
     override fun onChangeTaskCategoryValue(categoryId: Long) {

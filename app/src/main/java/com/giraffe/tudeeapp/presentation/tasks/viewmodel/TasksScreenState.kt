@@ -1,7 +1,5 @@
 package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.util.DomainError
 import kotlinx.datetime.Clock
@@ -19,10 +17,14 @@ data class TasksScreenState(
         TaskStatus.DONE to emptyList()
     ),
     val selectedTaskId: Long = 0L,
-    val isAddBottomSheetVisible: Boolean = false,
     val isDeleteBottomSheetVisible: Boolean = false,
     val error: DomainError? = null,
     val isSnackBarVisible: Boolean = false,
     val snackBarMsg: String = "",
     val snackBarHasError: Boolean = false,
+
+
+    val isTaskDetailsVisible: Boolean = false,
+    val isTaskEditorVisible: Boolean = false,
+    val currentTaskId: Long? = null,
 )

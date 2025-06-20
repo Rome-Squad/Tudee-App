@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.tasks.viewmodel
 
-import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
@@ -9,8 +8,6 @@ interface TasksScreenActions {
 
     fun selectTab(status: TaskStatus)
 
-    fun setAddBottomSheetVisibility(isVisible: Boolean)
-
     fun setDeleteBottomSheetVisibility(isVisible: Boolean)
 
     fun setSelectedTaskId(id: Long)
@@ -18,4 +15,11 @@ interface TasksScreenActions {
     fun showSnackBarMessage(message: String, hasError: Boolean = false)
 
     fun deleteTask(id: Long)
+
+
+    fun onAddTaskClick()
+    fun onTaskClick(taskId: Long)
+    fun onEditTaskClick(taskId: Long?)
+    fun dismissTaskDetails()
+    fun dismissTaskEditor()
 }

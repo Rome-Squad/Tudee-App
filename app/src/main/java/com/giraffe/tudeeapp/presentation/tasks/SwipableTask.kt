@@ -27,11 +27,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
 
 
@@ -51,6 +55,7 @@ fun SwipableTask(
     }
     val scope = rememberCoroutineScope()
 
+    // Animate the initial offset based on the isRevealed state
     LaunchedEffect(key1 = isRevealed, buttonWidth) {
         if (isRevealed) {
             offset.animateTo(-buttonWidth)
@@ -126,7 +131,7 @@ fun SwipableTask(
                 taskTitle = taskUi.title,
                 taskDescription = taskUi.description,
                 taskCardType = TaskCardType.TASK,
-                date = taskUi.dueDate.toString()
+                date = taskUi.dueDate.date.toString()
             )
         }
     }

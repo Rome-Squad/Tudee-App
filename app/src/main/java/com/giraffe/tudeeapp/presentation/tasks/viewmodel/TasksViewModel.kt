@@ -4,13 +4,14 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.NotFoundError
+import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.tasks.TasksArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import com.giraffe.tudeeapp.domain.util.Result
-import com.giraffe.tudeeapp.presentation.tasks.TasksArgs
 
 
 class TasksViewModel(
@@ -71,7 +70,7 @@ class TasksViewModel(
                                     error = null
                                 )
                             }
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             _state.update { it.copy(error = NotFoundError()) }
                         }
                     }
@@ -82,16 +81,17 @@ class TasksViewModel(
         }
     }
 
+    override fun onAddTaskClick() {
+        _state.update { currentState ->
+            currentState.copy(isTaskEditorVisible = true, currentTaskId = null)
+        }
+    }
+
+
     override fun setPickedDate(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(pickedDate = date) }
             getTasks(date)
-        }
-    }
-
-    override fun setAddBottomSheetVisibility(isVisible: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(isAddBottomSheetVisible = isVisible) }
         }
     }
 
@@ -163,5 +163,31 @@ class TasksViewModel(
                 }
         }
     }
+
+
+    override fun onTaskClick(taskId: Long) {
+        _state.update { currentState ->
+            currentState.copy(isTaskDetailsVisible = true, currentTaskId = taskId)
+        }
+    }
+
+    override fun onEditTaskClick(taskId: Long?) {
+        _state.update { currentState ->
+            currentState.copy(isTaskEditorVisible = true, currentTaskId = taskId)
+        }
+    }
+
+    override fun dismissTaskDetails() {
+        _state.update { currentState ->
+            currentState.copy(isTaskDetailsVisible = false, currentTaskId = null)
+        }
+    }
+
+    override fun dismissTaskEditor() {
+        _state.update { currentState ->
+            currentState.copy(isTaskEditorVisible = false, currentTaskId = null)
+        }
+    }
+
 }
 
