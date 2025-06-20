@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -48,12 +50,12 @@ fun TasksByCategoryScreen(
     EventListener(viewModel.events) { event ->
         when (event) {
             is TasksByCategoryEvents.CategoryDeleted -> {
-                viewModel.showSuccessMsg(context.getString(R.string.category_deleted_successfully))
+                viewModel.showSnakeBarMsg(context.getString(R.string.category_deleted_successfully))
                 onBackClick()
             }
 
             is TasksByCategoryEvents.CategoryEdited -> {
-                viewModel.showSuccessMsg(context.getString(R.string.category_updated_successfully))
+                viewModel.showSnakeBarMsg(context.getString(R.string.category_updated_successfully))
             }
         }
     }
@@ -71,6 +73,11 @@ fun TasksByCategoryContent(
     systemUiController.setStatusBarColor(
         color = Theme.color.surfaceHigh,
     )
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            actions.showSnakeBarMsg(context.errorToMessage(it))
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -152,9 +159,9 @@ fun TasksByCategoryContent(
             }
 
         }
-        AnimatedVisibility(state.successMsg != null || state.error != null) {
+        AnimatedVisibility(state.snakeBarMsg != null) {
             TudeeSnackBar(
-                message = state.successMsg ?: context.errorToMessage(state.error!!),
+                message = state.snakeBarMsg ?: "",
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,

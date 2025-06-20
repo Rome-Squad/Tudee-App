@@ -18,6 +18,6 @@ data class TasksByCategoryScreenState(
     val isBottomSheetVisible: Boolean = false,
 
     val error: DomainError? = null,
-    val successMsg: String? = null,
+    val snakeBarMsg: String? = null,
 )
 
