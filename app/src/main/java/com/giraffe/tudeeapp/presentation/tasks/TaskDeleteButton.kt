@@ -1,15 +1,16 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -23,25 +24,24 @@ fun TaskDeleteButton(
     backgroundColor: Color = Theme.color.errorVariant,
     modifier: Modifier = Modifier
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier.background(backgroundColor)
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .padding(start = 32.dp, end = 12.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = icon,
-            contentDescription = contentDescription,
-            tint = tint,
-            modifier = Modifier.size(28.dp)
-        )
+        IconButton(
+            onClick = onClick,
+            modifier = modifier.background(backgroundColor)
+        ) {
+            Icon(
+                painter = icon,
+                contentDescription = contentDescription,
+                tint = tint,
+                modifier = Modifier
+            )
+        }
+
     }
 }
 
-
-//@Preview
-//@Composable
-//fun TaskDeleteButtonPreview() {
-//    TaskDeleteButton(
-//        onClick = { /* Do nothing */ },
-//        modifier = Modifier
-//    )
-//}
