@@ -5,7 +5,9 @@ import androidx.compose.runtime.ReadOnlyComposable
 import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
 import com.giraffe.tudeeapp.design_system.color.TudeeColors
 import com.giraffe.tudeeapp.design_system.resources.LocalTudeeResources
-import com.giraffe.tudeeapp.design_system.resources.TudeeResources
+import com.giraffe.tudeeapp.design_system.resources.LocalTudeeStrings
+import com.giraffe.tudeeapp.design_system.resources.TudeeDrawable
+import com.giraffe.tudeeapp.design_system.resources.TudeeString
 import com.giraffe.tudeeapp.design_system.text_style.LocalTudeeTextStyle
 import com.giraffe.tudeeapp.design_system.text_style.TudeeTextStyle
 
@@ -15,6 +17,8 @@ object Theme {
 
     val textStyle: TudeeTextStyle
         @Composable @ReadOnlyComposable get() = LocalTudeeTextStyle.current
-    val resources: TudeeResources
+    val resources: TudeeDrawable
         @Composable @ReadOnlyComposable get() = LocalTudeeResources.current
+    val strings: TudeeString
+        @Composable @ReadOnlyComposable get() = LocalTudeeStrings.current
 }
