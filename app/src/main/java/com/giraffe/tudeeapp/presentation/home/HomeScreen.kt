@@ -6,11 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,19 +22,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
@@ -102,27 +106,36 @@ fun HomeContent(
     onChangeSnackBarState: (TudeeSnackBarState?) -> Unit,
     actions: HomeActions,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val screenSize = LocalWindowInfo.current.containerSize
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.color.surface)
-            .systemBarsPadding()
+            .background(Theme.color.primary)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(127.dp)
-                .background(Theme.color.primary),
-        )
-        Column(
-            modifier = Modifier
                 .fillMaxSize()
+                .background(Theme.color.surface)
         ) {
-            TudeeAppBar(
-                isDarkTheme = isDarkTheme,
-                onThemeSwitchToggle = onThemeSwitchToggle
+
+            val statusBarHeightDp: Dp = with(LocalDensity.current) {
+                WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(127.dp + statusBarHeightDp)
+                    .background(Theme.color.primary),
             )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+            ) {
+                TudeeAppBar(
+                    isDarkTheme = isDarkTheme,
+                    onThemeSwitchToggle = onThemeSwitchToggle
+                )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -194,50 +207,56 @@ fun HomeContent(
             }
         }
 
-        FabButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 10.dp),
-            icon = painterResource(R.drawable.add_task_icon),
-            onClick = actions::onAddTaskClick
-        )
-
-
-        if (state.isTaskDetailsVisible && state.currentTaskId != null) {
-            TaskDetailsBottomSheet(
-                taskId = state.currentTaskId,
-                onnDismiss = actions::dismissTaskDetails,
-                onEditTask = actions::onEditTaskClick
-            )
-        }
-
-        if (state.isTaskEditorVisible) {
-            TaskEditorBottomSheet(
-                taskId = state.currentTaskId,
-                onDismissRequest = actions::dismissTaskEditor,
+            FabButton(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxHeight(1 - (80.dp / screenHeight.dp)),
-                onSuccess = { message ->
-                    onChangeSnackBarState(TudeeSnackBarState(message = message, isError = false))
-                },
-                onError = { error ->
-                    onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
-                }
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 12.dp, bottom = 10.dp),
+                icon = painterResource(R.drawable.add_task_icon),
+                onClick = actions::onAddTaskClick
             )
-        }
 
-        snackBarState?.let {
-            TudeeSnackBar(
-                message = it.message,
-                iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
-                iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
-                iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                onDismiss = { onChangeSnackBarState(null) }
-            )
+
+            if (state.isTaskDetailsVisible && state.currentTaskId != null) {
+                TaskDetailsBottomSheet(
+                    taskId = state.currentTaskId,
+                    onnDismiss = actions::dismissTaskDetails,
+                    onEditTask = actions::onEditTaskClick
+                )
+            }
+
+            if (state.isTaskEditorVisible) {
+                TaskEditorBottomSheet(
+                    taskId = state.currentTaskId,
+                    onDismissRequest = actions::dismissTaskEditor,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
+                    onSuccess = { message ->
+                        onChangeSnackBarState(
+                            TudeeSnackBarState(
+                                message = message,
+                                isError = false
+                            )
+                        )
+                    },
+                    onError = { error ->
+                        onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
+                    }
+                )
+            }
+
+            snackBarState?.let {
+                TudeeSnackBar(
+                    message = it.message,
+                    iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
+                    iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
+                    iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.TopCenter),
+                    onDismiss = { onChangeSnackBarState(null) }
+                )
+            }
+            }
         }
     }
-}
