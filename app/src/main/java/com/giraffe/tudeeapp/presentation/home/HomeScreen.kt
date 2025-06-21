@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -51,6 +49,7 @@ import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import org.koin.androidx.compose.koinViewModel
 
@@ -137,75 +136,75 @@ fun HomeContent(
                     onThemeSwitchToggle = onThemeSwitchToggle
                 )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Theme.color.surfaceHigh)
-                            .padding(top = 8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Theme.color.surfaceHigh)
+                                .padding(top = 8.dp)
                         ) {
-                            TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                            SliderStatus(
-                                state,
-                                modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                            )
-                            OverViewSection(tasksState = state)
+                            Column(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                                SliderStatus(
+                                    state,
+                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                                )
+                                OverViewSection(tasksState = state)
+                            }
                         }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Theme.color.surface)
-                            .padding(top = 24.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (state.tasks.values.flatten().isEmpty()) {
-                            NoTasksSection(
-                                modifier = Modifier
-                                    .padding(top = 74.dp, start = 15.dp, end = 15.dp)
-                            )
-                        } else {
-                            if (state.tasks[TaskStatus.IN_PROGRESS]!!.isNotEmpty()) {
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.in_progress_tasks),
-                                    numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
-                                    tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
-                                    onTasksLinkClick = { actions.onTasksLinkClick(1) },
-                                    onTaskClick = actions::onTaskClick
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Theme.color.surface)
+                                .padding(top = 24.dp),
+                            verticalArrangement = Arrangement.spacedBy(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (state.tasks.values.flatten().isEmpty()) {
+                                NoTasksSection(
+                                    modifier = Modifier
+                                        .padding(top = 74.dp, start = 15.dp, end = 15.dp)
                                 )
-                            }
-                            if (state.tasks[TaskStatus.TODO]!!.isNotEmpty()) {
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.to_do_tasks),
-                                    numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
-                                    tasks = state.tasks[TaskStatus.TODO]!!,
-                                    onTasksLinkClick = { actions.onTasksLinkClick(0) },
-                                    onTaskClick = actions::onTaskClick
-                                )
-                            }
-                            if (state.tasks[TaskStatus.DONE]!!.isNotEmpty()) {
-                                TaskSection(
-                                    taskStatus = stringResource(R.string.done_tasks),
-                                    numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
-                                    tasks = state.tasks[TaskStatus.DONE]!!,
-                                    onTasksLinkClick = { actions.onTasksLinkClick(2) },
-                                    onTaskClick = actions::onTaskClick
-                                )
+                            } else {
+                                if (state.tasks[TaskStatus.IN_PROGRESS]!!.isNotEmpty()) {
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.in_progress_tasks),
+                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString()),
+                                        tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
+                                        onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                        onTaskClick = actions::onTaskClick
+                                    )
+                                }
+                                if (state.tasks[TaskStatus.TODO]!!.isNotEmpty()) {
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.to_do_tasks),
+                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.TODO]!!.size.toString()),
+                                        tasks = state.tasks[TaskStatus.TODO]!!,
+                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                        onTaskClick = actions::onTaskClick
+                                    )
+                                }
+                                if (state.tasks[TaskStatus.DONE]!!.isNotEmpty()) {
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.done_tasks),
+                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.DONE]!!.size.toString()),
+                                        tasks = state.tasks[TaskStatus.DONE]!!,
+                                        onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                        onTaskClick = actions::onTaskClick
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
             FabButton(
                 modifier = Modifier
@@ -257,6 +256,6 @@ fun HomeContent(
                     onDismiss = { onChangeSnackBarState(null) }
                 )
             }
-            }
         }
     }
+}
