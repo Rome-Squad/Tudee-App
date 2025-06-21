@@ -39,7 +39,7 @@ class CategoryViewModel(
                     flow.collect { categories ->
                         _categoriesUiState.update { currentState ->
                             currentState.copy(
-                                categories = categories.map { category -> category },
+                                categories = categories,
                                 isLoading = false,
                                 error = null
                             )
@@ -68,14 +68,26 @@ class CategoryViewModel(
                 .onSuccess {
                     _categoriesUiState.update {
                         it.copy(
-                            showSuccessSnackBar = true,
+                            isSnackBarVisible = true,
                             isBottomSheetVisible = false
                         )
                     }
                     delay(3000)
-                    _categoriesUiState.update { it.copy(showSuccessSnackBar = false) }
+                    _categoriesUiState.update { it.copy(isSnackBarVisible = false) }
                 }.onError { error ->
-                    _categoriesUiState.update { it.copy(error = error) }
+                    _categoriesUiState.update {
+                        it.copy(
+                            isSnackBarVisible = true,
+                            error = error
+                        )
+                    }
+                    delay(3000)
+                    _categoriesUiState.update {
+                        it.copy(
+                            isSnackBarVisible = false,
+                            error = null
+                        )
+                    }
                 }
         }
     }

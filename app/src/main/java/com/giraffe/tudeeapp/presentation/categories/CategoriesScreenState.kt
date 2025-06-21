@@ -9,5 +9,5 @@ data class CategoriesScreenState(
     val error: DomainError? = null,
     val isBottomSheetVisible: Boolean = false,
     val selectedCategoryId: Long? = null,
-    val showSuccessSnackBar: Boolean = false
+    val isSnackBarVisible: Boolean = false
 )

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
@@ -69,11 +70,12 @@ fun CategoriesContent(
         Modifier
             .fillMaxSize()
             .background(Theme.color.surface)
+            .systemBarsPadding()
     ) {
         Column {
             HeaderContent(stringResource(R.string.categories))
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Adaptive(minSize = 104.dp),
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxSize(),
@@ -115,18 +117,15 @@ fun CategoriesContent(
             )
         }
 
-        AnimatedVisibility(state.showSuccessSnackBar) {
+        AnimatedVisibility(state.isSnackBarVisible) {
             TudeeSnackBar(
-                message = if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(
-                    R.string.some_error_happened
-                ),
+                message = if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(R.string.some_error_happened),
                 iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
                 iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
                 iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
                 modifier = Modifier.padding(16.dp)
             )
         }
-
     }
 
 }
