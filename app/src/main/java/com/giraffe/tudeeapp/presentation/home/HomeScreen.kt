@@ -38,12 +38,13 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
 import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
-import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
-import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -170,7 +171,7 @@ fun HomeContent(
                                 verticalArrangement = Arrangement.spacedBy(24.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                if (state.allTasks.isEmpty()) {
+                                if (state.tasks[TaskStatus.TODO]!!.isEmpty()) {
                                     NoTasksSection(
                                         modifier = Modifier
                                             .padding(top = 48.dp, start = 15.dp, end = 15.dp)
@@ -179,22 +180,22 @@ fun HomeContent(
                                     TaskSection(
                                         modifier = Modifier.padding(top = 24.dp),
                                         taskStatus = stringResource(R.string.to_do_tasks),
-                                        numberOfTasks = state.todoTasks.size.toString(),
-                                        tasks = state.todoTasks,
+                                        numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
+                                        tasks = state.tasks[TaskStatus.TODO]!!,
                                         onTasksLinkClick = { actions.onTasksLinkClick(0) },
                                         onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.in_progress_tasks),
-                                        numberOfTasks = state.inProgressTasks.size.toString(),
-                                        tasks = state.inProgressTasks,
+                                        numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
+                                        tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
                                         onTasksLinkClick = { actions.onTasksLinkClick(1) },
                                         onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.done_tasks),
-                                        numberOfTasks = state.doneTasks.size.toString(),
-                                        tasks = state.doneTasks,
+                                        numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
+                                        tasks = state.tasks[TaskStatus.DONE]!!,
                                         onTasksLinkClick = { actions.onTasksLinkClick(2) },
                                         onTaskClick = actions::onTaskClick
                                     )
