@@ -103,10 +103,6 @@ fun HomeContent(
     actions: HomeActions,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(
-        color = Theme.color.primary,
-    )
     Box(
         modifier = Modifier
             .fillMaxSize()
