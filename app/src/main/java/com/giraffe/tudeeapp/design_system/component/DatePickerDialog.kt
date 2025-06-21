@@ -55,7 +55,7 @@ fun DatePickerDialog(
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .graphicsLayer(
                         scaleX = 0.91f,
