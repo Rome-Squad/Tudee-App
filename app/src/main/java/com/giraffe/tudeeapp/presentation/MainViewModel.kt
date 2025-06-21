@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.shared
+package com.giraffe.tudeeapp.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

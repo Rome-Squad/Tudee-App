@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks
+package com.giraffe.tudeeapp.presentation.tasks.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
@@ -27,15 +27,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TaskUi
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
 
 

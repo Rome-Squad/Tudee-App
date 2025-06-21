@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.shared.taskeditor
+package com.giraffe.tudeeapp.presentation.taskeditor
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority

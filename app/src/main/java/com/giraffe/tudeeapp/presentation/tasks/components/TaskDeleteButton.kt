@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks
+package com.giraffe.tudeeapp.presentation.tasks.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

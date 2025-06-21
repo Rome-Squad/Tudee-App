@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks
+package com.giraffe.tudeeapp.presentation.tasks.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

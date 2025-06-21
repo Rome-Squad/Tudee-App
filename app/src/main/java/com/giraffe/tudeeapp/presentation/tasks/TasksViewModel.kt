@@ -1,25 +1,24 @@
-package com.giraffe.tudeeapp.presentation.tasks.viewmodel
+package com.giraffe.tudeeapp.presentation.tasks
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.tasks.TasksArgs
+import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-
+import kotlin.collections.filter
 
 class TasksViewModel(
     private val tasksService: TasksService,
@@ -42,41 +41,44 @@ class TasksViewModel(
 
     private fun getTasks(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
-            tasksService.getTasksByDate(date)
-                .onSuccess { flow ->
-                    flow.collect { tasks ->
-                        try {
-                            val tasksUiList = tasks.map { task ->
-                                val categoryResult =
-                                    categoryService.getCategoryById(task.categoryId)
-                                val category = if (categoryResult is Result.Success) {
-                                    categoryResult.data
-                                } else {
-                                    null
-                                }
-                                task.toTaskUi(category ?: throw Exception())
-                            }
-                            val tasksMap = mapOf(
-                                TaskStatus.TODO to tasksUiList.filter { it.status == TaskStatus.TODO },
-                                TaskStatus.IN_PROGRESS to tasksUiList.filter { it.status == TaskStatus.IN_PROGRESS },
-                                TaskStatus.DONE to tasksUiList.filter { it.status == TaskStatus.DONE },
-                            )
+            val tasksResult = tasksService.getTasksByDate(date)
+            val categoriesResult = categoryService.getAllCategories()
 
-                            _state.update { currentState ->
-                                currentState.copy(
-                                    tasks = tasksMap,
-                                    pickedDate = date,
-                                    error = null
-                                )
-                            }
-                        } catch (_: Exception) {
-                            _state.update { it.copy(error = NotFoundError()) }
-                        }
+            if (tasksResult is Result.Error) {
+                _state.update { it.copy(error = tasksResult.error) }
+                return@launch
+            }
+
+            if (categoriesResult is Result.Error) {
+                _state.update { it.copy(error = categoriesResult.error) }
+                return@launch
+            }
+
+            val tasksFlow = (tasksResult as Result.Success).data
+            val categoriesFlow = (categoriesResult as Result.Success).data
+
+            combine(tasksFlow, categoriesFlow) { tasks, categories ->
+                val categoryMap = categories.associateBy { it.id }
+
+                tasks.mapNotNull { task ->
+                    categoryMap[task.categoryId]?.let {
+                        task.toTaskUi(it)
                     }
                 }
-                .onError { error ->
-                    _state.update { it.copy(error = error) }
+
+            }.collect { taskUiList ->
+                val taskMap = TaskStatus.entries.associateWith { status ->
+                    taskUiList.filter { it.status == status }
                 }
+                _state.update { currentState ->
+                    currentState.copy(
+                        tasks = taskMap,
+                        pickedDate = date,
+                        error = null
+                    )
+                }
+
+            }
         }
     }
 
@@ -142,7 +144,9 @@ class TasksViewModel(
                             isSnackBarVisible = true,
                             isDeleteBottomSheetVisible = false,
                             tasks = it.tasks.mapValues { entry ->
-                                entry.value.filter { task -> task.id != taskId }
+                                entry.value.filter {
+                                    it.id != taskId
+                                }
                             }
                         )
                     }

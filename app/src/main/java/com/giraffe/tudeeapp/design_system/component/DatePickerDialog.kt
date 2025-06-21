@@ -28,7 +28,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.tasks.convertToLocalDateTime
+import com.giraffe.tudeeapp.presentation.tasks.components.convertToLocalDateTime
 import kotlinx.datetime.LocalDateTime
 import java.time.Instant
 import java.time.LocalDate
