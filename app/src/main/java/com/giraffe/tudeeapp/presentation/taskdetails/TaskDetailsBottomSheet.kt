@@ -24,9 +24,11 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,9 +39,9 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -50,16 +52,20 @@ fun TaskDetailsBottomSheet(
     onnDismiss: () -> Unit,
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
-    onError: (DomainError) -> Unit = {},
+    onError: (String) -> Unit = {},
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
+    LaunchedEffect(key1 = taskId) {
+        viewModel.getTaskById(taskId)
+    }
+    val context = LocalContext.current
     EventListener(
         events = viewModel.events,
     ) {
         when (it) {
             is TaskDetailsEvent.Error -> {
-                onError(it.error)
+                onError(context.errorToMessage(it.error))
             }
         }
     }
