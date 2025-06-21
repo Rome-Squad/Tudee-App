@@ -18,17 +18,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -119,15 +116,7 @@ fun HomeContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            var width by remember { mutableIntStateOf(0) }
-            val heightInDp = with(LocalDensity.current) { (width * 0.2f).toDp() }
-
             TudeeAppBar(
-                modifier = Modifier
-                    .onGloballyPositioned {
-                        width = it.size.width
-                    }
-                    .height(heightInDp),
                 isDarkTheme = isDarkTheme,
                 onThemeSwitchToggle = onThemeSwitchToggle
             )
@@ -137,67 +126,59 @@ fun HomeContent(
             ) {
                 item {
                     Box(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Theme.color.surfaceHigh)
+                            .padding(top = 8.dp)
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            Box(
+                            TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                            SliderStatus(
+                                state,
+                                modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                            )
+                            OverViewSection(tasksState = state)
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Theme.color.surface),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (state.tasks.values.flatten().isEmpty()) {
+                            NoTasksSection(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(Theme.color.surfaceHigh)
-                                    .padding(top = 8.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                                    SliderStatus(
-                                        state,
-                                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                                    )
-                                    OverViewSection(tasksState = state)
-                                }
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Theme.color.surface),
-                                verticalArrangement = Arrangement.spacedBy(24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                if (state.tasks.values.flatten().isEmpty()) {
-                                    NoTasksSection(
-                                        modifier = Modifier
-                                            .padding(top = 48.dp, start = 15.dp, end = 15.dp)
-                                    )
-                                } else {
-                                    TaskSection(
-                                        modifier = Modifier.padding(top = 24.dp),
-                                        taskStatus = stringResource(R.string.in_progress_tasks),
-                                        numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
-                                        tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(1) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                    TaskSection(
-                                        taskStatus = stringResource(R.string.to_do_tasks),
-                                        numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
-                                        tasks = state.tasks[TaskStatus.TODO]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                    TaskSection(
-                                        taskStatus = stringResource(R.string.done_tasks),
-                                        numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
-                                        tasks = state.tasks[TaskStatus.DONE]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(2) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                }
-                            }
+                                    .padding(top = 74.dp, start = 15.dp, end = 15.dp)
+                            )
+                        } else {
+                            TaskSection(
+                                modifier = Modifier.padding(top = 24.dp),
+                                taskStatus = stringResource(R.string.in_progress_tasks),
+                                numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
+                                tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
+                                onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                onTaskClick = actions::onTaskClick
+                            )
+                            TaskSection(
+                                taskStatus = stringResource(R.string.to_do_tasks),
+                                numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
+                                tasks = state.tasks[TaskStatus.TODO]!!,
+                                onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                onTaskClick = actions::onTaskClick
+                            )
+                            TaskSection(
+                                taskStatus = stringResource(R.string.done_tasks),
+                                numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
+                                tasks = state.tasks[TaskStatus.DONE]!!,
+                                onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                onTaskClick = actions::onTaskClick
+                            )
                         }
                     }
                 }
