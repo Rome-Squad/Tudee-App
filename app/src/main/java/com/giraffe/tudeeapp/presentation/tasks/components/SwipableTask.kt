@@ -23,7 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
@@ -45,6 +47,7 @@ fun SwipableTask(
     action: () -> Unit = { }
 ) {
 
+    val layoutDirection = LocalLayoutDirection.current
     val buttonWidth = with(LocalDensity.current) { 76.dp.toPx() }
     val offset = remember {
         Animatable(initialValue = 0f)
@@ -86,8 +89,9 @@ fun SwipableTask(
                     detectHorizontalDragGestures(
                         onHorizontalDrag = { _, dragAmount ->
                             scope.launch {
+                                val correctedDragAmount = if (layoutDirection == LayoutDirection.Ltr) dragAmount else -dragAmount
                                 val newOffset =
-                                    (offset.value + dragAmount).coerceIn(-buttonWidth, 0f)
+                                    (offset.value + correctedDragAmount).coerceIn(-buttonWidth, 0f)
                                 offset.snapTo(newOffset)
                             }
                         },
