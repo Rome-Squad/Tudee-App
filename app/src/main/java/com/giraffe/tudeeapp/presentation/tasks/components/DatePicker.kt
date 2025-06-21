@@ -76,8 +76,10 @@ fun DatePicker(
         val formatedDate="$monthName, $yearInLocal"
         MonthHeader(
             monthYearLabel = formatedDate,
-            onPreviousClick = { selectedDate = selectedDate.minusMonths(1) },
-            onNextClick = { selectedDate = selectedDate.plusMonths(1) },
+            onPreviousClick = { selectedDate = selectedDate.minusMonths(1)
+                onDateSelected(convertToLocalDateTime(selectedDate))},
+            onNextClick = { selectedDate = selectedDate.plusMonths(1)
+                onDateSelected(convertToLocalDateTime(selectedDate))},
             onMonthClick = { isDialogVisible = true }
         )
 
