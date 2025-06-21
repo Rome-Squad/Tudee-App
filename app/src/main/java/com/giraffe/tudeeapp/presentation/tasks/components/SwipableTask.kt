@@ -21,12 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -115,19 +112,7 @@ fun SwipableTask(
             color = Color.Transparent,
             shadowElevation = 0.dp
         ) {
-            TaskCard(
-                taskIcon = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = taskUi.category.imageUri)
-                        .build()
-                ),
-                priority = taskUi.priorityType,
-                taskTitle = taskUi.title,
-                taskDescription = taskUi.description,
-                taskCardType = TaskCardType.TASK,
-                date = taskUi.dueDate.date.toString()
-            )
+            TaskCard(task = taskUi)
         }
     }
 }

@@ -98,20 +98,7 @@ fun TasksByCategoryContent(
                 state.tasks[state.selectedTab]?.let { tasks ->
                     if (tasks.isNotEmpty()) {
                         items(tasks) { task ->
-                            TaskCard(
-                                taskIcon = rememberAsyncImagePainter(
-                                    ImageRequest
-                                        .Builder(LocalContext.current)
-                                        .data(data = state.selectedCategory?.imageUri)
-                                        .build()
-                                ),
-                                categoryName = state.selectedCategory?.name ?: "",
-                                priority = task.priorityType,
-                                taskTitle = task.title,
-                                date = task.dueDate.date.toString(),
-                                taskDescription = task.description,
-                                taskCardType = TaskCardType.CATEGORY
-                            )
+                            TaskCard(task = task)
                         }
                     } else {
                         item {

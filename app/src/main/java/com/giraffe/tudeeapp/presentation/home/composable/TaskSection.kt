@@ -15,12 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.component.TaskCardType
@@ -83,21 +80,10 @@ fun TaskSection(
 
         tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(
-                taskIcon = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = task.category.imageUri)
-                        .build()
-                ),
-                priority = task.priorityType,
-                taskTitle = task.title,
-                taskDescription = task.description,
-                taskCardType = TaskCardType.TASK,
                 modifier = Modifier
-                    .clickable {
-                        onTaskClick(task.id)
-                    }
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .clickable { onTaskClick(task.id) }
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                task = task,
             )
         }
     }
