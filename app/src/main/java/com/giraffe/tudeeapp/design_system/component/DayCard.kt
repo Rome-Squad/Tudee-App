@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 @Composable
 fun DayCard(
     modifier: Modifier = Modifier,
-    dayNumber: Int = 15,
+    dayNumber: String = "15",
     dayName: String = "Mon",
     isSelected: Boolean = true,
     onClick: () -> Unit
@@ -41,6 +42,7 @@ fun DayCard(
                 brush = Brush.verticalGradient(backgroundColor),
                 shape = RoundedCornerShape(16.dp)
             )
+            .clip(shape = RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
