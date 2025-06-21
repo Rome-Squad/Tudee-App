@@ -40,8 +40,6 @@ class TaskEditorViewModel(
     init {
         viewModelScope.launch {
             loadCategories()
-
-            taskId?.let { loadTask(it) }
         }
     }
 
@@ -76,11 +74,10 @@ class TaskEditorViewModel(
     }
 
     suspend fun loadTask(id: Long) {
-        taskEditorUiState.update {
-            it.copy(
-                isLoading = true
-            )
-        }
+        if (
+            taskId == taskEditorUiState.value.taskUi.id ||
+            taskId == null
+        ) return
 
         tasksService.getTaskById(id)
             .onSuccess { task ->
