@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -48,7 +47,6 @@ import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -83,17 +81,12 @@ fun HomeScreen(
     HomeContent(
         state = state,
         snackBarState = snackBarData,
-        onTasksLinkClick = viewModel::onTasksLinkClick,
-        onTaskClick = viewModel::onTaskClick,
-        onEditTaskClick = viewModel::onEditTaskClick,
-        onAddTaskClick = viewModel::onAddTaskClick,
-        onDismissTaskDetails = viewModel::dismissTaskDetails,
-        onDismissTaskEditor = viewModel::dismissTaskEditor,
         onThemeSwitchToggle = onThemeSwitchToggle,
         isDarkTheme = isDarkTheme,
         onChangeSnackBarState = {
             snackBarData = it
-        }
+        },
+        actions = viewModel
     )
 }
 
@@ -104,14 +97,9 @@ fun HomeContent(
     state: HomeUiState,
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
-    onDismissTaskDetails: () -> Unit = {},
-    onDismissTaskEditor: () -> Unit = {},
-    onTaskClick: (Long) -> Unit = {},
-    onTasksLinkClick: (Int) -> Unit,
-    onEditTaskClick: (Long?) -> Unit,
-    onAddTaskClick: () -> Unit,
     snackBarState: TudeeSnackBarState?,
-    onChangeSnackBarState: (TudeeSnackBarState?) -> Unit
+    onChangeSnackBarState: (TudeeSnackBarState?) -> Unit,
+    actions: HomeActions,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val systemUiController = rememberSystemUiController()
@@ -193,22 +181,22 @@ fun HomeContent(
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.todoTasks.size.toString(),
                                         tasks = state.todoTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(0) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasks.size.toString(),
                                         tasks = state.inProgressTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(1) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasks.size.toString(),
                                         tasks = state.doneTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(2) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                 }
                             }
@@ -223,22 +211,22 @@ fun HomeContent(
                 .align(Alignment.BottomEnd)
                 .padding(end = 12.dp, bottom = 10.dp),
             icon = painterResource(R.drawable.add_task_icon),
-            onClick = onAddTaskClick
+            onClick = actions::onAddTaskClick
         )
 
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
-                onnDismiss = onDismissTaskDetails,
-                onEditTask = onEditTaskClick
+                onnDismiss = actions::dismissTaskDetails,
+                onEditTask = actions::onEditTaskClick
             )
         }
 
         if (state.isTaskEditorVisible) {
             TaskEditorBottomSheet(
                 taskId = state.currentTaskId,
-                onDismissRequest = onDismissTaskEditor,
+                onDismissRequest = actions::dismissTaskEditor,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxHeight(1 - (80.dp / screenHeight.dp)),
