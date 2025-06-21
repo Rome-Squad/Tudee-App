@@ -5,6 +5,5 @@ import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 data class TaskDetailsState(
     val task: TaskUi? = null,
-    val isLoading: Boolean = false,
-    val error: DomainError? = null
+    val isLoading: Boolean = false
 )

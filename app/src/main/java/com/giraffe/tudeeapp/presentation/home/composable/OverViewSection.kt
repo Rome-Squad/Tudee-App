@@ -30,7 +30,7 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
         TaskCardData(
             color = Theme.color.greenAccent,
             icon = R.drawable.done_task_card_icon,
-            taskCount = tasksState.tasks[TaskStatus.TODO]!!.size,
+            taskCount = tasksState.tasks[TaskStatus.DONE]!!.size,
             taskStatus = stringResource(R.string.done_tasks),
         ),
         TaskCardData(
@@ -42,7 +42,7 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
         TaskCardData(
             color = Theme.color.purpleAccent,
             icon = R.drawable.to_do_task_card_icon,
-            taskCount = tasksState.tasks[TaskStatus.IN_PROGRESS]!!.size,
+            taskCount = tasksState.tasks[TaskStatus.TODO]!!.size,
             taskStatus = stringResource(R.string.to_do_tasks)
         )
     )
