@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -69,7 +70,7 @@ fun DatePicker(
         )
     }
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)) {
         val monthName=currentMonth.month.getDisplayName(TextStyle.FULL,currentLocale)
         val yearInLocal=currentMonth.year.toLocaleNumbers(currentLocale)
         val formatedDate="$monthName, $yearInLocal"
