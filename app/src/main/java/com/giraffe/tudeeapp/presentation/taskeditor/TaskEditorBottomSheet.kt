@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,24 +33,20 @@ fun TaskEditorBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     onSuccess: (String) -> Unit = {},
-    onError: (String) -> Unit = {}
+    onError: (String) -> Unit = {},
+    viewModel: TaskEditorViewModel = koinViewModel( parameters = { parametersOf(taskId) } )
 ) {
+
     val context = LocalContext.current
-    val storeOwner = remember(taskId) { ViewModelStore() }
-    val owner = remember(taskId) {
-        object : ViewModelStoreOwner {
-            override val viewModelStore = storeOwner
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
+
+    LaunchedEffect(key1 = taskId) {
+        taskId?.let {
+            viewModel.loadTask(taskId)
         }
     }
-
-
-    val viewModel: TaskEditorViewModel = koinViewModel(
-        viewModelStoreOwner = owner,
-        parameters = { parametersOf(taskId) }
-    )
-
-
-    val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
     EventListener(
         events = viewModel.events,
@@ -62,8 +59,6 @@ fun TaskEditorBottomSheet(
         }
 
     }
-    val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = {
             viewModel.cancel()

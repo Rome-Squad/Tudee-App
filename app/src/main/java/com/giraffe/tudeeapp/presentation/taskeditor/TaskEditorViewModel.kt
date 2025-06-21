@@ -56,12 +56,12 @@ class TaskEditorViewModel(
         categoriesService.getAllCategories()
             .onSuccess { flow ->
                 val categories = flow.first()
-                    taskEditorUiState.update {
-                        it.copy(
-                            categories = categories,
-                            isLoading = false
-                        )
-                    }
+                taskEditorUiState.update {
+                    it.copy(
+                        categories = categories,
+                        isLoading = false
+                    )
+                }
 
             }
             .onError { error ->
@@ -75,7 +75,7 @@ class TaskEditorViewModel(
 
     }
 
-    private suspend fun loadTask(id: Long) {
+    suspend fun loadTask(id: Long) {
         taskEditorUiState.update {
             it.copy(
                 isLoading = true
