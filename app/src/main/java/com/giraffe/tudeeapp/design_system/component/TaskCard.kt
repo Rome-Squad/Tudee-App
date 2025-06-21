@@ -138,18 +138,6 @@ fun getColorForCategoryIcon(categoryName: String): Color {
 @Composable
 fun TaskCardPreview() {
     Column {
-        /*TaskCard(
-            taskIcon = painterResource(R.drawable.birthday_cake_icon),
-            priority = TaskPriority.HIGH,
-            taskTitle = "Organize Study Desk",
-            taskDescription = "Review cell structure and functions for tomorrow...",
-            date = "12-03-2025",
-            taskCardType = TaskCardType.CATEGORY
-        )*/
+        TaskCard(task = TaskUi())
     }
-}
-
-enum class TaskCardType {
-    TASK,
-    CATEGORY
 }
