@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -48,6 +49,7 @@ fun MonthHeader(
                     color = Theme.color.stroke,
                     shape = CircleShape
                 )
+                .clip(CircleShape)
                 .clickable(onClick = onPreviousClick),
             contentAlignment = Alignment.Center
         ){
@@ -86,6 +88,7 @@ fun MonthHeader(
                     color = Theme.color.stroke,
                     shape = CircleShape
                 )
+                .clip(CircleShape)
                 .clickable(onClick = onNextClick),
             contentAlignment = Alignment.Center
         ){
