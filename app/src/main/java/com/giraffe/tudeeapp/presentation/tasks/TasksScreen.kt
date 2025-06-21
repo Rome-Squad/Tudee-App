@@ -32,11 +32,10 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.shared.taskdetails.TaskDetailsBottomSheet
-import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenActions
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksScreenState
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
+import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
+import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
+import com.giraffe.tudeeapp.presentation.tasks.components.DatePicker
+import com.giraffe.tudeeapp.presentation.tasks.components.SwipableTask
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
@@ -113,7 +112,7 @@ fun TaskScreenContent(
                                 actions.setSelectedTaskId(taskUi.id)
                             },
                             modifier = Modifier
-                                .clickable{
+                                .clickable {
                                     actions.onTaskClick(taskUi.id)
                                 }
                         )

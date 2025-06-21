@@ -17,7 +17,7 @@ import com.giraffe.tudeeapp.design_system.component.NavBar
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.presentation.navigation.TudeeNavGraph
-import com.giraffe.tudeeapp.presentation.shared.MainViewModel
+import com.giraffe.tudeeapp.presentation.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {

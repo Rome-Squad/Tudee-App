@@ -12,7 +12,7 @@ import com.giraffe.tudeeapp.presentation.home.homeRoute
 import com.giraffe.tudeeapp.presentation.splash.onboard.onboardingRoute
 import com.giraffe.tudeeapp.presentation.splash.splashscreen.splashRoute
 import com.giraffe.tudeeapp.presentation.tasks.tasksRoute
-import com.giraffe.tudeeapp.presentation.tasks_by_category.tasksByCategoryRoute
+import com.giraffe.tudeeapp.presentation.tasksbycategory.tasksByCategoryRoute
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks.viewmodel
+package com.giraffe.tudeeapp.presentation.tasks
 
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime

@@ -1,7 +1,8 @@
-package com.giraffe.tudeeapp.presentation.tasks.viewmodel
+package com.giraffe.tudeeapp.presentation.tasks
 
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.util.DomainError
+import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks_by_category
+package com.giraffe.tudeeapp.presentation.tasksbycategory
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -34,7 +34,6 @@ import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController

@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks_by_category
+package com.giraffe.tudeeapp.presentation.tasksbycategory
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus

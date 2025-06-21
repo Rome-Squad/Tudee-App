@@ -5,16 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.Result
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDateTime
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,52 +35,45 @@ class HomeViewModel(
     private fun getAllTasks() = viewModelScope.launch {
         _homeUiState.update { it.copy(isLoading = true) }
 
-        tasksService.getTasksByDate(getCurrentLocalDateTime())
-            .onSuccess { tasksFlow ->
-                tasksFlow.collect { tasks ->
-                    try {
-                        val tasksUiList = tasks.map { task ->
-                            val categoryResult = categoryService.getCategoryById(task.categoryId)
-                            val category = if (categoryResult is Result.Success)
-                                categoryResult.data
-                            else
-                                null
+        val tasksResult = tasksService.getTasksByDate(getCurrentLocalDateTime())
+        val categoriesResult = categoryService.getAllCategories()
 
-                            task.toTaskUi(
-                                category ?: throw Exception()
-                            )
+        if (tasksResult is Result.Error) {
+            _events.send(HomeEvent.Error(tasksResult.error))
+            return@launch
+        }
 
-                        }
+        if (categoriesResult is Result.Error) {
 
-                        val todoTasks =
-                            tasksUiList.filter { it.status == TaskStatus.TODO }
+            _events.send(HomeEvent.Error(categoriesResult.error))
+            return@launch
+        }
 
-                        val doneTasks =
-                            tasksUiList.filter { it.status == TaskStatus.DONE }
+        val tasksFlow = (tasksResult as Result.Success).data
+        val categoriesFlow = (categoriesResult as Result.Success).data
 
-                        val iProgressTasks =
-                            tasksUiList.filter { it.status == TaskStatus.IN_PROGRESS }
+        combine(tasksFlow, categoriesFlow) { tasks, categories ->
+            val categoryMap = categories.associateBy { it.id }
 
-                        _homeUiState.update { currentState ->
-                            currentState.copy(
-                                allTasks = tasksUiList,
-                                todoTasks = todoTasks,
-                                inProgressTasks = iProgressTasks,
-                                doneTasks = doneTasks,
-                                isLoading = false,
-                            )
-                        }
-                    } catch (_: Exception) {
-                        _events.send(HomeEvent.Error(NotFoundError()))
-                    }
+            tasks.mapNotNull { task ->
+                categoryMap[task.categoryId]?.let {
+                    task.toTaskUi(it)
                 }
             }
-            .onError { error ->
-                _homeUiState.update { currentState ->
-                    currentState.copy(isLoading = false)
-                }
-                _events.send(HomeEvent.Error(error))
+
+        }.collect { taskUiList ->
+            val taskMap = TaskStatus.entries.associateWith { status ->
+                taskUiList.filter { it.status == status }
             }
+
+            _homeUiState.update { currentState ->
+                currentState.copy(
+                    tasks = taskMap,
+                    isLoading = false
+                )
+            }
+
+        }
 
     }
 

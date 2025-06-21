@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks_by_category
+package com.giraffe.tudeeapp.presentation.tasksbycategory
 
 sealed class TasksByCategoryEvents {
     class CategoryDeleted : TasksByCategoryEvents()

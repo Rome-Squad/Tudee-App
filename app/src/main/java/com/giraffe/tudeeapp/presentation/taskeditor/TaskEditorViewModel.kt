@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.shared.taskeditor
+package com.giraffe.tudeeapp.presentation.taskeditor
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -9,7 +9,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.giraffe.tudeeapp.presentation.navigation.Screen
-import com.giraffe.tudeeapp.presentation.tasks.viewmodel.TasksViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)

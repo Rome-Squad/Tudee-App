@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasks
+package com.giraffe.tudeeapp.presentation.tasks.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi

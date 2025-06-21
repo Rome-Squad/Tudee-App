@@ -4,9 +4,9 @@ import androidx.compose.ui.graphics.Color
 
 val darkThemeColor = TudeeColors(
     primary = Color(0xFF3090BF),
-    secondary = Color(0xFFF49061),
+    secondary = Color(0xFFCC7851),
     primaryVariant = Color(0xFF05202E),
-    primaryGradient = Gradient(Color(0xFF3DB6F2), Color(0xFF3A9CCD)),
+    primaryGradient = Gradient(Color(0xFF3090BF ), Color(0xFF3A9CCD)),
     title = Color(0xDDFFFFFF),
     body = Color(0x99FFFFFF),
     hint = Color(0x61FFFFFF),
@@ -20,14 +20,14 @@ val darkThemeColor = TudeeColors(
     onPrimaryCaption = Color(0xB2FFFFFF),
     onPrimaryCard = Color(0x28060414),
     onPrimaryStroke = Color(0x99242424),
-    pinkAccent = Color(0xFFF4869A),
-    yellowAccent = Color(0xFFF2C849),
-    yellowVariant = Color(0xFFF7F2E4),
-    greenAccent = Color(0xFF76C499),
-    greenVariant = Color(0xFFE4F2EA),
-    purpleAccent = Color(0xFF9887F5),
+    pinkAccent = Color(0xFFCC5268),
+    yellowAccent = Color(0xFFB28F25),
+    yellowVariant = Color(0xFF1F1E1C),
+    greenAccent = Color(0xFF4D8064),
+    greenVariant = Color(0xFF1C1F1D),
+    purpleAccent = Color(0xFF4D8064),
     purpleVariant = Color(0xFF1C1A33),
-    error = Color(0xFFE55C5C),
+    error = Color(0xFF1C1A33),
     errorVariant = Color(0xFF1F1111),
-    overlay = Color(0x5102151E)
+    overlay = Color(0x5202151E)
 )

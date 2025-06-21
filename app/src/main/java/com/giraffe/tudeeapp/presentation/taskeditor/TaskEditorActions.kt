@@ -1,6 +1,5 @@
-package com.giraffe.tudeeapp.presentation.shared.taskeditor
+package com.giraffe.tudeeapp.presentation.taskeditor
 
-import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime

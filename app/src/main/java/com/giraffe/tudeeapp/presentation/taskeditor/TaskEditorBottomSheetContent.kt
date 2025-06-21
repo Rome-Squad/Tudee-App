@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.shared.taskeditor
+package com.giraffe.tudeeapp.presentation.taskeditor
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
