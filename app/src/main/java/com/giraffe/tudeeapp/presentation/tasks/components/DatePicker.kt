@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
@@ -27,6 +28,7 @@ import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -37,7 +39,7 @@ import java.util.Locale
 data class DayData(
     val date: LocalDate,
     val dayName: String,
-    val dayNumber: Int
+    val dayNumber: String
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -52,6 +54,7 @@ fun DatePicker(
     var isDialogVisible by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val currentLocale = LocalConfiguration.current.locales[0]
 
     val displayedDays by remember(currentMonth) {
         mutableStateOf(
@@ -59,16 +62,19 @@ fun DatePicker(
                 val date = currentMonth.atDay(day)
                 DayData(
                     date = date,
-                    dayName = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH),
-                    dayNumber = date.dayOfMonth
+                    dayName = date.dayOfWeek.getDisplayName(TextStyle.SHORT, currentLocale),
+                    dayNumber = date.dayOfMonth.toLocaleNumbers(currentLocale)
                 )
             }
         )
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
+        val monthName=currentMonth.month.getDisplayName(TextStyle.FULL,currentLocale)
+        val yearInLocal=currentMonth.year.toLocaleNumbers(currentLocale)
+        val formatedDate="$monthName, $yearInLocal"
         MonthHeader(
-            monthYearLabel = selectedDate.format(DateTimeFormatter.ofPattern("MMM, yyyy")),
+            monthYearLabel = formatedDate,
             onPreviousClick = { selectedDate = selectedDate.minusMonths(1) },
             onNextClick = { selectedDate = selectedDate.plusMonths(1) },
             onMonthClick = { isDialogVisible = true }
@@ -79,7 +85,8 @@ fun DatePicker(
         LazyRow(
             state = listState,
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            reverseLayout = currentLocale.language == "ar"
         ) {
             items(items = displayedDays, key = { it.date }) { dayData ->
                 DayCard(
@@ -112,6 +119,11 @@ fun DatePicker(
             onDateSelected(it)
         }
     )
+}
+private fun Int.toLocaleNumbers(locale: Locale): String{
+    val formatter = NumberFormat.getInstance(locale)
+    formatter.isGroupingUsed = false
+    return formatter.format(this)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

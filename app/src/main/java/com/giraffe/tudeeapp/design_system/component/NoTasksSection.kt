@@ -11,13 +11,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.giraffe.tudeeapp.R
@@ -30,14 +34,19 @@ fun NoTasksSection(
     title: String = stringResource(R.string.no_tasks_here),
     description: String = stringResource(R.string.tap_the_button_to_add_your_first_one)
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+    val shouldFlip = layoutDirection == LayoutDirection.Rtl
     Row(
-        modifier = modifier
+        modifier = modifier.padding(top = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Column(
             modifier = Modifier
-
                 .width(203.dp)
-                .offset(y = (-26).dp)
+
+                .align(Alignment.Top)
+                .offset(x = 15.dp, y = (-18).dp)
                 .zIndex(1f)
                 .shadow(
                     elevation = 12.dp,
@@ -73,17 +82,21 @@ fun NoTasksSection(
             )
         }
         Image(
-            modifier = Modifier.offset(x = (-20).dp),
-            painter = painterResource(R.drawable.empty_list_robot),
+            modifier = Modifier
+                .offset(x = (-15).dp)
+                .graphicsLayer {
+                scaleX = if (shouldFlip) -1f else 1f
+            },
+            painter = painterResource(Theme.resources.emptyListRobot),
             contentDescription = "empty list robot"
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true,locale = "en")
 @Composable
 fun NoTasksSectionPreview() {
-    TudeeTheme {
+    TudeeTheme(isDarkTheme = true) {
         NoTasksSection()
     }
 }

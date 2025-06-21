@@ -4,7 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +35,7 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 @Composable
 fun TabsBar(
     modifier: Modifier = Modifier,
-    startTab : TaskStatus = TaskStatus.IN_PROGRESS,
+    startTab: TaskStatus = TaskStatus.TODO,
     onTabSelected: (TaskStatus) -> Unit = {},
     tasks: Map<TaskStatus, Int> = mapOf()
 ) {
@@ -43,9 +44,18 @@ fun TabsBar(
         modifier = modifier,
         containerColor = Theme.color.surfaceHigh,
         selectedTabIndex = selectedTab,
+        divider = {
+            Box(
+                modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Theme.color.stroke.copy(.12f))
+            )
+        },
         indicator = {
             TabRowDefaults.PrimaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedTab, matchContentSize = false),
+                height = 4.dp,
                 width = Dp.Unspecified,
                 shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
                 color = Theme.color.secondary
@@ -73,8 +83,7 @@ fun TabsBar(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            modifier = Modifier
-                                .weight(.73f),
+                            modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center,
                             text = title,
                             maxLines = 1,
@@ -85,16 +94,14 @@ fun TabsBar(
                         if (tab.value != 0 && selectedTab == index) {
                             Box(
                                 modifier = Modifier
-                                    .weight(.27f)
                                     .size(28.dp)
-                                    .aspectRatio(1f)
                                     .background(color = Theme.color.surface, shape = CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = tab.value.toString(),
                                     style = Theme.textStyle.label.medium,
-                                    color = Theme.color.body
+                                    color = Theme.color.body.copy(.6f)
                                 )
                             }
                         }
@@ -108,5 +115,11 @@ fun TabsBar(
 @Preview
 @Composable
 private fun Preview() {
-    TabsBar()
+    TabsBar(
+        tasks = mapOf(
+            TaskStatus.TODO to 5,
+            TaskStatus.IN_PROGRESS to 6,
+            TaskStatus.DONE to 2,
+        )
+    )
 }

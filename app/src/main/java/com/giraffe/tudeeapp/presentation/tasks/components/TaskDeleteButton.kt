@@ -3,6 +3,7 @@ package com.giraffe.tudeeapp.presentation.tasks.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ fun TaskDeleteButton(
 ) {
     Box(
         modifier = modifier
-            .background(backgroundColor)
+            .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
             .padding(start = 32.dp, end = 12.dp),
         contentAlignment = Alignment.Center
     ) {
