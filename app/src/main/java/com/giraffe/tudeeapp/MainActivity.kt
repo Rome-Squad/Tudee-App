@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
                 val showBottomBar = currentRoute !in noBottomBarRoutes
 
-                Scaffold(
+                /*Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         if (showBottomBar) {
@@ -62,6 +63,20 @@ class MainActivity : ComponentActivity() {
                         isDarkTheme = mainViewModel.isDarkTheme,
                         onToggleTheme = { mainViewModel.onToggleTheme() }
                     )
+                }*/
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    TudeeNavGraph(
+                        modifier = Modifier.weight(1f),
+                        navController = navController,
+                        isDarkTheme = mainViewModel.isDarkTheme,
+                        onToggleTheme = { mainViewModel.onToggleTheme() }
+                    )
+
+                    if (showBottomBar) {
+                        NavBar(navController = navController)
+                    }
                 }
             }
         }
