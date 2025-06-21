@@ -130,7 +130,7 @@ fun SwipableTask(
                 taskTitle = taskUi.title,
                 taskDescription = taskUi.description,
                 taskCardType = TaskCardType.TASK,
-                date = taskUi.dueDate.date.toString()
+                date = null
             )
         }
     }
