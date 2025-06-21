@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -46,7 +47,6 @@ import com.giraffe.tudeeapp.presentation.shared.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -65,10 +65,6 @@ fun HomeScreen(
         events = viewModel.events
     ) { event ->
         when (event) {
-            HomeEvent.DismissSnackBar -> {
-                snackBarData = null
-            }
-
             is HomeEvent.Error -> {
                 snackBarData = TudeeSnackBarState(
                     message = context.errorToMessage(event.error),
@@ -79,43 +75,18 @@ fun HomeScreen(
             is HomeEvent.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
             }
-
-            HomeEvent.TaskAddedSuccess -> {
-                snackBarData = TudeeSnackBarState(
-                    message = context.getString(R.string.task_added_successfully),
-                    isError = false
-                )
-            }
-
-            HomeEvent.TaskEditedSuccess -> {
-                snackBarData = TudeeSnackBarState(
-                    message = context.getString(R.string.task_edited_successfully),
-                    isError = false
-                )
-            }
-        }
-    }
-    LaunchedEffect(snackBarData) {
-        if (snackBarData != null) {
-            delay(3000)
-            viewModel.dismissSnackBar()
         }
     }
 
     HomeContent(
         state = state,
         snackBarState = snackBarData,
-        onTasksLinkClick = viewModel::onTasksLinkClick,
-        onTaskClick = viewModel::onTaskClick,
-        onEditTaskClick = viewModel::onEditTaskClick,
-        onAddTaskClick = viewModel::onAddTaskClick,
-        onDismissTaskDetails = viewModel::dismissTaskDetails,
-        onDismissTaskEditor = viewModel::dismissTaskEditor,
         onThemeSwitchToggle = onThemeSwitchToggle,
         isDarkTheme = isDarkTheme,
         onChangeSnackBarState = {
             snackBarData = it
-        }
+        },
+        actions = viewModel
     )
 }
 
@@ -126,15 +97,11 @@ fun HomeContent(
     state: HomeUiState,
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
-    onDismissTaskDetails: () -> Unit = {},
-    onDismissTaskEditor: () -> Unit = {},
-    onTaskClick: (Long) -> Unit = {},
-    onTasksLinkClick: (Int) -> Unit,
-    onEditTaskClick: (Long?) -> Unit,
-    onAddTaskClick: () -> Unit,
     snackBarState: TudeeSnackBarState?,
-    onChangeSnackBarState: (TudeeSnackBarState) -> Unit
+    onChangeSnackBarState: (TudeeSnackBarState?) -> Unit,
+    actions: HomeActions,
 ) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
         color = Theme.color.primary,
@@ -214,22 +181,22 @@ fun HomeContent(
                                         taskStatus = stringResource(R.string.to_do_tasks),
                                         numberOfTasks = state.todoTasks.size.toString(),
                                         tasks = state.todoTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(0) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.inProgressTasks.size.toString(),
                                         tasks = state.inProgressTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(1) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
                                         taskStatus = stringResource(R.string.done_tasks),
                                         numberOfTasks = state.doneTasks.size.toString(),
                                         tasks = state.doneTasks,
-                                        onTasksLinkClick = { onTasksLinkClick(2) },
-                                        onTaskClick = onTaskClick
+                                        onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                        onTaskClick = actions::onTaskClick
                                     )
                                 }
                             }
@@ -244,23 +211,25 @@ fun HomeContent(
                 .align(Alignment.BottomEnd)
                 .padding(end = 12.dp, bottom = 10.dp),
             icon = painterResource(R.drawable.add_task_icon),
-            onClick = onAddTaskClick
+            onClick = actions::onAddTaskClick
         )
 
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
-                onnDismiss = onDismissTaskDetails,
-                onEditTask = onEditTaskClick
+                onnDismiss = actions::dismissTaskDetails,
+                onEditTask = actions::onEditTaskClick
             )
         }
 
         if (state.isTaskEditorVisible) {
             TaskEditorBottomSheet(
                 taskId = state.currentTaskId,
-                onDismissRequest = onDismissTaskEditor,
-                modifier = Modifier.align(Alignment.BottomCenter),
+                onDismissRequest = actions::dismissTaskEditor,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxHeight(1 - (80.dp / screenHeight.dp)),
                 onSuccess = { message ->
                     onChangeSnackBarState(TudeeSnackBarState(message = message, isError = false))
                 },
@@ -278,7 +247,8 @@ fun HomeContent(
                 iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
                 modifier = Modifier
                     .padding(16.dp)
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.TopCenter),
+                onDismiss = { onChangeSnackBarState(null) }
             )
         }
     }

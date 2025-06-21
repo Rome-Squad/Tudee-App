@@ -5,7 +5,4 @@ import com.giraffe.tudeeapp.domain.util.DomainError
 sealed interface HomeEvent {
     data class NavigateToTasksScreen(val tabIndex: Int): HomeEvent
     data class Error(val error: DomainError): HomeEvent
-    object TaskAddedSuccess: HomeEvent
-    object TaskEditedSuccess: HomeEvent
-    object DismissSnackBar: HomeEvent
 }

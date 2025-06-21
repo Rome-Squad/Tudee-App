@@ -44,15 +44,15 @@ fun TudeeSnackBar(
     durationMillis: Long = 3000L,
     onDismiss: () -> Unit = {}
 ) {
-    var visible by remember { mutableStateOf(true) }
+    var visible by remember { mutableStateOf(false) }
 
     LaunchedEffect (Unit) {
+        visible = true
         delay(durationMillis)
         visible = false
         delay(1000)
         onDismiss()
     }
-
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(animationSpec = tween(durationMillis = 1000)),

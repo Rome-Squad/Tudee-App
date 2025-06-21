@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
@@ -113,18 +112,6 @@ class HomeViewModel(
         }
     }
 
-    override fun showTaskAddedSuccess(message: String) {
-        viewModelScope.launch {
-            _events.send(HomeEvent.TaskAddedSuccess)
-        }
-    }
-
-    override fun showTaskEditedSuccess(message: String) {
-        viewModelScope.launch {
-            _events.send(HomeEvent.TaskEditedSuccess)
-        }
-    }
-
     override fun dismissTaskDetails() {
         _homeUiState.update { currentState ->
             currentState.copy(isTaskDetailsVisible = false, currentTaskId = null)
@@ -137,12 +124,6 @@ class HomeViewModel(
             currentState.copy(isTaskEditorVisible = false, currentTaskId = null)
         }
         clearUiState()
-    }
-
-    override fun dismissSnackBar() {
-        viewModelScope.launch {
-            _events.send(HomeEvent.DismissSnackBar)
-        }
     }
 
     private fun clearUiState() {
