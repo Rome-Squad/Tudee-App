@@ -1,9 +1,0 @@
-package com.giraffe.tudeeapp.presentation.shared.taskdetails
-
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
-
-data class TaskDetailsState(
-    val task: TaskUi? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null
-)

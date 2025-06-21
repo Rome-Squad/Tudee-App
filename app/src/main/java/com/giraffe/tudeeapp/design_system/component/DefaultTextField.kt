@@ -36,7 +36,8 @@ fun DefaultTextField(
     textValue: String = stringResource(R.string.text_value),
     onValueChange: (String) -> Unit = {},
     hint: String = stringResource(R.string.hint),
-    iconRes: Int = R.drawable.ic_user
+    iconRes: Int = R.drawable.ic_user,
+    isReadOnly: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -67,6 +68,8 @@ fun DefaultTextField(
                 .background(color = Theme.color.stroke)
         )
         TextField(
+            readOnly = isReadOnly,
+            interactionSource = interactionSource,
             modifier = Modifier.weight(1f),
             value = textValue,
             onValueChange = onValueChange,

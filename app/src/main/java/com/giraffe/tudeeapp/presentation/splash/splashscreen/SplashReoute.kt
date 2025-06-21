@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.splash.splashscreen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -21,13 +20,5 @@ fun NavGraphBuilder.splashRoute(navController: NavController) {
                 }
             }
         )
-    }
-}
-
-class SplashArgs(savedStateHandle: SavedStateHandle) {
-    // handle screen args here to make navigation more cleaner
-
-    companion object {
-
     }
 }

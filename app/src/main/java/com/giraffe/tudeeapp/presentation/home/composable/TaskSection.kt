@@ -14,10 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
@@ -30,55 +30,56 @@ import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 @Composable
 fun TaskSection(
     modifier: Modifier = Modifier,
-    taskStatus: String = "In Progress",
+    taskStatus: String = stringResource(R.string.in_progress_tasks),
     numberOfTasks: String = "0",
     tasks: List<TaskUi> = emptyList(),
     onTaskClick: (Long) -> Unit,
     onTasksLinkClick: () -> Unit
 ) {
     Column(modifier = modifier) {
-        if(tasks.isNotEmpty()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = taskStatus,
-                color = Theme.color.title,
-                style = Theme.textStyle.title.large
-            )
-            Box(
-                modifier = Modifier.background(
-                    color = Theme.color.surfaceHigh,
-                    shape = RoundedCornerShape(100.dp)
-                )
+        if (tasks.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                Text(
+                    text = taskStatus,
+                    color = Theme.color.title,
+                    style = Theme.textStyle.title.large
+                )
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                        .background(
+                            color = Theme.color.surfaceHigh,
+                            shape = RoundedCornerShape(100.dp)
+                        )
+                        .clip(RoundedCornerShape(100.dp))
                         .clickable {
                             onTasksLinkClick()
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        }
                 ) {
-                    Text(
-                        text = numberOfTasks,
-                        color = Theme.color.body,
-                        style = Theme.textStyle.label.small
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_icon),
-                        contentDescription = "arrow icon"
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Text(
+                            text = numberOfTasks,
+                            color = Theme.color.body,
+                            style = Theme.textStyle.label.small
+                        )
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_icon),
+                            contentDescription = "arrow icon"
+                        )
+                    }
                 }
-            }
 
+            }
         }
-    }
 
         tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(

@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.splash.onboard
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -15,13 +14,5 @@ fun NavGraphBuilder.onboardingRoute(navController: NavController) {
                 }
             }
         )
-    }
-}
-
-class OnboardingArgs(savedStateHandle: SavedStateHandle) {
-    // handle screen args here to make navigation more cleaner
-
-    companion object {
-
     }
 }

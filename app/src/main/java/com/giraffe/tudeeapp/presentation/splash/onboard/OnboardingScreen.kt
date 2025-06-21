@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -22,7 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +34,6 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,9 +62,7 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                color = Theme.color.surface
-            )
+            .navigationBarsPadding()
             .background(
                 color = Theme.color.overlay
             )
@@ -73,8 +71,7 @@ fun OnboardingScreen(
             painter = painterResource(id = Theme.resources.bacgroundImage),
             contentDescription = stringResource(R.string.splash_background),
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
+                .fillMaxWidth(), contentScale = ContentScale.FillWidth
         )
 
         if (pagerState.currentPage < pages.lastIndex) {
