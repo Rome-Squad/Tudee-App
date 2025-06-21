@@ -105,7 +105,6 @@ fun TasksByCategoryContent(
                         items(tasks) { task ->
                             TaskCard(
                                 task = task,
-                                category = state.selectedCategory,
                                 date = task.dueDate.date.toString(),
                                 taskCardType = TaskCardType.CATEGORY,
                             )
