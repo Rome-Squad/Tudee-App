@@ -94,10 +94,10 @@ fun TaskSection(
                 taskDescription = task.description,
                 taskCardType = TaskCardType.TASK,
                 modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
                     .clickable {
                         onTaskClick(task.id)
                     }
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }
     }
