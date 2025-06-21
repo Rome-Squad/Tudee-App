@@ -18,14 +18,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -147,7 +150,8 @@ fun HomeContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Theme.color.surface),
+                            .background(Theme.color.surface)
+                            .padding(top = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -157,28 +161,33 @@ fun HomeContent(
                                     .padding(top = 74.dp, start = 15.dp, end = 15.dp)
                             )
                         } else {
-                            TaskSection(
-                                modifier = Modifier.padding(top = 24.dp),
-                                taskStatus = stringResource(R.string.in_progress_tasks),
-                                numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
-                                tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
-                                onTasksLinkClick = { actions.onTasksLinkClick(1) },
-                                onTaskClick = actions::onTaskClick
-                            )
-                            TaskSection(
-                                taskStatus = stringResource(R.string.to_do_tasks),
-                                numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
-                                tasks = state.tasks[TaskStatus.TODO]!!,
-                                onTasksLinkClick = { actions.onTasksLinkClick(0) },
-                                onTaskClick = actions::onTaskClick
-                            )
-                            TaskSection(
-                                taskStatus = stringResource(R.string.done_tasks),
-                                numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
-                                tasks = state.tasks[TaskStatus.DONE]!!,
-                                onTasksLinkClick = { actions.onTasksLinkClick(2) },
-                                onTaskClick = actions::onTaskClick
-                            )
+                            if (state.tasks[TaskStatus.IN_PROGRESS]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.in_progress_tasks),
+                                    numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
+                                    tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                    onTaskClick = actions::onTaskClick
+                                )
+                            }
+                            if (state.tasks[TaskStatus.TODO]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.to_do_tasks),
+                                    numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
+                                    tasks = state.tasks[TaskStatus.TODO]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                    onTaskClick = actions::onTaskClick
+                                )
+                            }
+                            if (state.tasks[TaskStatus.DONE]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.done_tasks),
+                                    numberOfTasks = state.tasks[TaskStatus.DONE]!!.size.toString(),
+                                    tasks = state.tasks[TaskStatus.DONE]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                    onTaskClick = actions::onTaskClick
+                                )
+                            }
                         }
                     }
                 }
