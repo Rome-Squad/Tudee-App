@@ -36,7 +36,6 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -68,10 +67,6 @@ fun TasksByCategoryContent(
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(
-        color = Theme.color.surfaceHigh,
-    )
     LaunchedEffect(state.error) {
         state.error?.let {
             actions.showSnakeBarMsg(context.errorToMessage(it))

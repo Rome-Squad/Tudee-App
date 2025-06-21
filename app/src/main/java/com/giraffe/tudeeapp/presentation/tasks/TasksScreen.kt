@@ -36,7 +36,6 @@ import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.tasks.components.DatePicker
 import com.giraffe.tudeeapp.presentation.tasks.components.SwipableTask
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -62,10 +61,6 @@ fun TaskScreenContent(
     actions: TasksScreenActions,
 ) {
     val context = LocalContext.current
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(
-        color = Theme.color.surfaceHigh,
-    )
     Box(
         modifier = Modifier
             .fillMaxSize()
