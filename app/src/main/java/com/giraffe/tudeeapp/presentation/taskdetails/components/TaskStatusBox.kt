@@ -35,7 +35,7 @@ fun TaskStatusBox(
         TaskStatus.DONE -> Theme.color.greenAccent
     }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(100.dp))
             .background(statusBackground)
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -52,7 +52,7 @@ fun TaskStatusBox(
         Text(
             text = status.toStringResource(),
             style = Theme.textStyle.body.small,
-            color = Theme.color.purpleAccent
+            color = contentColor
         )
 
     }

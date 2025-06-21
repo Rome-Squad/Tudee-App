@@ -39,6 +39,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.taskdetails.components.TaskStatusBox
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
@@ -142,7 +143,9 @@ fun TaskDetailsContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-
+            TaskStatusBox(
+                status = task?.status ?: TaskStatus.TODO
+            )
             Priority(
                 priorityType = task?.priorityType ?: TaskPriority.LOW,
                 isSelected = true
