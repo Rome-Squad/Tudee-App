@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.taskeditor
 import android.os.Build
+import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -114,16 +116,21 @@ fun TaskEditorBottomSheetContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            val context = LocalContext.current
+            val formattedDate = taskUi.dueDate.date.formatAsLocalizedDate(context)
+
+
             DefaultTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { showDatePickerDialog = true },
                 isReadOnly = true,
-                textValue = taskUi.dueDate.date.toString(),
+                textValue = formattedDate,
                 hint = stringResource(R.string.due_date_hint),
                 iconRes = R.drawable.calendar
             )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 

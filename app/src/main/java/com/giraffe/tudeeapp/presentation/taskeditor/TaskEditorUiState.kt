@@ -10,5 +10,6 @@ data class TaskEditorUiState(
     val isSuccessAdded: Boolean = false,
     val isSuccessEdited: Boolean = false,
     val isValidTask: Boolean = false,
+    val hasUnsavedChanges: Boolean = false
 )
 

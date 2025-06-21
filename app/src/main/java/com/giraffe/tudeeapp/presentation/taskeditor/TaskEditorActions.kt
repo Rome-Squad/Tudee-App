@@ -5,6 +5,7 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
 interface TaskEditorActions {
+    fun setTaskId(taskId: Long?)
     fun saveTask()
     fun cancel()
 

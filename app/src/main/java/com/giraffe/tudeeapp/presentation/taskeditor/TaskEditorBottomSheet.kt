@@ -3,19 +3,17 @@ package com.giraffe.tudeeapp.presentation.taskeditor
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
@@ -35,19 +33,15 @@ fun TaskEditorBottomSheet(
     onError: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val storeOwner = remember(taskId) { ViewModelStore() }
-    val owner = remember(taskId) {
-        object : ViewModelStoreOwner {
-            override val viewModelStore = storeOwner
-        }
-    }
-
 
     val viewModel: TaskEditorViewModel = koinViewModel(
-        viewModelStoreOwner = owner,
         parameters = { parametersOf(taskId) }
     )
 
+
+    LaunchedEffect(taskId) {
+        viewModel.setTaskId(taskId)
+    }
 
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
@@ -71,7 +65,7 @@ fun TaskEditorBottomSheet(
             scope.launch { bottomSheetState.hide() }
         },
         sheetState = bottomSheetState,
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier.fillMaxHeight(0.95f),
         containerColor = Theme.color.surface
     ) {
 
