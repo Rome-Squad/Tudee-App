@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.presentation.taskeditor
 
 import com.giraffe.tudeeapp.domain.model.Category
-import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 data class TaskEditorUiState(
