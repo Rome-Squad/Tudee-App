@@ -70,8 +70,11 @@ fun DatePicker(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
+        val monthName=currentMonth.month.getDisplayName(TextStyle.FULL,currentLocale)
+        val yearInLocal=currentMonth.year.toLocaleNumbers(currentLocale)
+        val formatedDate="$monthName, $yearInLocal"
         MonthHeader(
-            monthYearLabel = selectedDate.format(DateTimeFormatter.ofPattern("MMM, yyyy")),
+            monthYearLabel = formatedDate,
             onPreviousClick = { selectedDate = selectedDate.minusMonths(1) },
             onNextClick = { selectedDate = selectedDate.plusMonths(1) },
             onMonthClick = { isDialogVisible = true }
@@ -118,7 +121,9 @@ fun DatePicker(
     )
 }
 private fun Int.toLocaleNumbers(locale: Locale): String{
-    return NumberFormat.getInstance(locale).format(this)
+    val formatter = NumberFormat.getInstance(locale)
+    formatter.isGroupingUsed = false
+    return formatter.format(this)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
