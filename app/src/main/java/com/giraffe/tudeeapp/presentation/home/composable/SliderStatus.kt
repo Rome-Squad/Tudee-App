@@ -19,11 +19,11 @@ fun SliderStatus(state: HomeUiState, modifier: Modifier = Modifier) {
             status = painterResource(R.drawable.nothing_in_list_emoji)
         )
 
-        state.tasks[TaskStatus.IN_PROGRESS]!!.isEmpty() -> Slider(
+        state.tasks[TaskStatus.IN_PROGRESS]!!.isEmpty() && state.tasks[TaskStatus.DONE]!!.isEmpty() -> Slider(
             image = painterResource(R.drawable.tudee_zero_progress),
-            title = stringResource(R.string.nothing_on_your_list),
-            subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
-            status = painterResource(R.drawable.nothing_in_list_emoji)
+            title = stringResource(R.string.title_zero_progress),
+            subtitle = stringResource(R.string.subtitle_zero_progress),
+            status = painterResource(R.drawable.zero_progress_emoji)
         )
 
         state.tasks[TaskStatus.DONE]!!.size == state.tasks.values.flatten().size -> Slider(
@@ -33,24 +33,13 @@ fun SliderStatus(state: HomeUiState, modifier: Modifier = Modifier) {
             status = painterResource(R.drawable.great_work_emoji)
         )
 
-        (state.tasks[TaskStatus.DONE]!!.isNotEmpty() && (state.tasks[TaskStatus.TODO]!!.size > state.tasks[TaskStatus.DONE]!!.size)) -> Slider(
-            image = painterResource(R.drawable.tudee_slider_image),
-            title = stringResource(R.string.partially_completed_title),
-            subtitle = stringResource(
-                R.string.partially_completed_subtitle,
-                state.tasks[TaskStatus.DONE]!!.size,
-                state.tasks[TaskStatus.TODO]!!.size
-            ),
-            status = painterResource(R.drawable.stay_working_emoji),
-        )
-
         else -> Slider(
             image = painterResource(R.drawable.tudee_slider_image),
             title = stringResource(R.string.partially_completed_title),
             subtitle = stringResource(
                 R.string.partially_completed_subtitle,
                 state.tasks[TaskStatus.DONE]!!.size,
-                state.tasks[TaskStatus.TODO]!!.size
+                state.tasks.values.flatten().size
             ),
             status = painterResource(R.drawable.stay_working_emoji),
         )

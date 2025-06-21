@@ -168,7 +168,7 @@ fun HomeContent(
                                 verticalArrangement = Arrangement.spacedBy(24.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                if (state.tasks[TaskStatus.TODO]!!.isEmpty()) {
+                                if (state.tasks.values.flatten().isEmpty()) {
                                     NoTasksSection(
                                         modifier = Modifier
                                             .padding(top = 48.dp, start = 15.dp, end = 15.dp)
@@ -176,17 +176,17 @@ fun HomeContent(
                                 } else {
                                     TaskSection(
                                         modifier = Modifier.padding(top = 24.dp),
-                                        taskStatus = stringResource(R.string.to_do_tasks),
-                                        numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
-                                        tasks = state.tasks[TaskStatus.TODO]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                    TaskSection(
                                         taskStatus = stringResource(R.string.in_progress_tasks),
                                         numberOfTasks = state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString(),
                                         tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
                                         onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                        onTaskClick = actions::onTaskClick
+                                    )
+                                    TaskSection(
+                                        taskStatus = stringResource(R.string.to_do_tasks),
+                                        numberOfTasks = state.tasks[TaskStatus.TODO]!!.size.toString(),
+                                        tasks = state.tasks[TaskStatus.TODO]!!,
+                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
                                         onTaskClick = actions::onTaskClick
                                     )
                                     TaskSection(
