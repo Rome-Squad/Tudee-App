@@ -43,8 +43,7 @@ fun TaskCard(
     val blurColor = getColorForCategoryIcon(categoryName).copy(alpha = .08f)
     Column(
         modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Theme.color.surfaceHigh)
+            .background(color = Theme.color.surfaceHigh, shape = RoundedCornerShape(16.dp))
             .padding(
                 top = 4.dp, start = 4.dp, end = 12.dp, bottom = bottomPadding.dp
             ),

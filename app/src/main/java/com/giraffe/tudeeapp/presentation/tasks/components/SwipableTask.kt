@@ -68,9 +68,8 @@ fun SwipableTask(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier
                 .padding(1.dp)
-                .clip(shape = RoundedCornerShape(16.dp))
                 .fillMaxWidth()
-                .background(Theme.color.errorVariant)
+                .background(color = Theme.color.errorVariant, shape = RoundedCornerShape(16.dp))
         ) {
             TaskDeleteButton(
                 onClick = action,
