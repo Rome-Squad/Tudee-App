@@ -7,8 +7,6 @@ import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.NotFoundError
-import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
@@ -45,7 +43,7 @@ class TasksByCategoryViewModel(
                             selectedCategory = category,
                         )
                     }
-                    getTasks()
+                    getTasksByCategory(categoryId)
                 }
                 .onError { error ->
                     _state.update { it.copy(error = error) }
@@ -53,42 +51,41 @@ class TasksByCategoryViewModel(
         }
     }
 
-    private fun getTasks() {
+    private fun getTasksByCategory(categoryId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.value.selectedCategory?.id?.let { categoryId ->
-                tasksService.getTasksByCategory(categoryId)
-                    .onSuccess { tasksFlow ->
-                        tasksFlow.collect { tasks ->
-                            try {
-                                val tasksUiList = tasks.map { task ->
-                                    val categoryResult =
-                                        categoriesService.getCategoryById(task.categoryId)
-                                    val category = if (categoryResult is Result.Success)
-                                        categoryResult.data
-                                    else
-                                        null
-                                    task.toTaskUi(
-                                        category ?: throw Exception()
-                                    )
+            categoriesService.getCategoryById(categoryId)
+                .onSuccess { category ->
+                    getTasks(category)
+                }
+                .onError { error ->
+                    _state.update { it.copy(error = error) }
+                }
+        }
+    }
+
+    private fun getTasks(category: Category) {
+        viewModelScope.launch {
+            tasksService.getTasksByCategory(category.id)
+                .onSuccess { tasksFlow ->
+                    tasksFlow.collect { tasks ->
+                        tasks.map { task -> task.toTaskUi(category) }
+                            .let { tasksUi ->
+                                val tasks = TaskStatus.entries.associateWith { status ->
+                                    tasksUi.filter { it.status == status }
                                 }
-                                _state.update {
-                                    it.copy(
-                                        tasks = mapOf(
-                                            TaskStatus.TODO to tasksUiList.filter { it.status == TaskStatus.TODO },
-                                            TaskStatus.IN_PROGRESS to tasksUiList.filter { it.status == TaskStatus.IN_PROGRESS },
-                                            TaskStatus.DONE to tasksUiList.filter { it.status == TaskStatus.DONE },
-                                        )
-                                    )
-                                }
-                            } catch (_: Exception) {
-                                _state.update { it.copy(error = NotFoundError()) }
+                                _state.update { it.copy(tasks = tasks) }
                             }
-                        }
                     }
-                    .onError { error ->
-                        _state.update { it.copy(error = error) }
-                    }
-            }
+                }
+                .onError { error ->
+                    _state.update { it.copy(error = error) }
+                }
+        }
+    }
+
+    override fun selectTab(tab: TaskStatus) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(selectedTab = tab) }
         }
     }
 
@@ -104,20 +101,14 @@ class TasksByCategoryViewModel(
         }
     }
 
-    override fun selectTab(tab: TaskStatus) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(selectedTab = tab) }
-        }
-    }
-
     override fun editCategory(category: Category) {
         viewModelScope.launch(Dispatchers.IO) {
             categoriesService.updateCategory(category = category)
                 .onSuccess {
                     _state.update {
                         it.copy(
-                            selectedCategory = category,
                             isBottomSheetVisible = false,
+                            selectedCategory = category,
                         )
                     }
                     _events.send(TasksByCategoryEvents.CategoryEdited())
@@ -154,20 +145,6 @@ class TasksByCategoryViewModel(
                     delay(3000)
                     _state.update { it.copy(error = null) }
                 }
-        }
-    }
-
-    override fun setCategoryToDelete(category: Category?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(categoryToDelete = category) }
-        }
-    }
-
-    override fun showSnakeBarMsg(msg: String) {
-        viewModelScope.launch {
-            _state.update { it.copy(snakeBarMsg = msg) }
-            delay(3000)
-            _state.update { it.copy(snakeBarMsg = null) }
         }
     }
 }
