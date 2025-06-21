@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    //alias(libs.plugins.room)
+    id("jacoco")
 }
 
 android {
@@ -64,10 +64,8 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
-//    implementation(libs.androidx.navigation.safe.args.generator)
     ksp(libs.room.compiler)
     annotationProcessor(libs.room.compiler)
-
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(libs.junit.jupiter)
@@ -80,10 +78,50 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.accompanist.systemuicontroller)
     testImplementation(libs.kotlinx.coroutines.test)
 
+}
+
+val filteredCoverage = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) {
+    include("**/data/service/**")
+}
+
+val mainSrcDirs = listOf(
+    "${project.projectDir}/src/main/java",
+    "${project.projectDir}/src/main/kotlin"
+)
+
+tasks.register<JacocoReport>("jacocoUnitTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    classDirectories.setFrom(filteredCoverage)
+    sourceDirectories.setFrom(files(mainSrcDirs))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("**/testDebugUnitTest*.exec")
+    })
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    dependsOn("testDebugUnitTest", "jacocoUnitTestReport")
+
+    classDirectories.setFrom(filteredCoverage)
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("**/testDebugUnitTest*.exec")
+    })
+
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.8".toBigDecimal()
+            }
+        }
+    }
 }
