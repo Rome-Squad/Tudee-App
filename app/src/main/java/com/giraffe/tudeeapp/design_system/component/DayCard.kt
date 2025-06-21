@@ -21,7 +21,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 @Composable
 fun DayCard(
     modifier: Modifier = Modifier,
-    dayNumber: Int = 15,
+    dayNumber: String = "15",
     dayName: String = "Mon",
     isSelected: Boolean = true,
     onClick: () -> Unit
