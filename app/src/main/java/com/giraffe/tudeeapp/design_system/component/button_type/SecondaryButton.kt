@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +54,7 @@ fun SecondaryButton(
             .fillMaxWidth()
             .border(1.dp, Theme.color.stroke, shape),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Theme.color.surface,
+            containerColor = Color.Transparent,
             contentColor = Theme.color.primary,
             disabledContainerColor = Theme.color.disable,
             disabledContentColor = Theme.color.stroke
