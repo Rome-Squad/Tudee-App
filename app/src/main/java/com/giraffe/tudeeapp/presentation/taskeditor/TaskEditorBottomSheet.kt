@@ -20,7 +20,6 @@ import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
