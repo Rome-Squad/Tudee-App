@@ -9,10 +9,15 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetCategoryError
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetTasksError
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.CategoryDeleted
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.CategoryEdited
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.DeleteCategoryError
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.EditCategoryError
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -27,8 +32,8 @@ class TasksByCategoryViewModel(
     private val _state = MutableStateFlow(TasksByCategoryScreenState())
     val state = _state.asStateFlow()
 
-    private val _events = Channel<TasksByCategoryEvents>()
-    val events = _events.receiveAsFlow()
+    private val _event = Channel<TasksByCategoryEvents>()
+    val events = _event.receiveAsFlow()
 
     init {
         getCategoryById(CategoriesArgs(savedStateHandle = savedStateHandle).categoryId)
@@ -43,22 +48,10 @@ class TasksByCategoryViewModel(
                             selectedCategory = category,
                         )
                     }
-                    getTasksByCategory(categoryId)
-                }
-                .onError { error ->
-                    _state.update { it.copy(error = error) }
-                }
-        }
-    }
-
-    private fun getTasksByCategory(categoryId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            categoriesService.getCategoryById(categoryId)
-                .onSuccess { category ->
                     getTasks(category)
                 }
                 .onError { error ->
-                    _state.update { it.copy(error = error) }
+                    _event.send(GetCategoryError(error))
                 }
         }
     }
@@ -70,15 +63,15 @@ class TasksByCategoryViewModel(
                     tasksFlow.collect { tasks ->
                         tasks.map { task -> task.toTaskUi(category) }
                             .let { tasksUi ->
-                                val tasks = TaskStatus.entries.associateWith { status ->
+                                val tasksInMap = TaskStatus.entries.associateWith { status ->
                                     tasksUi.filter { it.status == status }
                                 }
-                                _state.update { it.copy(tasks = tasks) }
+                                _state.update { it.copy(tasks = tasksInMap) }
                             }
                     }
                 }
                 .onError { error ->
-                    _state.update { it.copy(error = error) }
+                    _event.send(GetTasksError(error))
                 }
         }
     }
@@ -111,16 +104,9 @@ class TasksByCategoryViewModel(
                             selectedCategory = category,
                         )
                     }
-                    _events.send(TasksByCategoryEvents.CategoryEdited())
+                    _event.send(CategoryEdited())
                 }.onError { error ->
-                    _state.update {
-                        it.copy(
-                            error = error,
-                            isBottomSheetVisible = false,
-                        )
-                    }
-                    delay(3000)
-                    _state.update { it.copy(error = null) }
+                    _event.send(EditCategoryError(error))
                 }
         }
     }
@@ -129,21 +115,14 @@ class TasksByCategoryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             categoriesService.deleteCategory(category.id)
                 .onSuccess {
-                    _events.send(TasksByCategoryEvents.CategoryDeleted())
                     _state.update {
                         it.copy(
                             isBottomSheetVisible = false,
                         )
                     }
+                    _event.send(CategoryDeleted())
                 }.onError { error ->
-                    _state.update {
-                        it.copy(
-                            error = error,
-                            isBottomSheetVisible = false,
-                        )
-                    }
-                    delay(3000)
-                    _state.update { it.copy(error = null) }
+                    _event.send(DeleteCategoryError(error))
                 }
         }
     }

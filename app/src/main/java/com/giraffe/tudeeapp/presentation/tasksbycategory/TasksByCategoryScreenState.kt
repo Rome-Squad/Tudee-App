@@ -2,7 +2,6 @@ package com.giraffe.tudeeapp.presentation.tasksbycategory
 
 import com.giraffe.tudeeapp.domain.model.Category
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 
 data class TasksByCategoryScreenState(
@@ -15,6 +14,5 @@ data class TasksByCategoryScreenState(
     ),
     val isAlertBottomSheetVisible: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
-    val error: DomainError? = null,
 )
 

@@ -30,11 +30,12 @@ import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
+import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,14 +63,38 @@ fun TasksByCategoryContent(
         when (event) {
             is TasksByCategoryEvents.CategoryDeleted -> {
                 coroutineScope.launch {
-                    snackState.showSnackbar(context.getString(R.string.category_deleted_successfully))
+                    snackState.showSuccessSnackbar(context.getString(R.string.category_deleted_successfully))
+                    onBackClick()
                 }
-                onBackClick()
             }
 
             is TasksByCategoryEvents.CategoryEdited -> {
                 coroutineScope.launch {
-                    snackState.showSnackbar(context.getString(R.string.category_updated_successfully))
+                    snackState.showSuccessSnackbar(context.getString(R.string.category_updated_successfully))
+                }
+            }
+
+            is TasksByCategoryEvents.GetCategoryError -> {
+                coroutineScope.launch {
+                    snackState.showErrorSnackbar(context.getString(R.string.sorry_the_selected_category_could_not_be_found))
+                }
+            }
+
+            is TasksByCategoryEvents.GetTasksError -> {
+                coroutineScope.launch {
+                    snackState.showErrorSnackbar(context.getString(R.string.failed_to_load_tasks))
+                }
+            }
+
+            is TasksByCategoryEvents.DeleteCategoryError -> {
+                coroutineScope.launch {
+                    snackState.showErrorSnackbar(context.getString(R.string.unable_to_delete_the_category))
+                }
+            }
+
+            is TasksByCategoryEvents.EditCategoryError -> {
+                coroutineScope.launch {
+                    snackState.showErrorSnackbar(context.getString(R.string.failed_to_update_the_category))
                 }
             }
         }
@@ -103,11 +128,7 @@ fun TasksByCategoryContent(
                 ) {
                     state.tasks[state.selectedTab]?.let { tasks ->
                         items(tasks) { task ->
-                            TaskCard(
-                                task = task,
-                                date = task.dueDate.date.toString(),
-                                taskCardType = TaskCardType.CATEGORY,
-                            )
+                            TaskCard(task = task)
                         }
                     }
                 }
@@ -116,7 +137,6 @@ fun TasksByCategoryContent(
         DefaultSnackBar(
             modifier = Modifier.align(Alignment.TopCenter),
             snackState = snackState,
-            isError = state.error != null,
         )
         CategoryBottomSheet(
             title = stringResource(R.string.edit_category),
@@ -130,6 +150,7 @@ fun TasksByCategoryContent(
         )
         AlertBottomSheet(
             isVisible = state.isAlertBottomSheetVisible,
+            onVisibilityChange = actions::setAlertBottomSheetVisibility,
             onRedBtnClick = { state.selectedCategory?.let { actions.deleteCategory(it) } },
             onBlueBtnClick = {
                 actions.setAlertBottomSheetVisibility(false)
