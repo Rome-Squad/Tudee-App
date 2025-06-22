@@ -5,11 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.service.MainService
+import com.giraffe.tudeeapp.domain.service.TudeeAppService
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    val mainService: MainService
+    val appService: TudeeAppService
 ): ViewModel() {
     var isDarkTheme by mutableStateOf(false)
     private set
@@ -19,12 +19,12 @@ class MainViewModel(
     }
 
     fun getIsDarkTheme() = viewModelScope.launch {
-        isDarkTheme = mainService.getCurrentTheme()
+        isDarkTheme = appService.getCurrentTheme()
     }
 
     fun onToggleTheme() = viewModelScope.launch {
         isDarkTheme = !isDarkTheme
-        mainService.setCurrentTheme(isDarkTheme)
+        appService.setCurrentTheme(isDarkTheme)
     }
 
 }
