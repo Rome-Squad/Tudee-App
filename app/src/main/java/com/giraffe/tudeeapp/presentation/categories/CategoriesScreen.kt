@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.categories
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,8 +29,8 @@ import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -44,6 +45,7 @@ fun CategoriesScreen(
 ) {
     val state = viewModel.categoriesUiState.collectAsState().value
     val lifeCycleOwner = LocalLifecycleOwner.current
+    val snackState = remember { SnackbarHostState() }
     LaunchedEffect(lifeCycleOwner.lifecycle) {
         lifeCycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             withContext(Dispatchers.Main.immediate) {
@@ -57,14 +59,16 @@ fun CategoriesScreen(
             }
         }
     }
-    CategoriesContent(state, viewModel)
+    CategoriesContent(state, viewModel, snackState)
 }
 
 @Composable
 fun CategoriesContent(
     state: CategoriesScreenState,
-    actions: CategoriesScreenActions
+    actions: CategoriesScreenActions,
+    snackState: SnackbarHostState
 ) {
+
     Box(
         Modifier
             .fillMaxSize()
@@ -107,26 +111,13 @@ fun CategoriesContent(
                 .padding(end = 16.dp, bottom = 8.dp)
         )
 
-        if (state.isBottomSheetVisible) {
-            CategoryBottomSheet(
-                title = stringResource(R.string.add_new_category),
-                onVisibilityChange = actions::setBottomSheetVisibility,
-                onAddClick = actions::addCategory,
-            )
-        }
-
-        AnimatedVisibility(state.showSuccessSnackBar) {
-            TudeeSnackBar(
-                message = if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(
-                    R.string.some_error_happened
-                ),
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
+        CategoryBottomSheet(
+            isVisible = state.isBottomSheetVisible,
+            title = stringResource(R.string.add_new_category),
+            onVisibilityChange = actions::setBottomSheetVisibility,
+            onAddClick = actions::addCategory,
+        )
+        DefaultSnackBar(snackState = snackState)
     }
 
 }
