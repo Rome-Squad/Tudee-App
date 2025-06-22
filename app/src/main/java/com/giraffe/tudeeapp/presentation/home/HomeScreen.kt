@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,10 +33,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
@@ -47,7 +46,6 @@ import com.giraffe.tudeeapp.presentation.home.composable.TopSlider
 import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
-import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,18 +58,13 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.homeUiState.collectAsState()
-    var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
+    val snackState = remember { SnackbarHostState() }
 
     EventListener(
         events = viewModel.events
     ) { event ->
         when (event) {
-            is HomeEvent.Error -> {
-                snackBarData = TudeeSnackBarState(
-                    message = context.errorToMessage(event.error),
-                    isError = true
-                )
-            }
+            is HomeEvent.Error -> {}
 
             is HomeEvent.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
@@ -81,13 +74,10 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        snackBarState = snackBarData,
         onThemeSwitchToggle = onThemeSwitchToggle,
         isDarkTheme = isDarkTheme,
-        onChangeSnackBarState = {
-            snackBarData = it
-        },
-        actions = viewModel
+        actions = viewModel,
+        snackState = snackState
     )
 }
 
@@ -98,9 +88,8 @@ fun HomeContent(
     state: HomeUiState,
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
-    snackBarState: TudeeSnackBarState?,
-    onChangeSnackBarState: (TudeeSnackBarState?) -> Unit,
     actions: HomeActions,
+    snackState: SnackbarHostState
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     Box(
@@ -228,26 +217,10 @@ fun HomeContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxHeight(1 - (80.dp / screenHeight.dp)),
-                onSuccess = { message ->
-                    onChangeSnackBarState(TudeeSnackBarState(message = message, isError = false))
-                },
-                onError = { error ->
-                    onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
-                }
+                onSuccess = { message -> },
+                onError = { error -> }
             )
         }
-
-        snackBarState?.let {
-            TudeeSnackBar(
-                message = it.message,
-                iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
-                iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
-                iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                onDismiss = { onChangeSnackBarState(null) }
-            )
-        }
+        DefaultSnackBar(snackState = snackState)
     }
 }
