@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -106,8 +107,11 @@ fun TaskScreenContent(
                         SwipableTask(
                             taskUi = taskUi,
                             action = {
+                                Log.d("TAG", "TaskScreenContent: delete on click1")
                                 actions.setDeleteBottomSheetVisibility(true)
+                                Log.d("TAG", "TaskScreenContent: delete on click2 : ${taskUi.id}")
                                 actions.setSelectedTaskId(taskUi.id)
+                                Log.d("TAG", "TaskScreenContent: delete on click3")
                             },
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
@@ -119,17 +123,9 @@ fun TaskScreenContent(
                 }
             }
 
-            if (state.isDeleteBottomSheetVisible) {
-                AlertBottomSheet(
-                    title = stringResource(R.string.delete_task),
-                    imgRes = R.drawable.sure_robot,
-                    onRedBtnClick = {
-                        actions.deleteTask(state.selectedTaskId)
-                    },
-                    onBlueBtnClick = { actions.setDeleteBottomSheetVisibility(false) }
-                )
-            }
+
         }
+
 
         FabButton(
             modifier = Modifier
@@ -138,6 +134,19 @@ fun TaskScreenContent(
             icon = painterResource(R.drawable.add_task),
             onClick = { actions.onAddTaskClick() }
         )
+
+        Log.d("TAG", "TaskScreenContent: before delete bottom shet visible")
+        if (state.isDeleteBottomSheetVisible) {
+            Log.d("TAG", "TaskScreenContent: when delete bottom sheet visible")
+            AlertBottomSheet(
+                title = stringResource(R.string.delete_task),
+                imgRes = R.drawable.sure_robot,
+                onRedBtnClick = {
+                    actions.deleteTask(state.selectedTaskId)
+                },
+                onBlueBtnClick = { actions.setDeleteBottomSheetVisibility(false) }
+            )
+        }
 
         if (state.isTaskDetailsVisible && state.currentTaskId != null) {
             TaskDetailsBottomSheet(

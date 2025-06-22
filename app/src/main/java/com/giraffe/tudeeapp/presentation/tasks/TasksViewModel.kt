@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -99,6 +100,7 @@ class TasksViewModel(
     override fun setDeleteBottomSheetVisibility(isVisible: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(isDeleteBottomSheetVisible = isVisible) }
+            Log.d("TAG", "setDeleteBottomSheetVisibility: ${_state.value.isDeleteBottomSheetVisible}")
         }
     }
 
@@ -131,11 +133,13 @@ class TasksViewModel(
     override fun setSelectedTaskId(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedTaskId = taskId) }
+            Log.d("TAG", "setSelectedTaskId: ${_state.value.selectedTaskId}")
         }
     }
 
     override fun deleteTask(taskId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("TAG", "deleteTask: before deleting task in viewmodel")
             tasksService.deleteTask(taskId)
                 .onSuccess {
                     _state.update {
