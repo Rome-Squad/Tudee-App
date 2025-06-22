@@ -18,11 +18,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBarState
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
@@ -51,6 +52,7 @@ import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -63,17 +65,16 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.homeUiState.collectAsState()
-    var snackBarData by remember { mutableStateOf<TudeeSnackBarState?>(null) }
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    var isErrorSnackBar by remember { mutableStateOf(false) }
 
     EventListener(
         events = viewModel.events
     ) { event ->
         when (event) {
             is HomeEvent.Error -> {
-                snackBarData = TudeeSnackBarState(
-                    message = context.errorToMessage(event.error),
-                    isError = true
-                )
+                snackBarHostState.showSnackbar(context.errorToMessage(event.error))
             }
 
             is HomeEvent.NavigateToTasksScreen -> {
@@ -84,13 +85,17 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        snackBarState = snackBarData,
         onThemeSwitchToggle = onThemeSwitchToggle,
         isDarkTheme = isDarkTheme,
-        onChangeSnackBarState = {
-            snackBarData = it
-        },
-        actions = viewModel
+        actions = viewModel,
+        snackBarHostState = snackBarHostState,
+        isErrorSnackBar = isErrorSnackBar,
+        showSnackBar = { message, isError ->
+            scope.launch {
+                isErrorSnackBar = isError
+                snackBarHostState.showSnackbar(message)
+            }
+        }
     )
 }
 
@@ -101,8 +106,9 @@ fun HomeContent(
     state: HomeUiState,
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
-    snackBarState: TudeeSnackBarState?,
-    onChangeSnackBarState: (TudeeSnackBarState?) -> Unit,
+    snackBarHostState: SnackbarHostState,
+    isErrorSnackBar: Boolean,
+    showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeActions,
 ) {
     val screenSize = LocalWindowInfo.current.containerSize
@@ -140,25 +146,22 @@ fun HomeContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     item {
-                        Box(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxSize()
                                 .padding(start = 16.dp, end = 16.dp)
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Theme.color.surfaceHigh)
                                 .padding(top = 8.dp)
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
-                                SliderStatus(
-                                    state,
-                                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                                )
-                                OverViewSection(tasksState = state)
-                            }
+                            TopSlider(modifier = Modifier.align(Alignment.CenterHorizontally))
+                            SliderStatus(
+                                state,
+                                modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                            )
+                            OverViewSection(tasksState = state)
                         }
+
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -172,34 +175,36 @@ fun HomeContent(
                                     modifier = Modifier
                                         .padding(top = 74.dp, start = 15.dp, end = 15.dp)
                                 )
-                            } else {
-                                if (state.tasks[TaskStatus.IN_PROGRESS]!!.isNotEmpty()) {
-                                    TaskSection(
-                                        taskStatus = stringResource(R.string.in_progress_tasks),
-                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString()),
-                                        tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(1) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                }
-                                if (state.tasks[TaskStatus.TODO]!!.isNotEmpty()) {
-                                    TaskSection(
-                                        taskStatus = stringResource(R.string.to_do_tasks),
-                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.TODO]!!.size.toString()),
-                                        tasks = state.tasks[TaskStatus.TODO]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(0) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                }
-                                if (state.tasks[TaskStatus.DONE]!!.isNotEmpty()) {
-                                    TaskSection(
-                                        taskStatus = stringResource(R.string.done_tasks),
-                                        numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.DONE]!!.size.toString()),
-                                        tasks = state.tasks[TaskStatus.DONE]!!,
-                                        onTasksLinkClick = { actions.onTasksLinkClick(2) },
-                                        onTaskClick = actions::onTaskClick
-                                    )
-                                }
+                            }
+
+                            if (state.tasks[TaskStatus.IN_PROGRESS]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.in_progress_tasks),
+                                    numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.IN_PROGRESS]!!.size.toString()),
+                                    tasks = state.tasks[TaskStatus.IN_PROGRESS]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(1) },
+                                    onTaskClick = actions::onTaskClick
+                                )
+                            }
+
+                            if (state.tasks[TaskStatus.TODO]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.to_do_tasks),
+                                    numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.TODO]!!.size.toString()),
+                                    tasks = state.tasks[TaskStatus.TODO]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(0) },
+                                    onTaskClick = actions::onTaskClick
+                                )
+                            }
+
+                            if (state.tasks[TaskStatus.DONE]!!.isNotEmpty()) {
+                                TaskSection(
+                                    taskStatus = stringResource(R.string.done_tasks),
+                                    numberOfTasks = convertToArabicNumbers(state.tasks[TaskStatus.DONE]!!.size.toString()),
+                                    tasks = state.tasks[TaskStatus.DONE]!!,
+                                    onTasksLinkClick = { actions.onTasksLinkClick(2) },
+                                    onTaskClick = actions::onTaskClick
+                                )
                             }
                         }
                     }
@@ -218,7 +223,7 @@ fun HomeContent(
             if (state.isTaskDetailsVisible && state.currentTaskId != null) {
                 TaskDetailsBottomSheet(
                     taskId = state.currentTaskId,
-                    onnDismiss = actions::dismissTaskDetails,
+                    onnDismiss = actions::onDismissTaskDetailsRequest,
                     onEditTask = actions::onEditTaskClick
                 )
             }
@@ -226,36 +231,26 @@ fun HomeContent(
             if (state.isTaskEditorVisible) {
                 TaskEditorBottomSheet(
                     taskId = state.currentTaskId,
-                    onDismissRequest = actions::dismissTaskEditor,
+                    onDismissRequest = actions::onDismissTaskEditorRequest,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
                     onSuccess = { message ->
-                        onChangeSnackBarState(
-                            TudeeSnackBarState(
-                                message = message,
-                                isError = false
-                            )
-                        )
+                        showSnackBar(message, false)
                     },
                     onError = { error ->
-                        onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
+                        showSnackBar(error, true)
                     }
                 )
             }
 
-            snackBarState?.let {
-                TudeeSnackBar(
-                    message = it.message,
-                    iconRes = if (it.isError) R.drawable.ic_error else R.drawable.ic_success,
-                    iconTintColor = if (it.isError) Theme.color.error else Theme.color.greenAccent,
-                    iconBackgroundColor = if (it.isError) Theme.color.errorVariant else Theme.color.greenVariant,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.TopCenter),
-                    onDismiss = { onChangeSnackBarState(null) }
-                )
-            }
+            DefaultSnackBar(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp),
+                snackState = snackBarHostState,
+                isError = isErrorSnackBar,
+            )
         }
     }
 }
