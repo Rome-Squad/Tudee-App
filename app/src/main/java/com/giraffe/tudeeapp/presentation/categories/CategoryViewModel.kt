@@ -59,7 +59,12 @@ class CategoryViewModel(
     }
 
     override fun setBottomSheetVisibility(isVisible: Boolean) {
-        _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
+        _categoriesUiState.update {
+            it.copy(
+                isBottomSheetVisible = isVisible,
+                error = if (isVisible) it.error else null,
+            )
+        }
     }
 
     override fun addCategory(category: Category) {
