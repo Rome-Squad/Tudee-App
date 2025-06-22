@@ -24,12 +24,12 @@ fun TaskStatusBox(
     status: TaskStatus = TaskStatus.TODO
 ) {
 
-    var statusBackground = when (status) {
+    val statusBackground = when (status) {
         TaskStatus.TODO -> Theme.color.yellowVariant
         TaskStatus.IN_PROGRESS -> Theme.color.purpleVariant
         TaskStatus.DONE -> Theme.color.greenVariant
     }
-    var contentColor = when (status) {
+    val contentColor = when (status) {
         TaskStatus.TODO -> Theme.color.yellowAccent
         TaskStatus.IN_PROGRESS -> Theme.color.purpleAccent
         TaskStatus.DONE -> Theme.color.greenAccent
@@ -46,7 +46,7 @@ fun TaskStatusBox(
             modifier = Modifier
                 .size(5.dp)
                 .clip(CircleShape)
-                .background(Theme.color.purpleAccent)
+                .background(contentColor)
         )
 
         Text(

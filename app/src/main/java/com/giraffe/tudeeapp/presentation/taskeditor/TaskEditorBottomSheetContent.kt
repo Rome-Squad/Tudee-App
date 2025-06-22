@@ -12,7 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -159,35 +163,27 @@ fun TaskEditorBottomSheetContent(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            val chunkedCategories = taskEditorUiState.categories.chunked(3)
 
-            Column(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 100.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp, max = 400.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.fillMaxWidth()
             ) {
-                chunkedCategories.forEach { rowItems ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                items(taskEditorUiState.categories) { category ->
+                    val painter = rememberAsyncImagePainter(model = category.imageUri)
+
+                    CategoryItem(
+                        icon = painter,
+                        categoryName = category.name,
+                        isSelected = taskUi.category.id == category.id,
+                        count = 0,
+                        isShowCount = false,
+                        onClick = { actions.onChangeTaskCategoryValue(category.id) },
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        rowItems.forEach { category ->
-                            val painter = rememberAsyncImagePainter(model = category.imageUri)
-
-                            CategoryItem(
-                                icon = painter,
-                                categoryName = category.name,
-                                isSelected = taskUi.category.id == category.id,
-                                count = 0,
-                                isShowCount = false,
-                                onClick = { actions.onChangeTaskCategoryValue(category.id) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        repeat(3 - rowItems.size) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
+                    )
                 }
             }
 

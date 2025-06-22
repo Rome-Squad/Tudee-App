@@ -66,12 +66,11 @@ class TaskEditorViewModel(
         }
     }
 
-    fun loadTask(taskId: Long?) {
-        if (taskId == taskEditorUiState.value.currentTaskId || taskId == null) return
+    fun loadTask(taskId: Long) {
+        if (taskId == taskEditorUiState.value.taskUi.id ) return
         taskEditorUiState.update {
             it.copy(
                 taskUi = it.taskUi.copy(id = taskId),
-                currentTaskId = taskId,
                 isLoading = true
             )
         }
@@ -83,7 +82,6 @@ class TaskEditorViewModel(
                         taskEditorUiState.update {
                             it.copy(
                                 taskUi = task.toTaskUi(category),
-                                currentTaskId = task.id,
                                 isLoading = false,
                                 isValidTask = isValidTask()
                             )
@@ -274,7 +272,6 @@ class TaskEditorViewModel(
         taskEditorUiState.update {
             it.copy(
                 taskUi = TaskUi(),
-                currentTaskId = null,
                 isLoading = false,
                 isValidTask = false,
                 isSuccessAdded = false,
