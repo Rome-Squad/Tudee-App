@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -106,6 +106,7 @@ fun TaskScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
+            .systemBarsPadding()
     ) {
         Column(
             modifier = Modifier
@@ -132,8 +133,7 @@ fun TaskScreenContent(
                     item {
                         Box(
                             modifier = Modifier
-                                .fillParentMaxSize()
-                                .padding(start = 12.dp),
+                                .fillParentMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             NoTasksSection()
@@ -144,11 +144,8 @@ fun TaskScreenContent(
                         SwipableTask(
                             taskUi = taskUi,
                             action = {
-                                Log.d("TAG", "TaskScreenContent: delete on click1")
                                 actions.setSelectedTaskId(taskUi.id)
                                 actions.onDeleteTaskClick()
-                                Log.d("TAG", "TaskScreenContent: delete on click2 : ${taskUi.id}")
-                                Log.d("TAG", "TaskScreenContent: delete on click3")
                             },
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
@@ -167,14 +164,12 @@ fun TaskScreenContent(
         FabButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 8.dp),
+                .padding(12.dp),
             icon = painterResource(R.drawable.add_task),
             onClick = { actions.onAddTaskClick() }
         )
 
-        Log.d("TAG", "TaskScreenContent: before delete bottom shet visible")
         if (state.isDeleteTaskBottomSheetVisible) {
-            Log.d("TAG", "TaskScreenContent: when delete bottom sheet visible")
             AlertBottomSheet(
                 title = stringResource(R.string.delete_task),
                 imgRes = R.drawable.sure_robot,
