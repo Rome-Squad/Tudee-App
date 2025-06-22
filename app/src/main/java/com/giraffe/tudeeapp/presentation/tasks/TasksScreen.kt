@@ -3,7 +3,6 @@ package com.giraffe.tudeeapp.presentation.tasks
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +15,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,10 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -40,6 +44,9 @@ import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsBottomSheet
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.tasks.components.DatePicker
 import com.giraffe.tudeeapp.presentation.tasks.components.SwipableTask
+import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -48,11 +55,39 @@ import org.koin.androidx.compose.koinViewModel
 fun TaskScreen(
     viewModel: TasksViewModel = koinViewModel(),
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    var isErrorSnackBar by remember { mutableStateOf(false) }
+
+    EventListener(
+        events = viewModel.events
+    ) {
+        when (it) {
+            is TasksScreenEvent.Error -> {
+                isErrorSnackBar = true
+                snackBarHostState.showSnackbar(context.errorToMessage(it.error))
+            }
+            TasksScreenEvent.TaskDeletedSuccess -> {
+                isErrorSnackBar = false
+                snackBarHostState.showSnackbar(context.getString(R.string.deleted_task_successfully))
+            }
+        }
+    }
+
     TaskScreenContent(
         state = state,
         actions = viewModel,
-
+        snackBarHostState = snackBarHostState,
+        isErrorSnackBar = isErrorSnackBar,
+        showSnackBar = { message, isError ->
+            scope.launch {
+                isErrorSnackBar = isError
+                snackBarHostState.showSnackbar(message)
+            }
+        }
     )
 }
 
@@ -63,8 +98,10 @@ fun TaskScreen(
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
     actions: TasksScreenActions,
+    snackBarHostState: SnackbarHostState,
+    isErrorSnackBar: Boolean,
+    showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
 ) {
-    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -76,10 +113,10 @@ fun TaskScreenContent(
         ) {
             HeaderContent(stringResource(R.string.tasks))
 
-            DatePicker(actions::setPickedDate)
+            DatePicker(actions::setSelectedDate)
             TabsBar(
                 startTab = state.selectedTab,
-                onTabSelected = actions::selectTab,
+                onTabSelected = actions::setSelectedTab,
                 tasks = state.tasks.mapValues { (_, value) -> value.size }
             )
 
@@ -108,9 +145,9 @@ fun TaskScreenContent(
                             taskUi = taskUi,
                             action = {
                                 Log.d("TAG", "TaskScreenContent: delete on click1")
-                                actions.setDeleteBottomSheetVisibility(true)
-                                Log.d("TAG", "TaskScreenContent: delete on click2 : ${taskUi.id}")
                                 actions.setSelectedTaskId(taskUi.id)
+                                actions.onDeleteTaskClick()
+                                Log.d("TAG", "TaskScreenContent: delete on click2 : ${taskUi.id}")
                                 Log.d("TAG", "TaskScreenContent: delete on click3")
                             },
                             modifier = Modifier
@@ -136,52 +173,48 @@ fun TaskScreenContent(
         )
 
         Log.d("TAG", "TaskScreenContent: before delete bottom shet visible")
-        if (state.isDeleteBottomSheetVisible) {
+        if (state.isDeleteTaskBottomSheetVisible) {
             Log.d("TAG", "TaskScreenContent: when delete bottom sheet visible")
             AlertBottomSheet(
                 title = stringResource(R.string.delete_task),
                 imgRes = R.drawable.sure_robot,
                 onRedBtnClick = {
-                    actions.deleteTask(state.selectedTaskId)
+                    actions.onConfirmDeleteTask(state.selectedTaskId)
                 },
-                onBlueBtnClick = { actions.setDeleteBottomSheetVisibility(false) }
+                onBlueBtnClick = { actions.onDismissDeleteTaskBottomSheetRequest() }
             )
         }
 
-        if (state.isTaskDetailsVisible && state.currentTaskId != null) {
+        if (state.isTaskDetailsBottomSheetVisible && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
-                onnDismiss = actions::dismissTaskDetails,
+                onnDismiss = actions::onDismissTaskDetailsBottomSheetRequest,
                 onEditTask = actions::onEditTaskClick
             )
 
         }
 
-        if (state.isTaskEditorVisible) {
+        if (state.isTaskEditorBottomSheetVisible) {
             TaskEditorBottomSheet(
                 taskId = state.currentTaskId,
-                onDismissRequest = actions::dismissTaskEditor,
+                onDismissRequest = actions::onDismissTaskEditorBottomSheetRequest,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSuccess = { message ->
-                    actions.showSnackBarMessage(context.getString(R.string.task_edited_successfully), hasError = false)
+                    showSnackBar(message, false)
                 },
                 onError = { error ->
-                    actions.showSnackBarMessage(error, hasError = true)
+                    showSnackBar(error, true)
                 }
             )
         }
 
-        AnimatedVisibility(state.isSnackBarVisible) {
-            TudeeSnackBar(
-                message = if (state.error == null && !state.snackBarHasError) stringResource(R.string.deleted_task_successfully) else stringResource(R.string.some_error_happened),
-                iconRes = if (state.error == null && !state.snackBarHasError) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null && !state.snackBarHasError) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter)
-            )
-        }
+        DefaultSnackBar(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp),
+            snackState = snackBarHostState,
+            isError = isErrorSnackBar,
+        )
     }
 }
 
