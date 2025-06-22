@@ -17,18 +17,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import kotlinx.coroutines.launch
@@ -45,6 +47,7 @@ fun SwipableTask(
     action: () -> Unit = { }
 ) {
 
+    val layoutDirection = LocalLayoutDirection.current
     val buttonWidth = with(LocalDensity.current) { 76.dp.toPx() }
     val offset = remember {
         Animatable(initialValue = 0f)
@@ -59,26 +62,14 @@ fun SwipableTask(
             offset.animateTo(0f)
         }
     }
-
     Box(
         modifier = modifier
-            .height(125.dp)
+            .background(Theme.color.errorVariant)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .padding(1.dp)
-                .clip(shape = RoundedCornerShape(16.dp))
-                .fillMaxWidth()
-                .background(Theme.color.errorVariant)
-        ) {
-            TaskDeleteButton(
-                onClick = action,
-                modifier = Modifier
-                    .fillMaxHeight()
-            )
-        }
-
+        TaskDeleteButton(
+            onClick = action,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,8 +78,9 @@ fun SwipableTask(
                     detectHorizontalDragGestures(
                         onHorizontalDrag = { _, dragAmount ->
                             scope.launch {
+                                val correctedDragAmount = if (layoutDirection == LayoutDirection.Ltr) dragAmount else -dragAmount
                                 val newOffset =
-                                    (offset.value + dragAmount).coerceIn(-buttonWidth, 0f)
+                                    (offset.value + correctedDragAmount).coerceIn(-buttonWidth, 0f)
                                 offset.snapTo(newOffset)
                             }
                         },
@@ -116,19 +108,7 @@ fun SwipableTask(
             color = Color.Transparent,
             shadowElevation = 0.dp
         ) {
-            TaskCard(
-                taskIcon = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = taskUi.category.imageUri)
-                        .build()
-                ),
-                priority = taskUi.priorityType,
-                taskTitle = taskUi.title,
-                taskDescription = taskUi.description,
-                taskCardType = TaskCardType.TASK,
-                date = taskUi.dueDate.date.toString()
-            )
+            TaskCard(task = taskUi)
         }
     }
 }
