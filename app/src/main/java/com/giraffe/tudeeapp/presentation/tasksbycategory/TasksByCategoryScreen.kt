@@ -119,7 +119,9 @@ fun TasksByCategoryContent(
                 onTabSelected = actions::selectTab
             )
             if (state.tasks[state.selectedTab].isNullOrEmpty()) {
-                NoTasksSection(modifier = Modifier.fillMaxSize())
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                    NoTasksSection()
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxHeight(),
