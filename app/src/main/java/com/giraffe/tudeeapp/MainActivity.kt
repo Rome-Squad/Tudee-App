@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.weight(1f),
                         navController = navController,
                         isDarkTheme = mainViewModel.isDarkTheme,
-                        onToggleTheme = { mainViewModel.onToggleTheme() }
+                        onToggleTheme = mainViewModel::onToggleTheme
                     )
                     if (showBottomBar) {
                         NavBar(navController = navController)
