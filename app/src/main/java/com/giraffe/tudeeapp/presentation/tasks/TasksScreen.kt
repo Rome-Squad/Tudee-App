@@ -19,10 +19,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +44,8 @@ import com.giraffe.tudeeapp.presentation.tasks.components.DatePicker
 import com.giraffe.tudeeapp.presentation.tasks.components.SwipableTask
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
+import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,19 +60,17 @@ fun TaskScreen(
 
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    var isErrorSnackBar by remember { mutableStateOf(false) }
 
     EventListener(
         events = viewModel.events
     ) {
         when (it) {
             is TasksScreenEvent.Error -> {
-                isErrorSnackBar = true
-                snackBarHostState.showSnackbar(context.errorToMessage(it.error))
+                snackBarHostState.showErrorSnackbar(context.errorToMessage(it.error))
             }
+
             TasksScreenEvent.TaskDeletedSuccess -> {
-                isErrorSnackBar = false
-                snackBarHostState.showSnackbar(context.getString(R.string.deleted_task_successfully))
+                snackBarHostState.showSuccessSnackbar(context.getString(R.string.deleted_task_successfully))
             }
         }
     }
@@ -81,11 +79,13 @@ fun TaskScreen(
         state = state,
         actions = viewModel,
         snackBarHostState = snackBarHostState,
-        isErrorSnackBar = isErrorSnackBar,
         showSnackBar = { message, isError ->
             scope.launch {
-                isErrorSnackBar = isError
-                snackBarHostState.showSnackbar(message)
+                if (isError) {
+                    snackBarHostState.showErrorSnackbar(message)
+                } else {
+                    snackBarHostState.showSuccessSnackbar(message)
+                }
             }
         }
     )
@@ -99,7 +99,6 @@ fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
     actions: TasksScreenActions,
     snackBarHostState: SnackbarHostState,
-    isErrorSnackBar: Boolean,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
 ) {
     Box(
@@ -169,16 +168,22 @@ fun TaskScreenContent(
             onClick = { actions.onAddTaskClick() }
         )
 
-        if (state.isDeleteTaskBottomSheetVisible) {
-            AlertBottomSheet(
-                title = stringResource(R.string.delete_task),
-                imgRes = R.drawable.sure_robot,
-                onRedBtnClick = {
-                    actions.onConfirmDeleteTask(state.selectedTaskId)
-                },
-                onBlueBtnClick = { actions.onDismissDeleteTaskBottomSheetRequest() }
-            )
-        }
+        AlertBottomSheet(
+            title = stringResource(R.string.delete_task),
+            imgRes = R.drawable.sure_robot,
+            onRedBtnClick = {
+                actions.onConfirmDeleteTask(state.selectedTaskId)
+            },
+            onBlueBtnClick = { actions.onDismissDeleteTaskBottomSheetRequest() },
+            isVisible = state.isDeleteTaskBottomSheetVisible,
+            onVisibilityChange = {
+                if (it) {
+                    actions.onDeleteTaskClick()
+                } else {
+                    actions.onDismissDeleteTaskBottomSheetRequest()
+                }
+            }
+        )
 
         if (state.isTaskDetailsBottomSheetVisible && state.currentTaskId != null) {
             TaskDetailsBottomSheet(
@@ -208,7 +213,6 @@ fun TaskScreenContent(
                 .align(Alignment.TopCenter)
                 .padding(16.dp),
             snackState = snackBarHostState,
-            isError = isErrorSnackBar,
         )
     }
 }
