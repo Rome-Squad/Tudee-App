@@ -22,10 +22,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +50,8 @@ import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
+import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -67,14 +67,13 @@ fun HomeScreen(
     val state by viewModel.homeUiState.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    var isErrorSnackBar by remember { mutableStateOf(false) }
 
     EventListener(
         events = viewModel.events
     ) { event ->
         when (event) {
             is HomeEvent.Error -> {
-                snackBarHostState.showSnackbar(context.errorToMessage(event.error))
+                snackBarHostState.showErrorSnackbar(context.errorToMessage(event.error))
             }
 
             is HomeEvent.NavigateToTasksScreen -> {
@@ -89,11 +88,13 @@ fun HomeScreen(
         isDarkTheme = isDarkTheme,
         actions = viewModel,
         snackBarHostState = snackBarHostState,
-        isErrorSnackBar = isErrorSnackBar,
         showSnackBar = { message, isError ->
             scope.launch {
-                isErrorSnackBar = isError
-                snackBarHostState.showSnackbar(message)
+                if (isError) {
+                    snackBarHostState.showErrorSnackbar(message)
+                } else {
+                    snackBarHostState.showSuccessSnackbar(message)
+                }
             }
         }
     )
@@ -107,7 +108,6 @@ fun HomeContent(
     isDarkTheme: Boolean = false,
     onThemeSwitchToggle: () -> Unit = {},
     snackBarHostState: SnackbarHostState,
-    isErrorSnackBar: Boolean,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeActions,
 ) {
@@ -248,8 +248,7 @@ fun HomeContent(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp),
-                snackState = snackBarHostState,
-                isError = isErrorSnackBar,
+                snackState = snackBarHostState
             )
         }
     }

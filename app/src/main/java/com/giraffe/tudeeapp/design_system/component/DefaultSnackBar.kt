@@ -34,7 +34,7 @@ fun DefaultSnackBar(
             .padding(horizontal = 16.dp),
         hostState = snackState
     ) { snackBarData ->
-        val isError = snackBarData.visuals.actionLabel != SnakeBarType.ERROR.name
+        val isError = snackBarData.visuals.actionLabel == SnakeBarType.ERROR.name
         snackBarData.visuals.actionLabel
         Snackbar(
             modifier = Modifier.height(56.dp),

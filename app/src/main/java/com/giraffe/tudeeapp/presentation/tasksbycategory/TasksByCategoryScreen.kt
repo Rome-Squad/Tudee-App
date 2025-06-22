@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.tasksbycategory
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -27,7 +25,6 @@ import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -136,15 +133,6 @@ fun TasksByCategoryContent(
                 )
             }
 
-        }
-        AnimatedVisibility(state.snakeBarMsg != null) {
-            TudeeSnackBar(
-                message = state.snakeBarMsg ?: "",
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
-            )
         }
     }
 

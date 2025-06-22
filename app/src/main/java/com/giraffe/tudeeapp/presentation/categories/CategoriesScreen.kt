@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.categories
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -115,17 +113,6 @@ fun CategoriesContent(
             )
         }
 
-        AnimatedVisibility(state.showSuccessSnackBar) {
-            TudeeSnackBar(
-                message = if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(
-                    R.string.some_error_happened
-                ),
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
 
     }
 
