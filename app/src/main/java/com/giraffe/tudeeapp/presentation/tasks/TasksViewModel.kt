@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
+import com.giraffe.tudeeapp.presentation.utils.toTaskUiList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,43 +43,33 @@ class TasksViewModel(
 
     private fun getTasks(date: LocalDateTime) {
         viewModelScope.launch(Dispatchers.IO) {
-            val tasksResult = tasksService.getTasksByDate(date)
-            val categoriesResult = categoryService.getAllCategories()
-
-            if (tasksResult is Result.Error) {
-                _events.send(TasksScreenEvent.Error(tasksResult.error))
-                return@launch
-            }
-
-            if (categoriesResult is Result.Error) {
-                _events.send(TasksScreenEvent.Error(categoriesResult.error))
-                return@launch
-            }
-
-            val tasksFlow = (tasksResult as Result.Success).data
-            val categoriesFlow = (categoriesResult as Result.Success).data
-
-            combine(tasksFlow, categoriesFlow) { tasks, categories ->
-                val categoryMap = categories.associateBy { it.id }
-
-                tasks.mapNotNull { task ->
-                    categoryMap[task.categoryId]?.let {
-                        task.toTaskUi(it)
-                    }
+            tasksService.getTasksByDate(date)
+                .onError {
+                    _events.send(TasksScreenEvent.Error(it))
                 }
+                .onSuccess { tasksFlow ->
+                    categoryService.getAllCategories()
+                        .onError {
+                            _events.send(TasksScreenEvent.Error(it))
+                        }
+                        .onSuccess { categoriesFlow ->
+                            combine(tasksFlow, categoriesFlow) { tasks, categories ->
+                                tasks.toTaskUiList(categories)
 
-            }.collect { taskUiList ->
-                val taskMap = TaskStatus.entries.associateWith { status ->
-                    taskUiList.filter { it.status == status }
-                }
-                _state.update { currentState ->
-                    currentState.copy(
-                        tasks = taskMap,
-                        selectedDate = date,
-                    )
-                }
+                            }.collect { taskUiList ->
 
-            }
+                                val taskMap = TaskStatus.entries.associateWith { status ->
+                                    taskUiList.filter { it.status == status }
+                                }
+                                _state.update { currentState ->
+                                    currentState.copy(
+                                        tasks = taskMap,
+                                        selectedDate = date,
+                                    )
+                                }
+                            }
+                        }
+                }
         }
     }
 
