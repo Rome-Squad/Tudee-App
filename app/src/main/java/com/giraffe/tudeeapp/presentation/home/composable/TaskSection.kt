@@ -79,8 +79,9 @@ fun TaskSection(
             TaskCard(
                 isDateVisible = false,
                 modifier = Modifier
-                    .clickable { onTaskClick(task.id) }
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { onTaskClick(task.id) },
                 task = task,
             )
         }
