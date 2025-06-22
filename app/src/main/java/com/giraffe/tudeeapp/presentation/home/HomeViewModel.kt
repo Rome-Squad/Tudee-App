@@ -103,14 +103,14 @@ class HomeViewModel(
         }
     }
 
-    override fun dismissTaskDetails() {
+    override fun onDismissTaskDetailsRequest() {
         _homeUiState.update { currentState ->
             currentState.copy(isTaskDetailsVisible = false, currentTaskId = null)
         }
         clearUiState()
     }
 
-    override fun dismissTaskEditor() {
+    override fun onDismissTaskEditorRequest() {
         _homeUiState.update { currentState ->
             currentState.copy(isTaskEditorVisible = false, currentTaskId = null)
         }

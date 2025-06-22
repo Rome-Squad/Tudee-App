@@ -223,7 +223,7 @@ fun HomeContent(
             if (state.isTaskDetailsVisible && state.currentTaskId != null) {
                 TaskDetailsBottomSheet(
                     taskId = state.currentTaskId,
-                    onnDismiss = actions::dismissTaskDetails,
+                    onnDismiss = actions::onDismissTaskDetailsRequest,
                     onEditTask = actions::onEditTaskClick
                 )
             }
@@ -231,7 +231,7 @@ fun HomeContent(
             if (state.isTaskEditorVisible) {
                 TaskEditorBottomSheet(
                     taskId = state.currentTaskId,
-                    onDismissRequest = actions::dismissTaskEditor,
+                    onDismissRequest = actions::onDismissTaskEditorRequest,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
