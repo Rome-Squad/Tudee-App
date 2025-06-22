@@ -4,22 +4,18 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
 interface TasksScreenActions {
-    fun setPickedDate(date: LocalDateTime)
-
-    fun selectTab(status: TaskStatus)
-
-    fun setDeleteBottomSheetVisibility(isVisible: Boolean)
-
+    fun setSelectedDate(date: LocalDateTime)
+    fun setSelectedTab(status: TaskStatus)
     fun setSelectedTaskId(id: Long)
 
-    fun showSnackBarMessage(message: String, hasError: Boolean = false)
-
-    fun deleteTask(id: Long)
-
-
-    fun onAddTaskClick()
     fun onTaskClick(taskId: Long)
+    fun onDeleteTaskClick()
+    fun onAddTaskClick()
     fun onEditTaskClick(taskId: Long?)
-    fun dismissTaskDetails()
-    fun dismissTaskEditor()
+
+    fun onDismissTaskDetailsBottomSheetRequest()
+    fun onDismissTaskEditorBottomSheetRequest()
+    fun onDismissDeleteTaskBottomSheetRequest()
+
+    fun onConfirmDeleteTask(id: Long)
 }

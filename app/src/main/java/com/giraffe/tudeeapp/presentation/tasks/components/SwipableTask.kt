@@ -3,9 +3,15 @@ package com.giraffe.tudeeapp.presentation.tasks.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,11 +19,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
@@ -34,11 +46,15 @@ fun SwipableTask(
     onCollapsed: () -> Unit = {},
     action: () -> Unit = { }
 ) {
+
+    val layoutDirection = LocalLayoutDirection.current
     val buttonWidth = with(LocalDensity.current) { 76.dp.toPx() }
     val offset = remember {
         Animatable(initialValue = 0f)
     }
     val scope = rememberCoroutineScope()
+
+    // Animate the initial offset based on the isRevealed state
     LaunchedEffect(key1 = isRevealed, buttonWidth) {
         if (isRevealed) {
             offset.animateTo(-buttonWidth)
@@ -47,7 +63,8 @@ fun SwipableTask(
         }
     }
     Box(
-        modifier = modifier.background(Theme.color.errorVariant)
+        modifier = modifier
+            .background(Theme.color.errorVariant)
     ) {
         TaskDeleteButton(
             onClick = action,
@@ -61,8 +78,9 @@ fun SwipableTask(
                     detectHorizontalDragGestures(
                         onHorizontalDrag = { _, dragAmount ->
                             scope.launch {
+                                val correctedDragAmount = if (layoutDirection == LayoutDirection.Ltr) dragAmount else -dragAmount
                                 val newOffset =
-                                    (offset.value + dragAmount).coerceIn(-buttonWidth, 0f)
+                                    (offset.value + correctedDragAmount).coerceIn(-buttonWidth, 0f)
                                 offset.snapTo(newOffset)
                             }
                         },
