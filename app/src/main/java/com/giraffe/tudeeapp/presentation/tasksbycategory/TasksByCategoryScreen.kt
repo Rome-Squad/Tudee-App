@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -42,6 +44,7 @@ fun TasksByCategoryScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
+    val snackState = remember { SnackbarHostState() }
     EventListener(viewModel.events) { event ->
         when (event) {
             is TasksByCategoryEvents.CategoryDeleted -> {
@@ -54,14 +57,15 @@ fun TasksByCategoryScreen(
             }
         }
     }
-    TasksByCategoryContent(state, viewModel, onBackClick)
+    TasksByCategoryContent(state, viewModel, onBackClick, snackState)
 }
 
 @Composable
 fun TasksByCategoryContent(
     state: TasksByCategoryScreenState = TasksByCategoryScreenState(),
     actions: TasksByCategoryScreenActions,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    snackState: SnackbarHostState
 ) {
     val context = LocalContext.current
     LaunchedEffect(state.error) {
@@ -137,15 +141,7 @@ fun TasksByCategoryContent(
             }
 
         }
-        AnimatedVisibility(state.snakeBarMsg != null) {
-            TudeeSnackBar(
-                message = state.snakeBarMsg ?: "",
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
+        DefaultSnackBar(snackState = snackState)
     }
 
 }
