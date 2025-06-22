@@ -71,9 +71,15 @@ class TaskEditorViewModel(
         }
     }
 
-    fun loadTask(taskId: Long) {
-        if (taskId == taskEditorUiState.value.taskUi.id) return
-
+    fun loadTask(taskId: Long?) {
+        if (taskId == taskEditorUiState.value.currentTaskId || taskId == null) return
+        taskEditorUiState.update {
+            it.copy(
+                taskUi = it.taskUi.copy(id = taskId),
+                currentTaskId = taskId,
+                isLoading = true
+            )
+        }
         viewModelScope.launch {
             tasksService.getTaskById(taskId)
                 .onSuccess { task ->
@@ -82,6 +88,7 @@ class TaskEditorViewModel(
                         taskEditorUiState.update {
                             it.copy(
                                 taskUi = task.toTaskUi(category),
+                                currentTaskId = task.id,
                                 isLoading = false,
                                 isValidTask = isValidTask()
                             )
@@ -115,7 +122,7 @@ class TaskEditorViewModel(
     override fun saveTask() {
         val task = taskEditorUiState.value.taskUi.toTask()
 
-        if (taskId == null) {
+        if (taskEditorUiState.value.currentTaskId == null) {
             addTask(
                 task.copy(
                     createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
@@ -290,6 +297,7 @@ class TaskEditorViewModel(
         taskEditorUiState.update {
             it.copy(
                 taskUi = TaskUi(),
+                currentTaskId = null,
                 isLoading = false,
                 isValidTask = false,
                 isSuccessAdded = false,
