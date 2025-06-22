@@ -57,10 +57,12 @@ fun TaskDetailsBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = taskId) {
         viewModel.getTaskById(taskId)
     }
-    val context = LocalContext.current
+
     EventListener(
         events = viewModel.events,
     ) {
@@ -70,6 +72,7 @@ fun TaskDetailsBottomSheet(
             }
         }
     }
+
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
