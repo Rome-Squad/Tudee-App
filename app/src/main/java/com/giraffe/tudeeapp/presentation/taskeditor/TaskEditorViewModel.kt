@@ -12,7 +12,6 @@ import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
-import com.giraffe.tudeeapp.presentation.uimodel.toTask
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 class TaskEditorViewModel(
     private val tasksService: TasksService,
@@ -118,26 +114,8 @@ class TaskEditorViewModel(
         }
     }
 
-    override fun saveTask() {
-        val task = taskEditorUiState.value.taskUi.toTask()
 
-        if (taskEditorUiState.value.currentTaskId == null) {
-            addTask(
-                task.copy(
-                    createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                    updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                )
-            )
-        } else {
-            editTask(
-                task.copy(
-                    updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                )
-            )
-        }
-    }
-
-    private fun addTask(task: Task) {
+    override fun addTask(task: Task) {
         viewModelScope.launch {
             taskEditorUiState.update {
                 it.copy(
@@ -170,7 +148,7 @@ class TaskEditorViewModel(
         }
     }
 
-    private fun editTask(task: Task) {
+    override fun editTask(task: Task) {
         viewModelScope.launch {
             taskEditorUiState.update {
                 it.copy(
