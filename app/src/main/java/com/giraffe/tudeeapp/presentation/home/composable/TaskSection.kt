@@ -79,16 +79,6 @@ fun TaskSection(
 
         tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(
-                taskIcon = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = task.category.imageUri)
-                        .build()
-                ),
-                priority = task.priorityType,
-                taskTitle = task.title,
-                taskDescription = task.description,
-                taskCardType = TaskCardType.TASK,
                 modifier = Modifier
                     .clickable { onTaskClick(task.id) }
                     .padding(vertical = 8.dp, horizontal = 16.dp),
