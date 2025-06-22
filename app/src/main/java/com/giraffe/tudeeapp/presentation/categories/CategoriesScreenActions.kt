@@ -6,4 +6,5 @@ interface CategoriesScreenActions {
     fun selectCategory(categoryId: Long)
     fun setBottomSheetVisibility(isVisible: Boolean)
     fun addCategory(category: Category)
+    fun showSnakeBarMsg(msg: String)
 }

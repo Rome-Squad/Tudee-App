@@ -39,7 +39,7 @@ class CategoryViewModel(
                     flow.collect { categories ->
                         _categoriesUiState.update { currentState ->
                             currentState.copy(
-                                categories = categories,
+                                categories = categories.map { category -> category },
                                 isLoading = false,
                                 error = null
                             )
@@ -59,12 +59,7 @@ class CategoryViewModel(
     }
 
     override fun setBottomSheetVisibility(isVisible: Boolean) {
-        _categoriesUiState.update {
-            it.copy(
-                isBottomSheetVisible = isVisible,
-                error = if (isVisible) it.error else null,
-            )
-        }
+        _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
     }
 
     override fun addCategory(category: Category) {
@@ -72,28 +67,28 @@ class CategoryViewModel(
             categoriesService.createCategory(category)
                 .onSuccess {
                     _categoriesUiState.update {
-                        it.copy(
-                            isSnackBarVisible = true,
-                            isBottomSheetVisible = false
-                        )
+                        it.copy(isBottomSheetVisible = false)
                     }
-                    delay(3000)
-                    _categoriesUiState.update { it.copy(isSnackBarVisible = false) }
+                    _events.send(CategoriesScreenEvents.CategoryAdded())
                 }.onError { error ->
                     _categoriesUiState.update {
                         it.copy(
-                            isSnackBarVisible = true,
-                            error = error
+                            error = error,
+                            isBottomSheetVisible = false
                         )
                     }
-                    delay(3000)
-                    _categoriesUiState.update {
-                        it.copy(
-                            isSnackBarVisible = false,
-                            error = null
-                        )
-                    }
+                        delay(3000)
+                        _categoriesUiState.update { it.copy(error = null) }
+
                 }
+        }
+    }
+
+    override fun showSnakeBarMsg(msg: String) {
+        viewModelScope.launch {
+            _categoriesUiState.update { it.copy(snakeBarMsg = msg) }
+            delay(3000)
+            _categoriesUiState.update { it.copy(snakeBarMsg = null) }
         }
     }
 }

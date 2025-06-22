@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.categories
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,17 +26,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
+import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
 import com.giraffe.tudeeapp.design_system.component.HeaderContent
-import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
+import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
+import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,20 +52,44 @@ fun CategoriesScreen(
 ) {
 
     val state = viewModel.categoriesUiState.collectAsState().value
+    val snackState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(state) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            if (state.snakeBarMsg != null) {
+                snackState.showSuccessSnackbar(state.snakeBarMsg)
+            } else if (state.error != null) {
+                snackState.showErrorSnackbar(
+                    context.errorToMessage(state.error)
+                )
+            }
+        }
+    }
+
+
     EventListener(viewModel.events) { event ->
         when (event) {
             is CategoriesScreenEvents.NavigateToTasksByCategoryScreen -> {
                 navigateToTaskByCategoryScreen(event.categoryId)
             }
+
+            is CategoriesScreenEvents.CategoryAdded -> {
+                viewModel.showSnakeBarMsg(
+                    context.getString(R.string.added_category_successfully),
+                )
+            }
         }
     }
-    CategoriesContent(state, viewModel)
+    CategoriesContent(state, viewModel, snackState)
 }
 
 @Composable
 fun CategoriesContent(
     state: CategoriesScreenState,
     actions: CategoriesScreenActions,
+    snackState: SnackbarHostState
 ) {
     val statusBarHeightDp: Dp = with(LocalDensity.current) {
         WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -107,26 +139,13 @@ fun CategoriesContent(
                 .padding(end = 16.dp, bottom = 8.dp)
         )
 
-        if (state.isBottomSheetVisible) {
-            CategoryBottomSheet(
-                title = stringResource(R.string.add_new_category),
-                onVisibilityChange = actions::setBottomSheetVisibility,
-                onAddClick = actions::addCategory,
-                isVisible = true
-            )
-        }
-
-        AnimatedVisibility(state.isSnackBarVisible) {
-            TudeeSnackBar(
-                message = (if (state.error == null) stringResource(R.string.added_category_successfully) else stringResource(
-                    R.string.some_error_happened
-                )),
-                iconRes = if (state.error == null) R.drawable.ic_success else R.drawable.ic_error,
-                iconTintColor = if (state.error == null) Theme.color.greenAccent else Theme.color.error,
-                iconBackgroundColor = if (state.error == null) Theme.color.greenVariant else Theme.color.errorVariant,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
+        CategoryBottomSheet(
+            isVisible = state.isBottomSheetVisible,
+            title = stringResource(R.string.add_new_category),
+            onVisibilityChange = actions::setBottomSheetVisibility,
+            onAddClick = actions::addCategory,
+        )
+        DefaultSnackBar(snackState = snackState)
     }
 
 }
