@@ -62,25 +62,13 @@ fun SwipableTask(
             offset.animateTo(0f)
         }
     }
-
     Box(
-        modifier = modifier
-            .height(125.dp)
+        modifier = modifier.background(Theme.color.errorVariant)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .padding(1.dp)
-                .fillMaxWidth()
-                .background(color = Theme.color.errorVariant, shape = RoundedCornerShape(16.dp))
-        ) {
-            TaskDeleteButton(
-                onClick = action,
-                modifier = Modifier
-                    .fillMaxHeight()
-            )
-        }
-
+        TaskDeleteButton(
+            onClick = action,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,19 +107,7 @@ fun SwipableTask(
             color = Color.Transparent,
             shadowElevation = 0.dp
         ) {
-            TaskCard(
-                taskIcon = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(data = taskUi.category.imageUri)
-                        .build()
-                ),
-                priority = taskUi.priorityType,
-                taskTitle = taskUi.title,
-                taskDescription = taskUi.description,
-                taskCardType = TaskCardType.TASK,
-                date = null
-            )
+            TaskCard(task = taskUi)
         }
     }
 }

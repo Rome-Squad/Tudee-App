@@ -21,15 +21,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.TaskCard
-import com.giraffe.tudeeapp.design_system.component.TaskCardType
 import com.giraffe.tudeeapp.design_system.component.TudeeSnackBar
 import com.giraffe.tudeeapp.design_system.component.TudeeTopBar
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -98,20 +95,7 @@ fun TasksByCategoryContent(
                 state.tasks[state.selectedTab]?.let { tasks ->
                     if (tasks.isNotEmpty()) {
                         items(tasks) { task ->
-                            TaskCard(
-                                taskIcon = rememberAsyncImagePainter(
-                                    ImageRequest
-                                        .Builder(LocalContext.current)
-                                        .data(data = state.selectedCategory?.imageUri)
-                                        .build()
-                                ),
-                                categoryName = state.selectedCategory?.name ?: "",
-                                priority = task.priorityType,
-                                taskTitle = task.title,
-                                date = task.dueDate.date.toString(),
-                                taskDescription = task.description,
-                                taskCardType = TaskCardType.CATEGORY
-                            )
+                            TaskCard(task = task)
                         }
                     } else {
                         item {
