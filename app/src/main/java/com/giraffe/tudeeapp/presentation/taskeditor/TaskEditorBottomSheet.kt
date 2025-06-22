@@ -68,13 +68,7 @@ fun TaskEditorBottomSheet(
 
         TaskEditorBottomSheetContent(
             taskEditorUiState = taskEditorUiState,
-            onTitleChange = viewModel::onChangeTaskTitleValue,
-            onDescriptionChange = viewModel::onChangeTaskDescriptionValue,
-            onPriorityChange = viewModel::onChangeTaskPriorityValue,
-            onCategoryChange = viewModel::onChangeTaskCategoryValue,
-            onDueDateChange = viewModel::onChangeTaskDueDateValue,
-            onSaveClick = viewModel::saveTask,
-            onCancelClick = viewModel::cancel,
+            actions  = viewModel,
             isNewTask = taskId == null
         )
     }

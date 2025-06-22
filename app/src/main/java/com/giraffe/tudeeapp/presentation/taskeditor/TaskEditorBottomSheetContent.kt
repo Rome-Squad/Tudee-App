@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.taskeditor
 import android.os.Build
-import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -41,21 +40,17 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import kotlinx.datetime.LocalDateTime
+import com.giraffe.tudeeapp.presentation.uimodel.toTask
+import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
     taskEditorUiState: TaskEditorUiState,
-    onTitleChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    onPriorityChange: (TaskPriority) -> Unit,
-    onCategoryChange: (Long) -> Unit,
-    onDueDateChange: (LocalDateTime) -> Unit,
-    onSaveClick: () -> Unit,
-    onCancelClick: () -> Unit,
+    actions : TaskEditorActions,
     isNewTask: Boolean
 ) {
+
     val taskUi = taskEditorUiState.taskUi
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
@@ -65,7 +60,7 @@ fun TaskEditorBottomSheetContent(
             showDatePickerDialog = false
         },
         onDateSelected = { selectedDateMillis ->
-            onDueDateChange(selectedDateMillis)
+            actions.onChangeTaskDueDateValue(selectedDateMillis)
             showDatePickerDialog = false
         }
     )
@@ -101,7 +96,7 @@ fun TaskEditorBottomSheetContent(
 
             DefaultTextField(
                 textValue = taskUi.title,
-                onValueChange = onTitleChange,
+                onValueChange = actions::onChangeTaskTitleValue,
                 hint = stringResource(R.string.task_title),
                 iconRes = R.drawable.addeditfield
             )
@@ -110,7 +105,7 @@ fun TaskEditorBottomSheetContent(
 
             ParagraphTextField(
                 textValue = taskUi.description,
-                onValueChange = onDescriptionChange,
+                onValueChange = actions::onChangeTaskDescriptionValue,
                 hint = stringResource(R.string.description)
             )
 
@@ -150,7 +145,7 @@ fun TaskEditorBottomSheetContent(
                         priorityType = priority,
                         isSelected = taskUi.priorityType == priority,
                         modifier = Modifier
-                            .clickable { onPriorityChange(priority) }
+                            .clickable { actions.onChangeTaskPriorityValue(priority) }
                     )
                 }
             }
@@ -184,7 +179,7 @@ fun TaskEditorBottomSheetContent(
                                 isSelected = taskUi.category.id == category.id,
                                 count = 0,
                                 isShowCount = false,
-                                onClick = { onCategoryChange(category.id) },
+                                onClick = { actions.onChangeTaskCategoryValue(category.id) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -208,7 +203,7 @@ fun TaskEditorBottomSheetContent(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
                 isLoading = taskEditorUiState.isLoading,
                 isDisable = !taskEditorUiState.isValidTask,
-                onClick = onSaveClick,
+                onClick = {if (isNewTask) actions.addTask(taskUi.toTask()) else actions.editTask(taskUi.toTask())},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -221,7 +216,7 @@ fun TaskEditorBottomSheetContent(
                 text = stringResource(R.string.cancel),
                 isLoading = false,
                 isDisable = false,
-                onClick = onCancelClick,
+                onClick = actions::cancel,
                 modifier = Modifier.fillMaxWidth()
             )
         }
