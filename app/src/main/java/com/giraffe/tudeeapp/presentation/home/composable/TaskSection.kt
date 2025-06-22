@@ -72,7 +72,8 @@ fun TaskSection(
                     )
                     Icon(
                         painter = painterResource(R.drawable.arrow_icon),
-                        contentDescription = "arrow icon"
+                        contentDescription = "arrow icon",
+                        tint = Theme.color.body,
                     )
                 }
             }
