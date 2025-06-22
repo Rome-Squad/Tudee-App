@@ -35,77 +35,83 @@ fun AlertBottomSheet(
     imgRes: Int = R.drawable.sure_robot,
     redBtnTitle: String = stringResource(R.string.delete),
     blueBtnTitle: String = stringResource(R.string.cancel),
+    isVisible: Boolean = false,
+    onVisibilityChange: (Boolean) -> Unit = {},
     onRedBtnClick: () -> Unit = {},
     onBlueBtnClick: () -> Unit = {},
 ) {
     val sheetState = rememberModalBottomSheetState()
+    if (isVisible) {
+        ModalBottomSheet(
+            modifier = modifier,
+            containerColor = Theme.color.surface,
+            onDismissRequest = {
+                onVisibilityChange(false)
+                onBlueBtnClick()
+            },
+            sheetState = sheetState
+        ) {
+            Column {
+                Text(
+                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+                    text = title,
+                    style = Theme.textStyle.title.large,
+                    color = Theme.color.title
+                )
+                Text(
+                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+                    text = subTitle,
+                    style = Theme.textStyle.body.large,
+                    color = Theme.color.body
+                )
+                Image(
 
-
-    ModalBottomSheet(
-        modifier = modifier,
-        containerColor = Theme.color.surface,
-        onDismissRequest = {
-            onBlueBtnClick()
-        },
-        sheetState = sheetState
-    ) {
-        Column {
-            Text(
-                modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                text = title,
-                style = Theme.textStyle.title.large,
-                color = Theme.color.title
-            )
-            Text(
-                modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                text = subTitle,
-                style = Theme.textStyle.body.large,
-                color = Theme.color.body
-            )
-            Image(
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-                painter = painterResource(imgRes),
-                contentDescription = "robot",
-            )
-            Column(
-                modifier = Modifier
-                    .background(color = Theme.color.surfaceHigh)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = Theme.color.errorVariant,
-                        contentColor = Theme.color.error,
-                    ),
-                    shape = RoundedCornerShape(100.dp),
-                    contentPadding = PaddingValues(18.5.dp),
-                    onClick = onRedBtnClick
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
+                    painter = painterResource(imgRes),
+                    contentDescription = "robot",
+                )
+                Column(
+                    modifier = Modifier
+                        .background(color = Theme.color.surfaceHigh)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(text = redBtnTitle, style = Theme.textStyle.label.large)
-                }
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = Theme.color.surfaceHigh,
-                        contentColor = Theme.color.primary,
-                    ),
-                    shape = RoundedCornerShape(100.dp),
-                    contentPadding = PaddingValues(18.5.dp),
-                    border = BorderStroke(width = 1.dp, color = Theme.color.stroke),
-                    onClick = onBlueBtnClick
-                ) {
-                    Text(text = blueBtnTitle, style = Theme.textStyle.label.large)
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors().copy(
+                            containerColor = Theme.color.errorVariant,
+                            contentColor = Theme.color.error,
+                        ),
+                        shape = RoundedCornerShape(100.dp),
+                        contentPadding = PaddingValues(18.5.dp),
+                        onClick = {
+                            onRedBtnClick()
+                            onVisibilityChange(false)
+                        }) {
+                        Text(text = redBtnTitle, style = Theme.textStyle.label.large)
+                    }
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors().copy(
+                            containerColor = Theme.color.surfaceHigh,
+                            contentColor = Theme.color.primary,
+                        ),
+                        shape = RoundedCornerShape(100.dp),
+                        contentPadding = PaddingValues(18.5.dp),
+                        border = BorderStroke(width = 1.dp, color = Theme.color.stroke),
+                        onClick = {
+                            onBlueBtnClick()
+                            onVisibilityChange(false)
+                        }) {
+                        Text(text = blueBtnTitle, style = Theme.textStyle.label.large)
+                    }
                 }
             }
         }
     }
-
 }
 
 @Preview
