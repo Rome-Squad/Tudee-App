@@ -5,7 +5,6 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import kotlinx.datetime.LocalDateTime
 
 interface TaskEditorActions {
-    fun setTaskId(taskId: Long?)
     fun saveTask()
     fun cancel()
 
@@ -15,5 +14,4 @@ interface TaskEditorActions {
     fun onChangeTaskPriorityValue(priority: TaskPriority)
     fun onChangeTaskCategoryValue(categoryId: Long)
     fun onChangeTaskStatusValue(status: TaskStatus)
-
 }

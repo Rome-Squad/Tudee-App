@@ -26,95 +26,102 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class TaskEditorViewModel(
-    private val taskId: Long? = null,
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
 ) : ViewModel(), TaskEditorActions {
-
     var taskEditorUiState = MutableStateFlow(TaskEditorUiState())
         private set
 
     private val _events = Channel<TaskEditorEvent>()
     val events = _events.receiveAsFlow()
 
-    private var currentTaskId: Long? = null
 
     init {
+        loadCategories()
+    }
+
+    private fun loadCategories() {
         viewModelScope.launch {
-            loadCategories()
-            taskId?.let { loadTask(it) }
-        }
-    }
-
-    override fun setTaskId(taskId: Long?) {
-        val uiState = taskEditorUiState.value
-        val taskUi = uiState.taskUi
-
-        val isEmptyUi = taskUi.title.isBlank() &&
-                taskUi.description.isBlank() &&
-                taskUi.category.name.isBlank()
-
-        val shouldReload = (  taskId != currentTaskId || isEmptyUi) &&
-                !uiState.hasUnsavedChanges
-
-        if (shouldReload) {
-            currentTaskId = taskId
-            if (taskId != null) {
-                viewModelScope.launch {
-                    loadTask(taskId)
-                }
+            taskEditorUiState.update {
+                it.copy(
+                    isLoading = true
+                )
             }
-        }
-    }
 
-    private suspend fun loadCategories() {
-        taskEditorUiState.update { it.copy(isLoading = true) }
-        categoriesService.getAllCategories()
-            .onSuccess { flow ->
-                val categories = flow.first()
-                taskEditorUiState.update {
-                    it.copy(categories = categories, isLoading = false)
-                }
-            }
-            .onError { error ->
-                taskEditorUiState.update { it.copy(isLoading = false) }
-                _events.send(TaskEditorEvent.Error(error))
-            }
-    }
-
-    private suspend fun loadTask(id: Long) {
-        taskEditorUiState.update { it.copy(isLoading = true) }
-        tasksService.getTaskById(id)
-            .onSuccess { task ->
-                val category = getCategoryById(task.categoryId)
-                if (category != null) {
+            categoriesService.getAllCategories()
+                .onSuccess { flow ->
+                    val categories = flow.first()
                     taskEditorUiState.update {
                         it.copy(
-                            taskUi = task.toTaskUi(category),
-                            isLoading = false,
-                            isValidTask = isValidTask(),
-                            hasUnsavedChanges = false
+                            categories = categories,
+                            isLoading = false
                         )
                     }
-                } else {
-                    taskEditorUiState.update { it.copy(isLoading = false) }
-                    _events.send(TaskEditorEvent.Error(NotFoundError()))
+
                 }
-            }
-            .onError { error ->
-                taskEditorUiState.update { it.copy(isLoading = false) }
-                _events.send(TaskEditorEvent.Error(error))
-            }
+                .onError { error ->
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                    _events.send(TaskEditorEvent.Error(error))
+                }
+        }
+    }
+
+    fun loadTask(taskId: Long?) {
+        if (taskId == taskEditorUiState.value.currentTaskId || taskId == null) return
+        taskEditorUiState.update {
+            it.copy(
+                taskUi = it.taskUi.copy(id = taskId),
+                currentTaskId = taskId,
+                isLoading = true
+            )
+        }
+        viewModelScope.launch {
+            tasksService.getTaskById(taskId)
+                .onSuccess { task ->
+                    val category = getCategoryById(task.categoryId)
+                    if (category != null) {
+                        taskEditorUiState.update {
+                            it.copy(
+                                taskUi = task.toTaskUi(category),
+                                currentTaskId = task.id,
+                                isLoading = false,
+                                isValidTask = isValidTask()
+                            )
+                        }
+                    } else {
+                        taskEditorUiState.update {
+                            it.copy(
+                                isLoading = false
+                            )
+                        }
+                        _events.send(TaskEditorEvent.Error(NotFoundError()))
+                    }
+                }
+                .onError { error ->
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                    _events.send(TaskEditorEvent.Error(error))
+                }
+        }
     }
 
     private fun getCategoryById(id: Long): Category? {
-        return taskEditorUiState.value.categories.find { it.id == id }
+        return taskEditorUiState.value.categories.find { category ->
+            category.id == id
+        }
     }
 
     override fun saveTask() {
         val task = taskEditorUiState.value.taskUi.toTask()
 
-        if (currentTaskId == null) {
+        if (taskEditorUiState.value.currentTaskId == null) {
             addTask(
                 task.copy(
                     createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
@@ -132,35 +139,62 @@ class TaskEditorViewModel(
 
     private fun addTask(task: Task) {
         viewModelScope.launch {
-            taskEditorUiState.update { it.copy(isLoading = true) }
+            taskEditorUiState.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+
             tasksService.createTask(task)
                 .onSuccess {
-                    taskEditorUiState.update { it.copy(isLoading = false) }
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                     _events.send(TaskEditorEvent.TaskAddedSuccess)
                     _events.send(TaskEditorEvent.DismissTaskEditor)
                     clearTask()
                 }
                 .onError {
-                    taskEditorUiState.update { it.copy(isLoading = false) }
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                     _events.send(TaskEditorEvent.Error(it))
                     _events.send(TaskEditorEvent.DismissTaskEditor)
                     clearTask()
                 }
+
         }
     }
 
     private fun editTask(task: Task) {
         viewModelScope.launch {
-            taskEditorUiState.update { it.copy(isLoading = true) }
+            taskEditorUiState.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+
             tasksService.updateTask(task)
                 .onSuccess {
-                    taskEditorUiState.update { it.copy(isLoading = false) }
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                     _events.send(TaskEditorEvent.TaskEditedSuccess)
                     _events.send(TaskEditorEvent.DismissTaskEditor)
                     clearTask()
                 }
                 .onError {
-                    taskEditorUiState.update { it.copy(isLoading = false) }
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                     _events.send(TaskEditorEvent.Error(it))
                     _events.send(TaskEditorEvent.DismissTaskEditor)
                     clearTask()
@@ -178,8 +212,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskTitleValue(title: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(title = title),
-                hasUnsavedChanges = true
+                taskUi = it.taskUi.copy(title = title)
             )
         }
         validateTask()
@@ -188,8 +221,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskDescriptionValue(description: String) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(description = description),
-                hasUnsavedChanges = true
+                taskUi = it.taskUi.copy(description = description)
             )
         }
         validateTask()
@@ -198,8 +230,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskDueDateValue(dueDate: LocalDateTime) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(dueDate = dueDate),
-                hasUnsavedChanges = true
+                taskUi = it.taskUi.copy(dueDate = dueDate)
             )
         }
         validateTask()
@@ -208,8 +239,7 @@ class TaskEditorViewModel(
     override fun onChangeTaskPriorityValue(priority: TaskPriority) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(priorityType = priority),
-                hasUnsavedChanges = true
+                taskUi = it.taskUi.copy(priorityType = priority)
             )
         }
         validateTask()
@@ -223,13 +253,16 @@ class TaskEditorViewModel(
                     it.copy(
                         taskUi = it.taskUi.copy(category = category),
                         isLoading = false,
-                        isValidTask = isValidTask(),
-                        hasUnsavedChanges = true
+                        isValidTask = isValidTask()
                     )
                 }
                 validateTask()
             } else {
-                taskEditorUiState.update { it.copy(isLoading = false) }
+                taskEditorUiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
                 _events.send(TaskEditorEvent.Error(NotFoundError()))
             }
         }
@@ -238,24 +271,24 @@ class TaskEditorViewModel(
     override fun onChangeTaskStatusValue(status: TaskStatus) {
         taskEditorUiState.update {
             it.copy(
-                taskUi = it.taskUi.copy(status = status),
-                hasUnsavedChanges = true
+                taskUi = it.taskUi.copy(status = status)
             )
         }
     }
 
     private fun isValidTask(): Boolean {
-        return with(taskEditorUiState.value.taskUi) {
-            title.isNotBlank() &&
-                    description.isNotBlank() &&
-                    category.name.isNotBlank() &&
-                    category.imageUri.isNotBlank()
-        }
+        return !(taskEditorUiState.value.taskUi.title.isBlank() ||
+                taskEditorUiState.value.taskUi.description.isBlank() ||
+                taskEditorUiState.value.taskUi.category.name.isBlank() ||
+                taskEditorUiState.value.taskUi.category.imageUri.isBlank()
+                )
     }
 
     private fun validateTask() {
         taskEditorUiState.update {
-            it.copy(isValidTask = isValidTask())
+            it.copy(
+                isValidTask = isValidTask()
+            )
         }
     }
 
@@ -263,11 +296,11 @@ class TaskEditorViewModel(
         taskEditorUiState.update {
             it.copy(
                 taskUi = TaskUi(),
+                currentTaskId = null,
                 isLoading = false,
                 isValidTask = false,
                 isSuccessAdded = false,
-                isSuccessEdited = false,
-                hasUnsavedChanges = false
+                isSuccessEdited = false
             )
         }
     }

@@ -30,21 +30,20 @@ fun TaskEditorBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     onSuccess: (String) -> Unit = {},
-    onError: (String) -> Unit = {}
+    onError: (String) -> Unit = {},
+    viewModel: TaskEditorViewModel = koinViewModel()
 ) {
+
     val context = LocalContext.current
-
-    val viewModel: TaskEditorViewModel = koinViewModel(
-        parameters = { parametersOf(taskId) }
-    )
-
-
-    LaunchedEffect(taskId) {
-        viewModel.setTaskId(taskId)
-    }
-
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
+    LaunchedEffect(key1 = taskId) {
+        taskId?.let {
+            viewModel.loadTask(taskId)
+        }
+    }
     EventListener(
         events = viewModel.events,
     ) { event ->
@@ -56,8 +55,7 @@ fun TaskEditorBottomSheet(
         }
 
     }
-    val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     ModalBottomSheet(
         onDismissRequest = {
             viewModel.cancel()
