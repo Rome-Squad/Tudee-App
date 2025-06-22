@@ -77,6 +77,7 @@ fun TaskSection(
 
         tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(
+                isDateVisible = false,
                 modifier = Modifier
                     .clickable { onTaskClick(task.id) }
                     .padding(vertical = 8.dp, horizontal = 16.dp),
