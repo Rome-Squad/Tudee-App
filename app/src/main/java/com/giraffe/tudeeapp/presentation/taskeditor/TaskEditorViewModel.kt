@@ -38,76 +38,72 @@ class TaskEditorViewModel(
 
 
     init {
+        loadCategories()
+    }
+
+    private fun loadCategories() {
         viewModelScope.launch {
-            loadCategories()
-        }
-    }
-
-
-    private suspend fun loadCategories() {
-        taskEditorUiState.update {
-            it.copy(
-                isLoading = true
-            )
-        }
-
-        categoriesService.getAllCategories()
-            .onSuccess { flow ->
-                val categories = flow.first()
-                taskEditorUiState.update {
-                    it.copy(
-                        categories = categories,
-                        isLoading = false
-                    )
-                }
-
-            }
-            .onError { error ->
-                taskEditorUiState.update {
-                    it.copy(
-                        isLoading = false
-                    )
-                }
-                _events.send(TaskEditorEvent.Error(error))
+            taskEditorUiState.update {
+                it.copy(
+                    isLoading = true
+                )
             }
 
-    }
-
-    suspend fun loadTask(id: Long) {
-        if (
-            taskId == taskEditorUiState.value.taskUi.id ||
-            taskId == null
-        ) return
-
-        tasksService.getTaskById(id)
-            .onSuccess { task ->
-                val category = getCategoryById(task.categoryId)
-                if (category != null) {
+            categoriesService.getAllCategories()
+                .onSuccess { flow ->
+                    val categories = flow.first()
                     taskEditorUiState.update {
                         it.copy(
-                            taskUi = task.toTaskUi(category),
-                            isLoading = false,
-                            isValidTask = isValidTask()
+                            categories = categories,
+                            isLoading = false
                         )
                     }
-                } else {
 
+                }
+                .onError { error ->
                     taskEditorUiState.update {
                         it.copy(
                             isLoading = false
                         )
                     }
-                    _events.send(TaskEditorEvent.Error(NotFoundError()))
+                    _events.send(TaskEditorEvent.Error(error))
                 }
-            }
-            .onError { error ->
-                taskEditorUiState.update {
-                    it.copy(
-                        isLoading = false
-                    )
+        }
+    }
+
+    fun loadTask(taskId: Long) {
+        if (taskId == taskEditorUiState.value.taskUi.id) return
+
+        viewModelScope.launch {
+            tasksService.getTaskById(taskId)
+                .onSuccess { task ->
+                    val category = getCategoryById(task.categoryId)
+                    if (category != null) {
+                        taskEditorUiState.update {
+                            it.copy(
+                                taskUi = task.toTaskUi(category),
+                                isLoading = false,
+                                isValidTask = isValidTask()
+                            )
+                        }
+                    } else {
+                        taskEditorUiState.update {
+                            it.copy(
+                                isLoading = false
+                            )
+                        }
+                        _events.send(TaskEditorEvent.Error(NotFoundError()))
+                    }
                 }
-                _events.send(TaskEditorEvent.Error(error))
-            }
+                .onError { error ->
+                    taskEditorUiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                    _events.send(TaskEditorEvent.Error(error))
+                }
+        }
     }
 
     private fun getCategoryById(id: Long): Category? {
