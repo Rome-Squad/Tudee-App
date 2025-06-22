@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,9 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import kotlinx.coroutines.delay
 
@@ -94,6 +102,60 @@ fun TudeeSnackBar(
         }
     }
 
+}
+
+@Composable
+fun DefaultSnackBar(
+    modifier: Modifier,
+    snackState: SnackbarHostState,
+    isError: Boolean,
+    isRtl: Boolean = false,
+) {
+    SnackbarHost(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .padding(horizontal = 16.dp),
+        hostState = snackState
+    ) { snackBarData ->
+        Snackbar(
+            modifier = Modifier.height(56.dp),
+            containerColor = Theme.color.surfaceHigh,
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(
+                                color = if (isError) Theme.color.errorVariant else Theme.color.greenVariant,
+                                shape = RoundedCornerShape(12.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = if (isError) R.drawable.ic_error else R.drawable.ic_success),
+                            contentDescription = null,
+                            tint = if (isError) Theme.color.error else Theme.color.greenAccent,
+                            modifier = Modifier.size(21.5.dp)
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = snackBarData.visuals.message,
+                        color = Theme.color.body.copy(.6f),
+                        style = Theme.textStyle.body.medium
+                    )
+                }
+            }
+
+        }
+    }
 }
 
 
