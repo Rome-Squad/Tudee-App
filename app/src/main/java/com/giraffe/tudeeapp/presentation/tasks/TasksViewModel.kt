@@ -149,15 +149,6 @@ class TasksViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             tasksService.deleteTask(taskId)
                 .onSuccess {
-                    _state.update {
-                        it.copy(
-                            tasks = it.tasks.mapValues { entry ->
-                                entry.value.filter {
-                                    it.id != taskId
-                                }
-                            }
-                        )
-                    }
                     onDismissDeleteTaskBottomSheetRequest()
                     _events.send(TasksScreenEvent.TaskDeletedSuccess)
                 }
