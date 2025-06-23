@@ -19,8 +19,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -43,7 +41,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `returns Task when getTaskById is called`() = runTest {
+    fun `getTaskById should return Task`() = runTest {
         val id = 1L
 
         val entity = TaskEntity(
@@ -64,22 +62,22 @@ class TasksServiceImpTest {
 
         val result = service.getTaskById(id)
 
-        assertTrue(result is Result.Success)
-        assertEquals(expectedTask, (result as Result.Success).data)
+        assertThat(result is Result.Success).isTrue()
+        assertThat((result as Result.Success).data).isEqualTo(expectedTask)
     }
 
     @Test
-    fun `getTaskById returns NotFoundError when DAO throws NoSuchElementException`() = runTest {
+    fun `getTaskById should returns NotFoundError when DAO throws NoSuchElementException`() = runTest {
         coEvery { taskDao.getTaskById(1L) } throws NoSuchElementException()
 
         val result = service.getTaskById(1L)
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is NotFoundError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is NotFoundError).isTrue()
     }
 
     @Test
-    fun `createTask calls DAO and returns Result_Success with ID when create Task`() = runTest {
+    fun `createTask should call DAO and return Result_Success with ID when create Task`() = runTest {
         // Given
         val task = Task(
             id = 0L,
@@ -108,7 +106,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByCategory maps flow correctly`() = runTest {
+    fun `getTasksByCategory should map flow correctly`() = runTest {
         // Given
         val categoryId = 3L
         val entity = TaskEntity(
@@ -131,45 +129,45 @@ class TasksServiceImpTest {
         val result = service.getTasksByCategory(categoryId)
 
         // Then
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         val collected = (result as Result.Success).data.first()
-        assertEquals(listOf(expectedTask), collected)
+        assertThat(collected).isEqualTo(listOf(expectedTask))
     }
 
     @Test
-    fun `getTasksByCategory returns ValidationError when DAO throws exception`() {
+    fun `getTasksByCategory should return ValidationError when DAO throws exception`() {
         every { taskDao.getTasksByCategory(any()) } throws IllegalArgumentException()
 
         val result = service.getTasksByCategory(99L)
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is ValidationError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is ValidationError).isTrue()
     }
 
     @Test
-    fun `deleteTask calls DAO and returns Result Success`() = runTest {
+    fun `deleteTask should call DAO and return Result Success`() = runTest {
         coEvery { taskDao.deleteTask(55L) } just Runs
 
         val result = service.deleteTask(55L)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { taskDao.deleteTask(55L) }
     }
 
     @Test
-    fun `changeStatus calls DAO with correct parameters`() = runTest {
+    fun `changeStatus should call DAO with correct parameters`() = runTest {
         val id = 1L
         val newStatus = TaskStatus.DONE
         coEvery { taskDao.changeStatus(id, newStatus) } just Runs
 
         val result = service.changeStatus(id, newStatus)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { taskDao.changeStatus(id, newStatus) }
     }
 
     @Test
-    fun `getTasksByDate returns Result Success with mapped list`() = runTest {
+    fun `getTasksByDate should return Result Success with mapped list`() = runTest {
         // Given
         val dateTime = LocalDateTime(2025, 6, 20, 12, 0)
         val daoDate = dateTime.date.atTime(0, 0).toString()
@@ -193,9 +191,9 @@ class TasksServiceImpTest {
         val result = service.getTasksByDate(dateTime)
 
         // Then
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         val tasks = (result as Result.Success).data.first()
-        assertEquals(listOf(expectedTask), tasks)
+        assertThat(tasks).isEqualTo(listOf(expectedTask))
     }
 
 }

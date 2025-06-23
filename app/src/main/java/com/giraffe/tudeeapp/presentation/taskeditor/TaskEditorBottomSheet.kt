@@ -3,26 +3,23 @@ package com.giraffe.tudeeapp.presentation.taskeditor
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,25 +29,20 @@ fun TaskEditorBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     onSuccess: (String) -> Unit = {},
-    onError: (String) -> Unit = {}
+    onError: (String) -> Unit = {},
+    viewModel: TaskEditorViewModel = koinViewModel()
 ) {
+
     val context = LocalContext.current
-    val storeOwner = remember(taskId) { ViewModelStore() }
-    val owner = remember(taskId) {
-        object : ViewModelStoreOwner {
-            override val viewModelStore = storeOwner
-        }
-    }
-
-
-    val viewModel: TaskEditorViewModel = koinViewModel(
-        viewModelStoreOwner = owner,
-        parameters = { parametersOf(taskId) }
-    )
-
-
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
 
+    LaunchedEffect(key1 = taskId) {
+        taskId?.let {
+            viewModel.loadTask(taskId)
+        }
+    }
     EventListener(
         events = viewModel.events,
     ) { event ->
@@ -62,8 +54,7 @@ fun TaskEditorBottomSheet(
         }
 
     }
-    val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     ModalBottomSheet(
         onDismissRequest = {
             viewModel.cancel()
@@ -71,19 +62,13 @@ fun TaskEditorBottomSheet(
             scope.launch { bottomSheetState.hide() }
         },
         sheetState = bottomSheetState,
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier.fillMaxHeight(0.95f),
         containerColor = Theme.color.surface
     ) {
 
         TaskEditorBottomSheetContent(
             taskEditorUiState = taskEditorUiState,
-            onTitleChange = viewModel::onChangeTaskTitleValue,
-            onDescriptionChange = viewModel::onChangeTaskDescriptionValue,
-            onPriorityChange = viewModel::onChangeTaskPriorityValue,
-            onCategoryChange = viewModel::onChangeTaskCategoryValue,
-            onDueDateChange = viewModel::onChangeTaskDueDateValue,
-            onSaveClick = viewModel::saveTask,
-            onCancelClick = viewModel::cancel,
+            actions  = viewModel,
             isNewTask = taskId == null
         )
     }

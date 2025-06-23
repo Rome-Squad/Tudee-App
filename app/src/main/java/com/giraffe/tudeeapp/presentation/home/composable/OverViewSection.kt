@@ -14,11 +14,12 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.HomeUiState
+import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 
 data class TaskCardData(
     val color: Color,
     val icon: Int,
-    val taskCount: Int,
+    val taskCount: String,
     val taskStatus: String
 )
 
@@ -30,19 +31,19 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
         TaskCardData(
             color = Theme.color.greenAccent,
             icon = R.drawable.done_task_card_icon,
-            taskCount = tasksState.tasks[TaskStatus.TODO]!!.size,
+            taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.DONE]!!.size.toString()),
             taskStatus = stringResource(R.string.done_tasks),
         ),
         TaskCardData(
             color = Theme.color.yellowAccent,
             icon = R.drawable.in_progress_task_card_icon,
-            taskCount = tasksState.tasks[TaskStatus.IN_PROGRESS]!!.size,
+            taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.IN_PROGRESS]!!.size.toString()),
             taskStatus = stringResource(R.string.in_progress_tasks)
         ),
         TaskCardData(
             color = Theme.color.purpleAccent,
             icon = R.drawable.to_do_task_card_icon,
-            taskCount = tasksState.tasks[TaskStatus.IN_PROGRESS]!!.size,
+            taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.TODO]!!.size.toString()),
             taskStatus = stringResource(R.string.to_do_tasks)
         )
     )
@@ -58,7 +59,7 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
                 modifier = Modifier.weight(1f),
                 color = cardData.color,
                 icon = painterResource(cardData.icon),
-                taskCount = cardData.taskCount.toString(),
+                taskCount = cardData.taskCount,
                 taskStatus = cardData.taskStatus
             )
         }

@@ -20,7 +20,7 @@
     <string name="title_zero_progress">Zero progress?!</string>
     <string name="title_great_work">Tadaa!</string>
     <string name="subtitle_great_work">You’re doing amazing!!!\nTudee is proud of you.</string>
-    <string name="partially_completed_subtitle">You\\\'ve completed %1$s out of %2$s \ntasks Keep going!</string>
+    <string name="partially_completed_subtitle">You\'ve completed %1$s out of %2$s \ntasks Keep going!</string>
     <string name="partially_completed_title">Stay working!</string>
     <string name="text_value">hello</string>
     <string name="hint">Full name</string>
@@ -88,4 +88,5 @@
     <string name="failed_to_load_tasks">Failed to load tasks</string>
     <string name="unable_to_delete_the_category">Unable to delete the category</string>
     <string name="failed_to_update_the_category">Failed to update the category</string>
+    <string name="overview">Overview</string>
 </resources>
