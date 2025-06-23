@@ -10,6 +10,7 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.Result
 import com.giraffe.tudeeapp.domain.util.UnknownError
+import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +39,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `getAllCategories returns flow mapped correctly`() = runTest {
+    fun `when call getAllCategories should returns flow mapped correctly`() = runTest {
         // Given
         val entity = CategoryEntity(
             uid = 1L,
@@ -66,8 +67,8 @@ class CategoryServiceImpTest {
 
         val result = service.getAllCategories()
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is UnknownError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is UnknownError).isTrue()
     }
 
     @Test
@@ -86,8 +87,8 @@ class CategoryServiceImpTest {
 
         val result = service.getCategoryById(id)
 
-        assertTrue(result is Result.Success)
-        assertEquals(expected, (result as Result.Success).data)
+        assertThat(result is Result.Success).isTrue()
+        assertThat((result as Result.Success).data).isEqualTo(expected)
     }
 
     @Test
@@ -96,8 +97,8 @@ class CategoryServiceImpTest {
 
         val result = service.getCategoryById(99L)
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is NotFoundError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is NotFoundError).isTrue()
     }
 
     @Test
@@ -118,8 +119,8 @@ class CategoryServiceImpTest {
 
         val result = service.createCategory(category)
 
-        assertTrue(result is Result.Success)
-        assertEquals(42L, (result as Result.Success).data)
+        assertThat(result is Result.Success).isTrue()
+        assertThat((result as Result.Success).data).isEqualTo(42L)
     }
 
     @Test
@@ -140,7 +141,7 @@ class CategoryServiceImpTest {
 
         val result = service.updateCategory(category)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { categoryDao.updateCategory(entity) }
     }
 
@@ -151,7 +152,7 @@ class CategoryServiceImpTest {
 
         val result = service.deleteCategory(id)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { categoryDao.deleteCategory(id) }
     }
 }

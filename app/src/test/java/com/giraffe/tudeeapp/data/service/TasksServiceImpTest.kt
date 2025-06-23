@@ -19,8 +19,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -64,8 +62,8 @@ class TasksServiceImpTest {
 
         val result = service.getTaskById(id)
 
-        assertTrue(result is Result.Success)
-        assertEquals(expectedTask, (result as Result.Success).data)
+        assertThat(result is Result.Success).isTrue()
+        assertThat((result as Result.Success).data).isEqualTo(expectedTask)
     }
 
     @Test
@@ -74,8 +72,8 @@ class TasksServiceImpTest {
 
         val result = service.getTaskById(1L)
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is NotFoundError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is NotFoundError).isTrue()
     }
 
     @Test
@@ -131,9 +129,9 @@ class TasksServiceImpTest {
         val result = service.getTasksByCategory(categoryId)
 
         // Then
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         val collected = (result as Result.Success).data.first()
-        assertEquals(listOf(expectedTask), collected)
+        assertThat(collected).isEqualTo(listOf(expectedTask))
     }
 
     @Test
@@ -142,8 +140,8 @@ class TasksServiceImpTest {
 
         val result = service.getTasksByCategory(99L)
 
-        assertTrue(result is Result.Error)
-        assertTrue((result as Result.Error).error is ValidationError)
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is ValidationError).isTrue()
     }
 
     @Test
@@ -152,7 +150,7 @@ class TasksServiceImpTest {
 
         val result = service.deleteTask(55L)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { taskDao.deleteTask(55L) }
     }
 
@@ -164,7 +162,7 @@ class TasksServiceImpTest {
 
         val result = service.changeStatus(id, newStatus)
 
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         coVerify { taskDao.changeStatus(id, newStatus) }
     }
 
@@ -193,9 +191,9 @@ class TasksServiceImpTest {
         val result = service.getTasksByDate(dateTime)
 
         // Then
-        assertTrue(result is Result.Success)
+        assertThat(result is Result.Success).isTrue()
         val tasks = (result as Result.Success).data.first()
-        assertEquals(listOf(expectedTask), tasks)
+        assertThat(tasks).isEqualTo(listOf(expectedTask))
     }
 
 }
