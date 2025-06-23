@@ -52,6 +52,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.presentation.utils.copyImageToInternalStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,11 +72,7 @@ fun CategoryBottomSheet(
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let {
-                photoUri = it
-                context.contentResolver.takePersistableUriPermission(
-                    it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
+                photoUri = uri.copyImageToInternalStorage(context)
             }
         }
     if (isVisible) {
