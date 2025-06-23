@@ -5,30 +5,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
@@ -54,20 +46,6 @@ fun CategoriesScreen(
     val state = viewModel.categoriesUiState.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(state) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            if (state.snakeBarMsg != null) {
-                snackState.showSuccessSnackbar(state.snakeBarMsg)
-            } else if (state.error != null) {
-                snackState.showErrorSnackbar(
-                    context.errorToMessage(state.error)
-                )
-            }
-        }
-    }
-
 
     EventListener(viewModel.events) { event ->
         when (event) {
@@ -76,13 +54,21 @@ fun CategoriesScreen(
             }
 
             is CategoriesScreenEvents.CategoryAdded -> {
-                viewModel.showSnakeBarMsg(
-                    context.getString(R.string.added_category_successfully),
+                snackState.showSuccessSnackbar(context.getString(R.string.added_category_successfully))
+            }
+
+            is CategoriesScreenEvents.Error -> {
+                snackState.showErrorSnackbar(
+                    context.errorToMessage(event.error)
                 )
             }
         }
     }
-    CategoriesContent(state, viewModel, snackState)
+    CategoriesContent(
+        state = state,
+        actions = viewModel,
+        snackState = snackState
+    )
 }
 
 @Composable
@@ -91,15 +77,11 @@ fun CategoriesContent(
     actions: CategoriesScreenActions,
     snackState: SnackbarHostState
 ) {
-    val statusBarHeightDp: Dp = with(LocalDensity.current) {
-        WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    }
-
     Box(
         Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
-            .padding(top = statusBarHeightDp)
+            .systemBarsPadding()
     ) {
         Column {
             HeaderContent(stringResource(R.string.categories))
@@ -107,9 +89,11 @@ fun CategoriesContent(
                 columns = GridCells.Adaptive(minSize = 104.dp),
                 modifier = Modifier
                     .background(Theme.color.surface)
-                    .padding(horizontal = 16.dp)
                     .fillMaxSize(),
-                contentPadding = PaddingValues(top = 12.dp),
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 12.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -136,7 +120,7 @@ fun CategoriesContent(
             onClick = { actions.setBottomSheetVisibility(isVisible = true) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 8.dp)
+                .padding(end = 12.dp, bottom = 12.dp)
         )
 
         CategoryBottomSheet(
