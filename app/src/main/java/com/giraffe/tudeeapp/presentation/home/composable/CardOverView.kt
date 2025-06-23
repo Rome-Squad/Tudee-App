@@ -1,8 +1,10 @@
 package com.giraffe.tudeeapp.presentation.home.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,14 +39,17 @@ fun CardOverView(
     ) {
         Icon(
             modifier = Modifier
-                .align(Alignment.TopEnd),
+                .align(Alignment.TopEnd)
+                .fillMaxWidth(.4f)
+                .aspectRatio(1f),
             painter = painterResource(id = R.drawable.overview_card_background),
             tint = Theme.color.onPrimary,
             contentDescription = stringResource(R.string.calendar_icon),
         )
         Column(
             modifier = Modifier
-                .padding(start = 12.dp, top = 12.dp, bottom = 12.dp),
+                .padding(12.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
                 modifier = Modifier

@@ -1,8 +1,10 @@
 package com.giraffe.tudeeapp.data.service
 
 import TaskDao
+import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.mapper.toEntity
 import com.giraffe.tudeeapp.data.mapper.toTask
+import com.giraffe.tudeeapp.data.mapper.toTaskList
 import com.giraffe.tudeeapp.data.util.safeCall
 import com.giraffe.tudeeapp.data.util.safeFlowCall
 import com.giraffe.tudeeapp.domain.model.task.Task
@@ -11,30 +13,40 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.atTime
+import kotlinx.coroutines.flow.combine
+import kotlinx.datetime.LocalDate
 
 class TasksServiceImp(
     private val taskDao: TaskDao,
+    private val categoryDao: CategoryDao
     ) : TasksService {
-    override fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError> {
+    override fun getTasksByDate(date: LocalDate): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
-            taskDao.getTasksByDate(date.date.atTime(0, 0).toString())
-                .map { list -> list.map { it.toTask() } }
+            val tasksFlow = taskDao.getTasksByDate(date.toString())
+            val categoriesFlow = categoryDao.getAllCategories()
+
+            combine(tasksFlow, categoriesFlow) { tasks, categories ->
+                tasks.toTaskList(categories)
+            }
         }
     }
 
     override fun getTasksByCategory(categoryId: Long): Result<Flow<List<Task>>, DomainError> {
         return safeFlowCall {
-            taskDao.getTasksByCategory(categoryId)
-                .map { list -> list.map { it.toTask() } }
+            val tasksFlow = taskDao.getTasksByCategory(categoryId)
+            val categoriesFlow = categoryDao.getAllCategories()
+
+            combine(tasksFlow, categoriesFlow) { tasks, categories ->
+                tasks.toTaskList(categories)
+            }
         }
     }
 
     override suspend fun getTaskById(id: Long): Result<Task, DomainError> {
         return safeCall {
-            taskDao.getTaskById(id).toTask()
+            val taskEntity = taskDao.getTaskById(id)
+            val category = categoryDao.getCategoryById(taskEntity.categoryId)
+            taskEntity.toTask(category)
         }
     }
 

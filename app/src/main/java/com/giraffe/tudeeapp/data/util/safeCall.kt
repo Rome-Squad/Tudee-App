@@ -1,6 +1,10 @@
 package com.giraffe.tudeeapp.data.util
 
-import com.giraffe.tudeeapp.domain.util.*
+import com.giraffe.tudeeapp.domain.util.DomainError
+import com.giraffe.tudeeapp.domain.util.NotFoundError
+import com.giraffe.tudeeapp.domain.util.Result
+import com.giraffe.tudeeapp.domain.util.UnknownError
+import com.giraffe.tudeeapp.domain.util.ValidationError
 import kotlinx.coroutines.flow.Flow
 
 suspend fun <T> safeCall(
@@ -15,7 +19,7 @@ suspend fun <T> safeCall(
 
 fun <T> safeFlowCall(block: () -> Flow<T>): Result<Flow<T>, DomainError> {
     return try {
-            Result.Success(block())
+        Result.Success(block())
     } catch (e: Exception) {
         Result.Error(mapExceptionToDomainError(e))
     }

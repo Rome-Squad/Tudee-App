@@ -1,8 +1,11 @@
 package com.giraffe.tudeeapp.data.service
 
 import TaskDao
+import com.giraffe.tudeeapp.data.database.CategoryDao
+import com.giraffe.tudeeapp.data.mapper.toCategory
 import com.giraffe.tudeeapp.data.mapper.toEntity
 import com.giraffe.tudeeapp.data.mapper.toTask
+import com.giraffe.tudeeapp.data.model.CategoryEntity
 import com.giraffe.tudeeapp.data.model.TaskEntity
 import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
@@ -23,9 +26,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.atTime
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDate
 import org.junit.Before
 import org.junit.Test
 
@@ -33,41 +34,51 @@ import org.junit.Test
 class TasksServiceImpTest {
 
     private val taskDao: TaskDao = mockk()
+    private val categoryDao: CategoryDao = mockk()
     private lateinit var service: TasksService
 
     @Before
     fun setup() {
-        service = TasksServiceImp(taskDao)
+        service = TasksServiceImp(taskDao, categoryDao)
     }
 
     @Test
     fun `getTaskById should return Task`() = runTest {
+        // Given
         val id = 1L
-
         val entity = TaskEntity(
-            uid = 1L,
+            uid = id,
             title = "Test",
             description = "Description",
-            dueDate = "2025-06-20T12:00:00",
+            dueDate = "2025-06-20",
             status = TaskStatus.TODO,
-            categoryId = 1L,
+            categoryId = 5L,
             taskPriority = TaskPriority.HIGH,
-            createdAt = "2025-06-20T12:00:00",
-            updatedAt = "2025-06-20T12:00:00"
+            createdAt = "2025-06-20",
+            updatedAt = "2025-06-20"
         )
-
-        val expectedTask = entity.toTask()
+        val categoryEntity = CategoryEntity(
+            uid = 5L,
+            name = "Work",
+            imageUri = "content://sample",
+            isEditable = true,
+            taskCount = 10
+        )
+        val expectedTask = entity.toTask(categoryEntity)
 
         coEvery { taskDao.getTaskById(id) } returns entity
+        coEvery { categoryDao.getCategoryById(5L) } returns categoryEntity
 
+        // When
         val result = service.getTaskById(id)
 
+        // Then
         assertThat(result is Result.Success).isTrue()
         assertThat((result as Result.Success).data).isEqualTo(expectedTask)
     }
 
     @Test
-    fun `getTaskById should returns NotFoundError when DAO throws NoSuchElementException`() = runTest {
+    fun `getTaskById should return NotFoundError when DAO throws NoSuchElementException`() = runTest {
         coEvery { taskDao.getTaskById(1L) } throws NoSuchElementException()
 
         val result = service.getTaskById(1L)
@@ -77,123 +88,136 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `createTask should call DAO and return Result_Success with ID when create Task`() = runTest {
-        // Given
+    fun `createTask should call DAO and return Result_Success with ID`() = runTest {
         val task = Task(
             id = 0L,
             title = "Test Task",
             description = "Test description",
-            dueDate = "2025-06-20T12:00:00".toLocalDateTime(),
+            dueDate = LocalDate.parse("2025-06-20"),
             status = TaskStatus.TODO,
-            categoryId = 1L,
+            category = CategoryEntity(
+                uid = 5L,
+                name = "Work",
+                imageUri = "content://sample",
+                isEditable = true,
+                taskCount = 10
+            ).toCategory(),
             taskPriority = TaskPriority.HIGH,
-            createdAt = "2025-06-20T12:00:00".toLocalDateTime(),
-            updatedAt = "2025-06-20T12:00:00".toLocalDateTime()
+            createdAt = LocalDate.parse("2025-06-20"),
+            updatedAt = LocalDate.parse("2025-06-20")
         )
-        val entity = mockk<TaskEntity>()
 
+        val entity = mockk<TaskEntity>()
         mockkStatic("com.giraffe.tudeeapp.data.mapper.TaskMapperKt")
         every { task.toEntity() } returns entity
         coEvery { taskDao.createTask(entity) } returns 101L
 
-        // When
         val result = service.createTask(task)
 
-        // Then
-        assertThat(result).isInstanceOf(Result.Success::class.java)
+        assertThat(result is Result.Success).isTrue()
         assertThat((result as Result.Success).data).isEqualTo(101L)
-        coVerify { taskDao.createTask(entity) }
     }
 
     @Test
-    fun `getTasksByCategory should map flow correctly`() = runTest {
-        // Given
-        val categoryId = 3L
-        val entity = TaskEntity(
+    fun `getTasksByCategory should return mapped flow of tasks`() = runTest {
+        val categoryId = 5L
+        val taskEntity = TaskEntity(
             uid = 1L,
-            title = "Test",
+            title = "Task",
             description = "Description",
-            dueDate = "2025-06-20T12:00:00",
+            dueDate = "2025-06-20",
             status = TaskStatus.TODO,
             categoryId = categoryId,
             taskPriority = TaskPriority.HIGH,
-            createdAt = "2025-06-20T12:00:00",
-            updatedAt = "2025-06-20T12:00:00"
+            createdAt = "2025-06-20",
+            updatedAt = "2025-06-20"
         )
-        val expectedTask = entity.toTask()
 
-        val flow = flowOf(listOf(entity))
-        every { taskDao.getTasksByCategory(categoryId) } returns flow
+        val categoryEntity = CategoryEntity(
+            uid = 5L,
+            name = "Work",
+            imageUri = "content://sample",
+            isEditable = true,
+            taskCount = 10
+        )
+        val expectedTask = taskEntity.toTask(categoryEntity)
 
-        // When
+        val tasksFlow = flowOf(listOf(taskEntity))
+        val categoriesFlow = flowOf(listOf(categoryEntity))
+
+        every { taskDao.getTasksByCategory(categoryId) } returns tasksFlow
+        every { categoryDao.getAllCategories() } returns categoriesFlow
+
         val result = service.getTasksByCategory(categoryId)
 
-        // Then
         assertThat(result is Result.Success).isTrue()
         val collected = (result as Result.Success).data.first()
         assertThat(collected).isEqualTo(listOf(expectedTask))
     }
 
     @Test
-    fun `getTasksByCategory should return ValidationError when DAO throws exception`() {
-        every { taskDao.getTasksByCategory(any()) } throws IllegalArgumentException()
+    fun `getTasksByDate should return mapped flow of tasks`() = runTest {
+        val date = LocalDate.parse("2025-06-20")
+        val taskEntity = TaskEntity(
+            uid = 1L,
+            title = "Task",
+            description = "Description",
+            dueDate = "2025-06-20",
+            status = TaskStatus.TODO,
+            categoryId = 5L,
+            taskPriority = TaskPriority.HIGH,
+            createdAt = "2025-06-20",
+            updatedAt = "2025-06-20"
+        )
+        val categoryEntity = CategoryEntity(
+            uid = 5L,
+            name = "Work",
+            imageUri = "content://sample",
+            isEditable = true,
+            taskCount = 10
+        )
+        val expectedTask = taskEntity.toTask(categoryEntity)
 
-        val result = service.getTasksByCategory(99L)
+        val tasksFlow = flowOf(listOf(taskEntity))
+        val categoriesFlow = flowOf(listOf(categoryEntity))
 
-        assertThat(result is Result.Error).isTrue()
-        assertThat((result as Result.Error).error is ValidationError).isTrue()
+        every { taskDao.getTasksByDate(date.toString()) } returns tasksFlow
+        every { categoryDao.getAllCategories() } returns categoriesFlow
+
+        val result = service.getTasksByDate(date)
+
+        assertThat(result is Result.Success).isTrue()
+        val collected = (result as Result.Success).data.first()
+        assertThat(collected).isEqualTo(listOf(expectedTask))
     }
 
     @Test
     fun `deleteTask should call DAO and return Result Success`() = runTest {
-        coEvery { taskDao.deleteTask(55L) } just Runs
+        coEvery { taskDao.deleteTask(99L) } just Runs
 
-        val result = service.deleteTask(55L)
+        val result = service.deleteTask(99L)
 
         assertThat(result is Result.Success).isTrue()
-        coVerify { taskDao.deleteTask(55L) }
+        coVerify { taskDao.deleteTask(99L) }
     }
 
     @Test
-    fun `changeStatus should call DAO with correct parameters`() = runTest {
-        val id = 1L
-        val newStatus = TaskStatus.DONE
-        coEvery { taskDao.changeStatus(id, newStatus) } just Runs
+    fun `changeStatus should call DAO with correct values`() = runTest {
+        coEvery { taskDao.changeStatus(1L, TaskStatus.DONE) } just Runs
 
-        val result = service.changeStatus(id, newStatus)
+        val result = service.changeStatus(1L, TaskStatus.DONE)
 
         assertThat(result is Result.Success).isTrue()
-        coVerify { taskDao.changeStatus(id, newStatus) }
+        coVerify { taskDao.changeStatus(1L, TaskStatus.DONE) }
     }
 
     @Test
-    fun `getTasksByDate should return Result Success with mapped list`() = runTest {
-        // Given
-        val dateTime = LocalDateTime(2025, 6, 20, 12, 0)
-        val daoDate = dateTime.date.atTime(0, 0).toString()
+    fun `getTasksByCategory should return ValidationError on exception`() {
+        every { taskDao.getTasksByCategory(any()) } throws IllegalArgumentException()
 
-        val entity = TaskEntity(
-            uid = 1L,
-            title = "Test",
-            description = "Description",
-            dueDate = "2025-06-20T12:00:00",
-            status = TaskStatus.TODO,
-            categoryId = 1L,
-            taskPriority = TaskPriority.HIGH,
-            createdAt = "2025-06-20T12:00:00",
-            updatedAt = "2025-06-20T12:00:00"
-        )
+        val result = service.getTasksByCategory(5L)
 
-        val expectedTask = entity.toTask()
-        every { taskDao.getTasksByDate(daoDate) } returns flowOf(listOf(entity))
-
-        // When
-        val result = service.getTasksByDate(dateTime)
-
-        // Then
-        assertThat(result is Result.Success).isTrue()
-        val tasks = (result as Result.Success).data.first()
-        assertThat(tasks).isEqualTo(listOf(expectedTask))
+        assertThat(result is Result.Error).isTrue()
+        assertThat((result as Result.Error).error is ValidationError).isTrue()
     }
-
 }

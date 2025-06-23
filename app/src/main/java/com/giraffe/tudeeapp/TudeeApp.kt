@@ -1,8 +1,8 @@
 package com.giraffe.tudeeapp
 
 import android.app.Application
-import com.giraffe.tudeeapp.di.dataModule
 import com.giraffe.tudeeapp.di.appModule
+import com.giraffe.tudeeapp.di.dataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

@@ -37,10 +37,10 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.domain.model.task.Task
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.taskdetails.components.TaskStatusBox
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import org.koin.androidx.compose.koinViewModel
@@ -92,7 +92,7 @@ fun TaskDetailsBottomSheet(
 
 @Composable
 fun TaskDetailsContent(
-    task: TaskUi?,
+    task: Task?,
     actions: TaskDetailsAction,
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
@@ -150,7 +150,7 @@ fun TaskDetailsContent(
                 status = task?.status ?: TaskStatus.TODO
             )
             Priority(
-                priorityType = task?.priorityType ?: TaskPriority.LOW,
+                priorityType = task?.taskPriority ?: TaskPriority.LOW,
                 isSelected = true
             )
         }
