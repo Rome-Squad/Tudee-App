@@ -13,9 +13,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
@@ -32,7 +30,9 @@ import com.giraffe.tudeeapp.presentation.navigation.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultNavigationBar(
-    modifier: Modifier = Modifier, navController: NavController, onNavigation: (String) -> Unit = {}
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    onNavigation: (String) -> Unit = {},
 ) {
     val items = listOf(
         BottomNavigationItem(
@@ -51,19 +51,20 @@ fun DefaultNavigationBar(
             unselectedIcon = R.drawable.categories_unselected
         )
     )
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
     CompositionLocalProvider(LocalRippleConfiguration provides null) {
         NavigationBar(
             modifier = modifier,
             containerColor = Theme.color.surfaceHigh
         ) {
             items.forEachIndexed { index, item ->
+                val isSelected = currentRoute?.contains(item.route.split("/").first()) == true
                 NavigationBarItem(
-                    selected = selectedItemIndex == index,
+                    selected = isSelected,
                     onClick = {
                         onNavigation(item.route)
-                        if (index != selectedItemIndex) {
-                            selectedItemIndex = index
+                        if (!isSelected) {
                             navController.navigate(item.route)
                         }
                     },
@@ -72,18 +73,14 @@ fun DefaultNavigationBar(
                             modifier = Modifier
                                 .size(42.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(if (selectedItemIndex == index) Theme.color.primaryVariant else Theme.color.surfaceHigh),
+                                .background(if (isSelected) Theme.color.primaryVariant else Theme.color.surfaceHigh),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    if (index == selectedItemIndex) {
-                                        item.selectedIcon
-                                    } else {
-                                        item.unselectedIcon
-                                    }
+                                    if (isSelected) item.selectedIcon else item.unselectedIcon
                                 ),
-                                tint = if (index == selectedItemIndex) Theme.color.primary else Theme.color.hint.copy(
+                                tint = if (isSelected) Theme.color.primary else Theme.color.hint.copy(
                                     .38f
                                 ),
                                 contentDescription = item.route
