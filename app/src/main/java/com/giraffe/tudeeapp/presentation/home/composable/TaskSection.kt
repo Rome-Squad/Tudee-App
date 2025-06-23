@@ -33,55 +33,55 @@ fun TaskSection(
     onTasksLinkClick: () -> Unit
 ) {
     Column(modifier = modifier) {
-        if (tasks.isNotEmpty()) {
-            Row(
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = taskStatus,
+                color = Theme.color.title,
+                style = Theme.textStyle.title.large
+            )
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = taskStatus,
-                    color = Theme.color.title,
-                    style = Theme.textStyle.title.large
-                )
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Theme.color.surfaceHigh,
-                            shape = RoundedCornerShape(100.dp)
-                        )
-                        .clip(RoundedCornerShape(100.dp))
-                        .clickable {
-                            onTasksLinkClick()
-                        }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = numberOfTasks,
-                            color = Theme.color.body,
-                            style = Theme.textStyle.label.small
-                        )
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_icon),
-                            contentDescription = "arrow icon"
-                        )
+                    .background(
+                        color = Theme.color.surfaceHigh,
+                        shape = RoundedCornerShape(100.dp)
+                    )
+                    .clip(RoundedCornerShape(100.dp))
+                    .clickable {
+                        onTasksLinkClick()
                     }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = numberOfTasks,
+                        color = Theme.color.body,
+                        style = Theme.textStyle.label.small
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_icon),
+                        contentDescription = "arrow icon",
+                        tint = Theme.color.body,
+                    )
                 }
-
             }
         }
 
         tasks.takeLast(2).reversed().forEach { task ->
             TaskCard(
+                isDateVisible = false,
                 modifier = Modifier
-                    .clickable { onTaskClick(task.id) }
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { onTaskClick(task.id) },
                 task = task,
             )
         }

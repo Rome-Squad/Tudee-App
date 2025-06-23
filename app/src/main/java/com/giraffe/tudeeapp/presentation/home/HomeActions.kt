@@ -6,6 +6,6 @@ interface HomeActions {
     fun onAddTaskClick()
     fun onTaskClick(taskId: Long)
     fun onEditTaskClick(taskId: Long?)
-    fun dismissTaskDetails()
-    fun dismissTaskEditor()
+    fun onDismissTaskDetailsRequest()
+    fun onDismissTaskEditorRequest()
 }

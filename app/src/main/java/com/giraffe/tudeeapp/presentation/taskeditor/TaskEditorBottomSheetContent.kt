@@ -12,7 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -39,21 +44,17 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import kotlinx.datetime.LocalDateTime
+import com.giraffe.tudeeapp.presentation.uimodel.toTask
+import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
     taskEditorUiState: TaskEditorUiState,
-    onTitleChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    onPriorityChange: (TaskPriority) -> Unit,
-    onCategoryChange: (Long) -> Unit,
-    onDueDateChange: (LocalDateTime) -> Unit,
-    onSaveClick: () -> Unit,
-    onCancelClick: () -> Unit,
+    actions : TaskEditorActions,
     isNewTask: Boolean
 ) {
+
     val taskUi = taskEditorUiState.taskUi
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
@@ -63,7 +64,7 @@ fun TaskEditorBottomSheetContent(
             showDatePickerDialog = false
         },
         onDateSelected = { selectedDateMillis ->
-            onDueDateChange(selectedDateMillis)
+            actions.onChangeTaskDueDateValue(selectedDateMillis)
             showDatePickerDialog = false
         }
     )
@@ -99,7 +100,7 @@ fun TaskEditorBottomSheetContent(
 
             DefaultTextField(
                 textValue = taskUi.title,
-                onValueChange = onTitleChange,
+                onValueChange = actions::onChangeTaskTitleValue,
                 hint = stringResource(R.string.task_title),
                 iconRes = R.drawable.addeditfield
             )
@@ -108,11 +109,15 @@ fun TaskEditorBottomSheetContent(
 
             ParagraphTextField(
                 textValue = taskUi.description,
-                onValueChange = onDescriptionChange,
+                onValueChange = actions::onChangeTaskDescriptionValue,
                 hint = stringResource(R.string.description)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            val context = LocalContext.current
+            val formattedDate = taskUi.dueDate.date.formatAsLocalizedDate(context)
+
 
             DefaultTextField(
                 modifier = Modifier
@@ -120,10 +125,11 @@ fun TaskEditorBottomSheetContent(
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { showDatePickerDialog = true },
                 isReadOnly = true,
-                textValue = taskUi.dueDate.date.toString(),
+                textValue = formattedDate,
                 hint = stringResource(R.string.due_date_hint),
                 iconRes = R.drawable.calendar
             )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -143,7 +149,7 @@ fun TaskEditorBottomSheetContent(
                         priorityType = priority,
                         isSelected = taskUi.priorityType == priority,
                         modifier = Modifier
-                            .clickable { onPriorityChange(priority) }
+                            .clickable { actions.onChangeTaskPriorityValue(priority) }
                     )
                 }
             }
@@ -157,35 +163,27 @@ fun TaskEditorBottomSheetContent(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            val chunkedCategories = taskEditorUiState.categories.chunked(3)
 
-            Column(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 100.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp, max = 400.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.fillMaxWidth()
             ) {
-                chunkedCategories.forEach { rowItems ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                items(taskEditorUiState.categories) { category ->
+                    val painter = rememberAsyncImagePainter(model = category.imageUri)
+
+                    CategoryItem(
+                        icon = painter,
+                        categoryName = category.name,
+                        isSelected = taskUi.category.id == category.id,
+                        count = 0,
+                        isShowCount = false,
+                        onClick = { actions.onChangeTaskCategoryValue(category.id) },
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        rowItems.forEach { category ->
-                            val painter = rememberAsyncImagePainter(model = category.imageUri)
-
-                            CategoryItem(
-                                icon = painter,
-                                categoryName = category.name,
-                                isSelected = taskUi.category.id == category.id,
-                                count = 0,
-                                isShowCount = false,
-                                onClick = { onCategoryChange(category.id) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        repeat(3 - rowItems.size) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
+                    )
                 }
             }
 
@@ -201,7 +199,7 @@ fun TaskEditorBottomSheetContent(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
                 isLoading = taskEditorUiState.isLoading,
                 isDisable = !taskEditorUiState.isValidTask,
-                onClick = onSaveClick,
+                onClick = {if (isNewTask) actions.addTask(taskUi.toTask()) else actions.editTask(taskUi.toTask())},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -214,7 +212,7 @@ fun TaskEditorBottomSheetContent(
                 text = stringResource(R.string.cancel),
                 isLoading = false,
                 isDisable = false,
-                onClick = onCancelClick,
+                onClick = actions::cancel,
                 modifier = Modifier.fillMaxWidth()
             )
         }

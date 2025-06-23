@@ -59,7 +59,7 @@ fun DatePickerDialog(
                     .fillMaxWidth()
                     .graphicsLayer(
                         scaleX = 0.91f,
-                        scaleY = 0.80f
+                        scaleY = 0.85f
                     ),
                 shape = RoundedCornerShape(16.dp),
                 color = Theme.color.surface
