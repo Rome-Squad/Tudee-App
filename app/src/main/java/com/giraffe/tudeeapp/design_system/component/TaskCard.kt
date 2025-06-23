@@ -27,12 +27,13 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
+import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.presentation.utils.emptyTask
 
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
-    task: TaskUi,
+    task: Task,
     isDateVisible: Boolean = true,
 ) {
     val blurColor = getColorForCategoryIcon(task.category.name).copy(alpha = .08f)
@@ -80,11 +81,11 @@ fun TaskCard(
                         backgroundColor = Theme.color.surface,
                         contentColor = Theme.color.body,
                         icon = painterResource(R.drawable.calendar_icon),
-                        label = task.dueDate.date.toString()
+                        label = task.dueDate.toString()
                     )
                 }
                 Priority(
-                    priorityType = task.priorityType,
+                    priorityType = task.taskPriority,
                     isSelected = true
                 )
             }
@@ -138,6 +139,6 @@ fun getColorForCategoryIcon(categoryName: String): Color {
 @Composable
 fun TaskCardPreview() {
     Column {
-        TaskCard(task = TaskUi())
+        TaskCard(task = emptyTask())
     }
 }

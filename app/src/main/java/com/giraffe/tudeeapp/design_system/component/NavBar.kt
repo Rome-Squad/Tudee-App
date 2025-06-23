@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.presentation.navigation.Screen
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.presentation.navigation.Screen
 
 @Composable
 fun NavBar(modifier: Modifier = Modifier, navController: NavController) {

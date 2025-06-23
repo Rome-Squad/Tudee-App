@@ -9,13 +9,12 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetCategoryError
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetTasksError
 import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.CategoryDeleted
 import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.CategoryEdited
 import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.DeleteCategoryError
 import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.EditCategoryError
-import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetCategoryError
+import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEvents.GetTasksError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,13 +60,11 @@ class TasksByCategoryViewModel(
             tasksService.getTasksByCategory(category.id)
                 .onSuccess { tasksFlow ->
                     tasksFlow.collect { tasks ->
-                        tasks.map { task -> task.toTaskUi(category) }
-                            .let { tasksUi ->
-                                val tasksInMap = TaskStatus.entries.associateWith { status ->
-                                    tasksUi.filter { it.status == status }
-                                }
-                                _state.update { it.copy(tasks = tasksInMap) }
-                            }
+                        val tasksInMap = TaskStatus.entries.associateWith { status ->
+                            tasks.filter { it.status == status }
+                        }
+                        _state.update { it.copy(tasks = tasksInMap) }
+
                     }
                 }
                 .onError { error ->

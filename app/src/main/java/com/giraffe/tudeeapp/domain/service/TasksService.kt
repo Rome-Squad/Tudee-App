@@ -5,11 +5,11 @@ import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 
 interface TasksService {
 
-    fun getTasksByDate(date: LocalDateTime): Result<Flow<List<Task>>, DomainError>
+    fun getTasksByDate(date: LocalDate): Result<Flow<List<Task>>, DomainError>
 
     fun getTasksByCategory(categoryId: Long): Result<Flow<List<Task>>, DomainError>
 

@@ -214,7 +214,7 @@ fun HomeContent(
             FabButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 12.dp, bottom = 10.dp),
+                    .padding(12.dp),
                 icon = painterResource(R.drawable.add_task_icon),
                 onClick = actions::onAddTaskClick
             )

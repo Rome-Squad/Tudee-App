@@ -5,7 +5,6 @@ import com.giraffe.tudeeapp.domain.model.Category
 
 
 fun Category.toEntity(): CategoryEntity {
-
     return CategoryEntity(
         uid = this.id,
         name = this.name,

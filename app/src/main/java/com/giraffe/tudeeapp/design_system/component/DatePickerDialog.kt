@@ -28,11 +28,12 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.tasks.components.convertToLocalDateTime
-import kotlinx.datetime.LocalDateTime
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,13 +42,13 @@ fun DatePickerDialog(
     modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
-    onDateSelected: (LocalDateTime) -> Unit
+    onDateSelected: (LocalDate) -> Unit
 ) {
     if (showDialog) {
-        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+        var selectedDate by remember { mutableStateOf(getCurrentLocalDate()) }
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant()
-                .toEpochMilli()
+            initialSelectedDateMillis = selectedDate.atStartOfDayIn(TimeZone.UTC)
+                .toEpochMilliseconds()
         )
 
         Dialog(
@@ -116,10 +117,11 @@ fun DatePickerDialog(
                                 modifier = Modifier,
                                 onClick = {
                                     datePickerState.selectedDateMillis?.let { millis ->
-                                        selectedDate = Instant.ofEpochMilli(millis)
-                                            .atZone(ZoneId.of("UTC"))
-                                            .toLocalDate()
-                                        onDateSelected(convertToLocalDateTime(selectedDate))
+                                        selectedDate = Instant
+                                            .fromEpochMilliseconds(millis)
+                                            .toLocalDateTime(TimeZone.UTC)
+                                            .date
+                                        onDateSelected(selectedDate)
                                     }
                                     onDismissRequest()
                                 },

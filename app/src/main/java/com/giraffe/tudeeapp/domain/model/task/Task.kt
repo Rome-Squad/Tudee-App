@@ -1,6 +1,7 @@
 package com.giraffe.tudeeapp.domain.model.task
 
-import kotlinx.datetime.LocalDateTime
+import com.giraffe.tudeeapp.domain.model.Category
+import kotlinx.datetime.LocalDate
 
 data class Task(
     val id: Long = 0L,
@@ -8,8 +9,8 @@ data class Task(
     val description: String,
     val taskPriority: TaskPriority,
     val status: TaskStatus,
-    val categoryId: Long,
-    val dueDate: LocalDateTime,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val category: Category,
+    val dueDate: LocalDate,
+    val createdAt: LocalDate,
+    val updatedAt: LocalDate
 )

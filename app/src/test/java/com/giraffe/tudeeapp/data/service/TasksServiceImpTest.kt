@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toLocalDateTime
@@ -83,12 +84,12 @@ class TasksServiceImpTest {
             id = 0L,
             title = "Test Task",
             description = "Test description",
-            dueDate = "2025-06-20T12:00:00".toLocalDateTime(),
+            dueDate = LocalDate.parse("2025-06-20"),
             status = TaskStatus.TODO,
             categoryId = 1L,
             taskPriority = TaskPriority.HIGH,
-            createdAt = "2025-06-20T12:00:00".toLocalDateTime(),
-            updatedAt = "2025-06-20T12:00:00".toLocalDateTime()
+            createdAt = LocalDate.parse("2025-06-20"),
+            updatedAt = LocalDate.parse("2025-06-20")
         )
         val entity = mockk<TaskEntity>()
 

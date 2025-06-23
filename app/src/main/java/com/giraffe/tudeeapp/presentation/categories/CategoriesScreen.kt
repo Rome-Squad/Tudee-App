@@ -120,7 +120,7 @@ fun CategoriesContent(
             onClick = { actions.setBottomSheetVisibility(isVisible = true) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp)
+                .padding(12.dp)
         )
 
         CategoryBottomSheet(

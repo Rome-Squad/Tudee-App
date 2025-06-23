@@ -1,4 +1,5 @@
 package com.giraffe.tudeeapp.presentation.taskeditor
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -44,7 +45,6 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.presentation.uimodel.toTask
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -55,7 +55,7 @@ fun TaskEditorBottomSheetContent(
     isNewTask: Boolean
 ) {
 
-    val taskUi = taskEditorUiState.taskUi
+    val task = taskEditorUiState.task
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
     DatePickerDialog(
@@ -63,8 +63,8 @@ fun TaskEditorBottomSheetContent(
         onDismissRequest = {
             showDatePickerDialog = false
         },
-        onDateSelected = { selectedDateMillis ->
-            actions.onChangeTaskDueDateValue(selectedDateMillis)
+        onDateSelected = { selectedDate ->
+            actions.onChangeTaskDueDateValue(selectedDate)
             showDatePickerDialog = false
         }
     )
@@ -99,7 +99,7 @@ fun TaskEditorBottomSheetContent(
             )
 
             DefaultTextField(
-                textValue = taskUi.title,
+                textValue = task.title,
                 onValueChange = actions::onChangeTaskTitleValue,
                 hint = stringResource(R.string.task_title),
                 iconRes = R.drawable.addeditfield
@@ -108,7 +108,7 @@ fun TaskEditorBottomSheetContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             ParagraphTextField(
-                textValue = taskUi.description,
+                textValue = task.description,
                 onValueChange = actions::onChangeTaskDescriptionValue,
                 hint = stringResource(R.string.description)
             )
@@ -116,7 +116,7 @@ fun TaskEditorBottomSheetContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             val context = LocalContext.current
-            val formattedDate = taskUi.dueDate.date.formatAsLocalizedDate(context)
+            val formattedDate = task.dueDate.formatAsLocalizedDate(context)
 
 
             DefaultTextField(
@@ -147,7 +147,7 @@ fun TaskEditorBottomSheetContent(
                 TaskPriority.entries.reversed().forEach { priority ->
                     Priority(
                         priorityType = priority,
-                        isSelected = taskUi.priorityType == priority,
+                        isSelected = task.taskPriority == priority,
                         modifier = Modifier
                             .clickable { actions.onChangeTaskPriorityValue(priority) }
                     )
@@ -178,7 +178,7 @@ fun TaskEditorBottomSheetContent(
                     CategoryItem(
                         icon = painter,
                         categoryName = category.name,
-                        isSelected = taskUi.category.id == category.id,
+                        isSelected = task.category.id == category.id,
                         count = 0,
                         isShowCount = false,
                         onClick = { actions.onChangeTaskCategoryValue(category.id) },
@@ -199,7 +199,7 @@ fun TaskEditorBottomSheetContent(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
                 isLoading = taskEditorUiState.isLoading,
                 isDisable = !taskEditorUiState.isValidTask,
-                onClick = {if (isNewTask) actions.addTask(taskUi.toTask()) else actions.editTask(taskUi.toTask())},
+                onClick = {if (isNewTask) actions.addTask(task) else actions.editTask(task)},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
