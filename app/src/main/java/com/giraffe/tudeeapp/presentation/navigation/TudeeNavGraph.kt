@@ -45,7 +45,7 @@ fun TudeeNavGraph(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomNav =
-        currentRoute != null && !screensWithoutBottomNav.any { currentRoute.contains(it) == true }
+        currentRoute != null && !screensWithoutBottomNav.any { currentRoute.contains(it) }
     val animationTime = 500
     val animatedPadding = animateDpAsState(
         targetValue = if (showBottomNav) 74.dp else 0.dp,
