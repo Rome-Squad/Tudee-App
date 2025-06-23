@@ -206,7 +206,10 @@ fun HomeContent(
             TaskDetailsBottomSheet(
                 taskId = state.currentTaskId,
                 onnDismiss = actions::dismissTaskDetails,
-                onEditTask = actions::onEditTaskClick
+                onEditTask = actions::onEditTaskClick,
+                onError = { error ->
+                    onChangeSnackBarState(TudeeSnackBarState(message = error, isError = true))
+                }
             )
         }
 

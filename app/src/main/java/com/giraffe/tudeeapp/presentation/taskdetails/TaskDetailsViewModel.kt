@@ -11,16 +11,20 @@ import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel(
     private val taskId: Long,
     val taskService: TasksService,
     val categoryService: CategoriesService
-) : ViewModel() {
+) : ViewModel(), TaskDetailsAction {
     var taskDetailsState by mutableStateOf<TaskDetailsState>(TaskDetailsState())
         private set
 
+    private val _events = Channel<TaskDetailsEvent>()
+    val events = _events.receiveAsFlow()
     init {
         getTaskById(taskId)
     }
@@ -39,39 +43,39 @@ class TaskDetailsViewModel(
                         )
                     }
                     .onError {
-                        taskDetailsState = taskDetailsState.copy(
-                            error = it
-                        )
+                        _events.send(TaskDetailsEvent.Error(it))
                     }
             }
             .onError {
+                _events.send(TaskDetailsEvent.Error(it))
                 taskDetailsState = taskDetailsState.copy(
-                    error = it,
                     isLoading = false
                 )
             }
     }
 
-    fun changeTaskStatus(newStatus: TaskStatus) = viewModelScope.launch {
-        taskDetailsState = taskDetailsState.copy(
-            isLoading = true
-        )
-        if (taskDetailsState.task != null) {
-            taskService.changeStatus(taskDetailsState.task!!.id, newStatus)
-                .onSuccess {
-                    taskDetailsState = taskDetailsState.copy(
-                        task = taskDetailsState.task!!.copy(
-                            status = newStatus
-                        ),
-                        isLoading = false
-                    )
-                }
-                .onError {
-                    taskDetailsState = taskDetailsState.copy(
-                        error = it,
-                        isLoading = false
-                    )
-                }
+    override fun changeTaskStatus(newStatus: TaskStatus) {
+        viewModelScope.launch {
+            taskDetailsState = taskDetailsState.copy(
+                isLoading = true
+            )
+            if (taskDetailsState.task != null) {
+                taskService.changeStatus(taskDetailsState.task!!.id, newStatus)
+                    .onSuccess {
+                        taskDetailsState = taskDetailsState.copy(
+                            task = taskDetailsState.task!!.copy(
+                                status = newStatus
+                            ),
+                            isLoading = false
+                        )
+                    }
+                    .onError {
+                        _events.send(TaskDetailsEvent.Error(it))
+                        taskDetailsState = taskDetailsState.copy(
+                            isLoading = false
+                        )
+                    }
+            }
         }
     }
 }
