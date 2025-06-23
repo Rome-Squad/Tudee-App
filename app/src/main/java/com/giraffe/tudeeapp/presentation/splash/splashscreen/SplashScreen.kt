@@ -56,14 +56,14 @@ fun SplashScreen(
                 )
         ) {
             Image(
-                painter = painterResource(id = Theme.resources.bacgroundImage),
+                painter = painterResource(id = Theme.drawables.bacgroundImage),
                 contentDescription = stringResource(R.string.splash_background),
                 modifier = Modifier
                     .fillMaxWidth(), contentScale = ContentScale.FillWidth
             )
 
             Image(
-                painter = painterResource(id = Theme.resources.logoImageResId),
+                painter = painterResource(id = Theme.drawables.logoImageResId),
                 contentDescription = stringResource(R.string.splash_logo),
                 modifier = Modifier.align(Alignment.Center)
             )

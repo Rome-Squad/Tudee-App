@@ -26,17 +26,17 @@ val appModule = module {
     single<DataStore<Preferences>> { androidContext().tudeeDataStore }
     single<TudeeAppService> { TudeeAppServiceImpl(get()) }
 
-    single<TasksService> { TasksServiceImp(get()) }
+    single<TasksService> { TasksServiceImp(get(), get()) }
     single<CategoriesService> { CategoryServiceImp(get()) }
 
 
     viewModel { SplashViewModel(get()) }
     viewModel { (handle: SavedStateHandle) ->
-        TasksViewModel(get(), get(), handle)
+        TasksViewModel(get(), handle)
     }
     viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
     viewModel { TaskEditorViewModel(get(), get()) }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
     viewModel { MainViewModel(get()) }
     viewModel { CategoryViewModel(get()) }
     viewModel { (handle: SavedStateHandle) ->

@@ -113,7 +113,7 @@ fun TaskScreenContent(
         ) {
             HeaderContent(stringResource(R.string.tasks))
 
-            DatePicker(actions::setSelectedDate)
+            DatePicker(onDateSelected = actions::setSelectedDate)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::setSelectedTab,
@@ -139,17 +139,17 @@ fun TaskScreenContent(
                         }
                     }
                 } else {
-                    itemsIndexed(selectedTasks) { index, taskUi ->
+                    itemsIndexed(selectedTasks) { index, task ->
                         SwipableTask(
-                            taskUi = taskUi,
+                            task = task,
                             action = {
-                                actions.setSelectedTaskId(taskUi.id)
+                                actions.setSelectedTaskId(task.id)
                                 actions.onDeleteTaskClick()
                             },
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable {
-                                    actions.onTaskClick(taskUi.id)
+                                    actions.onTaskClick(task.id)
                                 }
                         )
                     }

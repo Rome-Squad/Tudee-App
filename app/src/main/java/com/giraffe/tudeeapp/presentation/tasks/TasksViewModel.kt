@@ -4,24 +4,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.utils.toTaskUiList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 
 class TasksViewModel(
     private val tasksService: TasksService,
-    private val categoryService: CategoriesService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), TasksScreenActions {
 
@@ -41,39 +37,30 @@ class TasksViewModel(
         getTasks(_state.value.selectedDate)
     }
 
-    private fun getTasks(date: LocalDateTime) {
+    private fun getTasks(date: LocalDate) {
         viewModelScope.launch(Dispatchers.IO) {
             tasksService.getTasksByDate(date)
                 .onError {
                     _events.send(TasksScreenEvent.Error(it))
                 }
                 .onSuccess { tasksFlow ->
-                    categoryService.getAllCategories()
-                        .onError {
-                            _events.send(TasksScreenEvent.Error(it))
+                    tasksFlow.collect { taskUiList ->
+                        val taskMap = TaskStatus.entries.associateWith { status ->
+                            taskUiList.filter { it.status == status }
                         }
-                        .onSuccess { categoriesFlow ->
-                            combine(tasksFlow, categoriesFlow) { tasks, categories ->
-                                tasks.toTaskUiList(categories)
 
-                            }.collect { taskUiList ->
-
-                                val taskMap = TaskStatus.entries.associateWith { status ->
-                                    taskUiList.filter { it.status == status }
-                                }
-                                _state.update { currentState ->
-                                    currentState.copy(
-                                        tasks = taskMap,
-                                        selectedDate = date,
-                                    )
-                                }
-                            }
+                        _state.update { currentState ->
+                            currentState.copy(
+                                tasks = taskMap,
+                                selectedDate = date,
+                            )
                         }
+                    }
                 }
         }
     }
 
-    override fun setSelectedDate(date: LocalDateTime) {
+    override fun setSelectedDate(date: LocalDate) {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(selectedDate = date) }
             getTasks(date)

@@ -1,10 +1,10 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 
 interface TasksScreenActions {
-    fun setSelectedDate(date: LocalDateTime)
+    fun setSelectedDate(date: LocalDate)
     fun setSelectedTab(status: TaskStatus)
     fun setSelectedTaskId(id: Long)
 

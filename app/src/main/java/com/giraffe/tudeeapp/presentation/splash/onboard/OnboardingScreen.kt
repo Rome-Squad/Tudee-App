@@ -68,7 +68,7 @@ fun OnboardingScreen(
             )
     ) {
         Image(
-            painter = painterResource(id = Theme.resources.bacgroundImage),
+            painter = painterResource(id = Theme.drawables.bacgroundImage),
             contentDescription = stringResource(R.string.splash_background),
             modifier = Modifier
                 .fillMaxWidth(), contentScale = ContentScale.FillWidth

@@ -21,14 +21,14 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
+import com.giraffe.tudeeapp.domain.model.task.Task
 
 @Composable
 fun TaskSection(
     modifier: Modifier = Modifier,
     taskStatus: String = stringResource(R.string.in_progress_tasks),
     numberOfTasks: String = "0",
-    tasks: List<TaskUi> = emptyList(),
+    tasks: List<Task> = emptyList(),
     onTaskClick: (Long) -> Unit,
     onTasksLinkClick: () -> Unit
 ) {

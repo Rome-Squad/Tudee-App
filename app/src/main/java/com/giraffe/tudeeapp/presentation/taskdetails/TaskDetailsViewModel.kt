@@ -10,7 +10,6 @@ import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -35,10 +34,10 @@ class TaskDetailsViewModel(
         )
         taskService.getTaskById(taskId)
             .onSuccess { task ->
-                categoryService.getCategoryById(task.categoryId)
+                categoryService.getCategoryById(task.category.id)
                     .onSuccess { category ->
                         taskDetailsState = taskDetailsState.copy(
-                            task = task.toTaskUi(category),
+                            task = task,
                             isLoading = false
                         )
                     }

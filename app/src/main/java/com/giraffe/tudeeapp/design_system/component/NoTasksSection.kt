@@ -87,7 +87,7 @@ fun NoTasksSection(
                 .graphicsLayer {
                 scaleX = if (shouldFlip) -1f else 1f
             },
-            painter = painterResource(Theme.resources.emptyListRobot),
+            painter = painterResource(Theme.drawables.emptyListRobot),
             contentDescription = "empty list robot"
         )
     }
