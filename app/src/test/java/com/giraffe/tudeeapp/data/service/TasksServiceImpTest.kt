@@ -41,7 +41,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `returns Task when getTaskById is called`() = runTest {
+    fun `getTaskById should return Task`() = runTest {
         val id = 1L
 
         val entity = TaskEntity(
@@ -67,7 +67,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTaskById returns NotFoundError when DAO throws NoSuchElementException`() = runTest {
+    fun `getTaskById should returns NotFoundError when DAO throws NoSuchElementException`() = runTest {
         coEvery { taskDao.getTaskById(1L) } throws NoSuchElementException()
 
         val result = service.getTaskById(1L)
@@ -77,7 +77,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `createTask calls DAO and returns Result_Success with ID when create Task`() = runTest {
+    fun `createTask should call DAO and return Result_Success with ID when create Task`() = runTest {
         // Given
         val task = Task(
             id = 0L,
@@ -106,7 +106,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByCategory maps flow correctly`() = runTest {
+    fun `getTasksByCategory should map flow correctly`() = runTest {
         // Given
         val categoryId = 3L
         val entity = TaskEntity(
@@ -135,7 +135,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByCategory returns ValidationError when DAO throws exception`() {
+    fun `getTasksByCategory should return ValidationError when DAO throws exception`() {
         every { taskDao.getTasksByCategory(any()) } throws IllegalArgumentException()
 
         val result = service.getTasksByCategory(99L)
@@ -145,7 +145,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `deleteTask calls DAO and returns Result Success`() = runTest {
+    fun `deleteTask should call DAO and return Result Success`() = runTest {
         coEvery { taskDao.deleteTask(55L) } just Runs
 
         val result = service.deleteTask(55L)
@@ -155,7 +155,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `changeStatus calls DAO with correct parameters`() = runTest {
+    fun `changeStatus should call DAO with correct parameters`() = runTest {
         val id = 1L
         val newStatus = TaskStatus.DONE
         coEvery { taskDao.changeStatus(id, newStatus) } just Runs
@@ -167,7 +167,7 @@ class TasksServiceImpTest {
     }
 
     @Test
-    fun `getTasksByDate returns Result Success with mapped list`() = runTest {
+    fun `getTasksByDate should return Result Success with mapped list`() = runTest {
         // Given
         val dateTime = LocalDateTime(2025, 6, 20, 12, 0)
         val daoDate = dateTime.date.atTime(0, 0).toString()

@@ -39,7 +39,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `when call getAllCategories should returns flow mapped correctly`() = runTest {
+    fun `getAllCategories should returns flow mapped correctly`() = runTest {
         // Given
         val entity = CategoryEntity(
             uid = 1L,
@@ -62,7 +62,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `getAllCategories returns ValidationError when DAO throws exception`() {
+    fun `getAllCategories should returns ValidationError when DAO throws exception`() {
         every { categoryDao.getAllCategories() } throws IllegalStateException()
 
         val result = service.getAllCategories()
@@ -72,7 +72,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `getCategoryById returns mapped Category`() = runTest {
+    fun `getCategoryById should returns mapped Category`() = runTest {
         val id = 1L
         val entity = CategoryEntity(
             uid = id,
@@ -92,7 +92,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `getCategoryById returns NotFoundError on NoSuchElementException`() = runTest {
+    fun `getCategoryById should returns NotFoundError on NoSuchElementException`() = runTest {
         coEvery { categoryDao.getCategoryById(any()) } throws NoSuchElementException()
 
         val result = service.getCategoryById(99L)
@@ -102,7 +102,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `createCategory returns inserted id`() = runTest {
+    fun `createCategory should returns inserted id`() = runTest {
         val category = Category(
             id = 0L,
             name = "New",
@@ -124,7 +124,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `updateCategory maps and calls DAO`() = runTest {
+    fun `updateCategory should map and call DAO`() = runTest {
         val category = Category(
             id = 0L,
             name = "New",
@@ -146,7 +146,7 @@ class CategoryServiceImpTest {
     }
 
     @Test
-    fun `deleteCategory calls DAO and returns success`() = runTest {
+    fun `deleteCategory should call DAO and return success`() = runTest {
         val id = 77L
         coEvery { categoryDao.deleteCategory(id) } just Runs
 
