@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                 val showBottomBar = currentRoute !in noBottomBarRoutes
                 Column(
                     modifier = Modifier.fillMaxSize()
+                        .navigationBarsPadding()
                 ) {
                     TudeeNavGraph(
                         modifier = Modifier.weight(1f),

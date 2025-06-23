@@ -8,7 +8,6 @@ import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +32,7 @@ class CategoryViewModel(
 
     private fun getAllCategories() {
         viewModelScope.launch(Dispatchers.IO) {
-            _categoriesUiState.update { it.copy(isLoading = true, error = null) }
+            _categoriesUiState.update { it.copy(isLoading = true) }
             categoriesService.getAllCategories()
                 .onSuccess { flow ->
                     flow.collect { categories ->
@@ -41,12 +40,12 @@ class CategoryViewModel(
                             currentState.copy(
                                 categories = categories.map { category -> category },
                                 isLoading = false,
-                                error = null
                             )
                         }
                     }
                 }.onError { error ->
-                    _categoriesUiState.update { it.copy(isLoading = false, error = error) }
+                    _categoriesUiState.update { it.copy(isLoading = false) }
+                    _events.send(CategoriesScreenEvents.Error(error))
                 }
 
         }
@@ -67,15 +66,16 @@ class CategoryViewModel(
             categoriesService.createCategory(category)
                 .onSuccess {
                     _categoriesUiState.update {
+                        it.copy(isBottomSheetVisible = false)
+                    }
+                    _events.send(CategoriesScreenEvents.CategoryAdded)
+                }.onError { error ->
+                    _categoriesUiState.update {
                         it.copy(
-                            showSuccessSnackBar = true,
                             isBottomSheetVisible = false
                         )
                     }
-                    delay(3000)
-                    _categoriesUiState.update { it.copy(showSuccessSnackBar = false) }
-                }.onError { error ->
-                    _categoriesUiState.update { it.copy(error = error) }
+                    _events.send(CategoriesScreenEvents.Error(error))
                 }
         }
     }
