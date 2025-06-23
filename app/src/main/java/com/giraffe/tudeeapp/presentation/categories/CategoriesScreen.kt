@@ -31,6 +31,7 @@ import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.presentation.MainViewModel
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
@@ -40,9 +41,11 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CategoriesScreen(
     viewModel: CategoryViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
     navigateToTaskByCategoryScreen: (categoryId: Long) -> Unit = {}
 ) {
 
+    mainViewModel.setStatusBarColor(Theme.color.greenAccent)
     val state = viewModel.categoriesUiState.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current
