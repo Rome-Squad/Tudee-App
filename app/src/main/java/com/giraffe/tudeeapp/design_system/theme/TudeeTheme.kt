@@ -5,9 +5,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.giraffe.tudeeapp.design_system.color.LocalTudeeColors
 import com.giraffe.tudeeapp.design_system.color.darkThemeColor
 import com.giraffe.tudeeapp.design_system.color.lightThemeColor
-import com.giraffe.tudeeapp.design_system.resources.LocalTudeeDrawables
-import com.giraffe.tudeeapp.design_system.resources.darkDrawables
-import com.giraffe.tudeeapp.design_system.resources.lightDrawables
+import com.giraffe.tudeeapp.design_system.drawables.LocalTudeeDrawables
+import com.giraffe.tudeeapp.design_system.drawables.darkDrawables
+import com.giraffe.tudeeapp.design_system.drawables.lightDrawables
 import com.giraffe.tudeeapp.design_system.text_style.LocalTudeeTextStyle
 import com.giraffe.tudeeapp.design_system.text_style.defaultTextStyle
 

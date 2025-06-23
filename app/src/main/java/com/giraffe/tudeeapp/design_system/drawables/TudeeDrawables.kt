@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.design_system.resources
+package com.giraffe.tudeeapp.design_system.drawables
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.giraffe.tudeeapp.R
