@@ -42,7 +42,6 @@ fun CategoriesScreen(
     viewModel: CategoryViewModel = koinViewModel(),
     navigateToTaskByCategoryScreen: (categoryId: Long) -> Unit = {}
 ) {
-
     val state = viewModel.categoriesUiState.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current

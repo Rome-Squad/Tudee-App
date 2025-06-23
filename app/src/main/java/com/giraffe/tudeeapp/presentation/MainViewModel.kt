@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     val appService: TudeeAppService
-): ViewModel() {
+) : ViewModel() {
     var isDarkTheme by mutableStateOf(false)
-    private set
+        private set
 
     init {
         getIsDarkTheme()
@@ -26,5 +26,4 @@ class MainViewModel(
         isDarkTheme = !isDarkTheme
         appService.setCurrentTheme(isDarkTheme)
     }
-
 }
