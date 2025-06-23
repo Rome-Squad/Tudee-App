@@ -84,5 +84,9 @@
     <string name="category_image">Category image</string>
     <string name="upload">Upload</string>
     <string name="sava">Sava</string>
+    <string name="sorry_the_selected_category_could_not_be_found">Sorry, the selected category could not be found</string>
+    <string name="failed_to_load_tasks">Failed to load tasks</string>
+    <string name="unable_to_delete_the_category">Unable to delete the category</string>
+    <string name="failed_to_update_the_category">Failed to update the category</string>
     <string name="overview">Overview</string>
 </resources>

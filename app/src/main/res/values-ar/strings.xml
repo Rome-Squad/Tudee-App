@@ -85,5 +85,9 @@
     <string name="category_image">صورة الفئة</string>
     <string name="upload">تحميل</string>
     <string name="sava">حفظ</string>
+    <string name="sorry_the_selected_category_could_not_be_found">عذرًا، لم يتم العثور على الفئة المحددة</string>
+    <string name="failed_to_load_tasks">فشل في تحميل المهام</string>
+    <string name="unable_to_delete_the_category">تعذر حذف الفئة</string>
+    <string name="failed_to_update_the_category">فشل في تحديث الفئة</string>
     <string name="overview">نظرة عامة</string>
 </resources>
