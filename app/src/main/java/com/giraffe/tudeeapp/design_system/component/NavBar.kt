@@ -68,8 +68,10 @@ fun NavBar(modifier: Modifier = Modifier, navController: NavController) {
                     navigationItem = navigationItem,
                     isSelected = selectedItem.intValue == index,
                     onClick = {
-                        selectedItem.intValue = index
-                        navController.navigate(navigationItem.route)
+                        if (selectedItem.intValue != index) {
+                            selectedItem.intValue = index
+                            navController.navigate(navigationItem.route)
+                        }
                     }
                 )
             }
