@@ -90,4 +90,5 @@
     <string name="unable_to_delete_the_category">تعذر حذف الفئة</string>
     <string name="failed_to_update_the_category">فشل في تحديث الفئة</string>
     <string name="overview">نظرة عامة</string>
+    <string name="loading_indicator">مؤشر التحميل</string>
 </resources>

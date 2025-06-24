@@ -1,6 +1,9 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,21 +19,30 @@ fun Priority(
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var icon: Int = when (priorityType) {
+    var icon = when (priorityType) {
         TaskPriority.HIGH -> R.drawable.flag_icon
         TaskPriority.MEDIUM -> R.drawable.alert_icon
         TaskPriority.LOW -> R.drawable.trade_down_icon
     }
-    val backgroundColor = when (priorityType) {
+    val selectedBackgroundColor = when (priorityType) {
         TaskPriority.HIGH -> Theme.color.pinkAccent
         TaskPriority.MEDIUM -> Theme.color.yellowAccent
         TaskPriority.LOW -> Theme.color.greenAccent
     }
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isSelected) selectedBackgroundColor else Theme.color.surfaceLow,
+        animationSpec = tween(durationMillis = 300),
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isSelected) Theme.color.onPrimary else Theme.color.hint,
+        animationSpec = tween(durationMillis = 300),
+    )
+
     LabelIconBox(
         icon = painterResource(icon),
         label = priorityType.toStringResource(),
-        backgroundColor = if (isSelected) backgroundColor else Theme.color.surfaceLow,
-        contentColor = if (isSelected) Theme.color.onPrimary else Theme.color.hint,
+        backgroundColor = backgroundColor,
+        contentColor = contentColor,
         modifier = modifier
     )
 }

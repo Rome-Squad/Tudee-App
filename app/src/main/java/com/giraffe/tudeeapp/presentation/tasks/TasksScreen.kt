@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
-import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
@@ -111,7 +112,15 @@ fun TaskScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            HeaderContent(stringResource(R.string.tasks))
+            Text(
+                text = stringResource(R.string.tasks),
+                style = Theme.textStyle.title.large,
+                color = Theme.color.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.color.surfaceHigh)
+                    .padding(vertical = 20.dp, horizontal = 16.dp)
+            )
 
             DatePicker(onDateSelected = actions::setSelectedDate)
             TabsBar(
