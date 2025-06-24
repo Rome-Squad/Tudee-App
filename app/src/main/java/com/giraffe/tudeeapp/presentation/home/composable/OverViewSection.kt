@@ -64,8 +64,7 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
     ) {
         cardsData.forEach { cardData ->
             CardOverView(
-                modifier = Modifier.weight(1f)
-                    .aspectRatio(.85f),
+                modifier = Modifier.weight(1f),
                 color = cardData.color,
                 icon = painterResource(cardData.icon),
                 taskCount = cardData.taskCount,

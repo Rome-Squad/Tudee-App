@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,8 +59,6 @@ import org.koin.androidx.compose.koinViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
     navigateToTasksScreen: (tabIndex: Int) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
@@ -84,8 +83,6 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        onThemeSwitchToggle = onThemeSwitchToggle,
-        isDarkTheme = isDarkTheme,
         actions = viewModel,
         snackBarHostState = snackBarHostState,
         showSnackBar = { message, isError ->
@@ -105,8 +102,6 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     state: HomeUiState,
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeActions,
@@ -116,6 +111,7 @@ fun HomeContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.primary)
+            .statusBarsPadding()
     ) {
         Box(
             modifier = Modifier
@@ -135,11 +131,10 @@ fun HomeContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .statusBarsPadding()
             ) {
                 TudeeAppBar(
-                    isDarkTheme = isDarkTheme,
-                    onThemeSwitchToggle = onThemeSwitchToggle
+                    isDarkTheme = state.isDarkTheme,
+                    onThemeSwitchToggle = actions::onToggleTheme
                 )
 
                 LazyColumn(
