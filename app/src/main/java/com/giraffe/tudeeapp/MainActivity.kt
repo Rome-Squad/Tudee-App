@@ -14,10 +14,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.MainViewModel
+import com.giraffe.tudeeapp.presentation.AppViewModel
 import com.giraffe.tudeeapp.presentation.navigation.TudeeNavGraph
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.getValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,30 +29,35 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val mainViewModel = koinViewModel<MainViewModel>()
-            enableEdgeToEdge(
-                statusBarStyle =
-                    if (mainViewModel.isDarkTheme)
-                        SystemBarStyle.dark(Color.Transparent.toArgb())
-                    else
-                        SystemBarStyle.light(
-                            Color.Transparent.toArgb(),
-                            Color.Transparent.toArgb()
-                        ),
-            )
-            TudeeTheme(
-                isDarkTheme = mainViewModel.isDarkTheme
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.Transparent,
+            val appViewModel = koinViewModel<AppViewModel>()
+            val state by appViewModel.state.collectAsStateWithLifecycle()
+            state.isDarkTheme?.let { isDarkTheme ->
+                enableEdgeToEdge(
+                    statusBarStyle =
+                        if (isDarkTheme)
+                            SystemBarStyle.dark(Color.Transparent.toArgb())
+                        else
+                            SystemBarStyle.light(
+                                Color.Transparent.toArgb(),
+                                Color.Transparent.toArgb()
+                            ),
+                )
+                TudeeTheme(
+                    isDarkTheme = isDarkTheme
                 ) {
-                    TudeeNavGraph(
-                        isDarkTheme = mainViewModel.isDarkTheme,
-                        onToggleTheme = mainViewModel::onToggleTheme,
-                    )
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = Color.Transparent,
+                    ) {
+                        TudeeNavGraph(
+                            isDarkTheme = isDarkTheme,
+                            onToggleTheme = appViewModel::onToggleTheme,
+                        )
+                    }
                 }
             }
+
+
         }
     }
 }

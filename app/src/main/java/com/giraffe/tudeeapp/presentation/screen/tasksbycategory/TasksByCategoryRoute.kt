@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasksbycategory
+package com.giraffe.tudeeapp.presentation.screen.tasksbycategory
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
