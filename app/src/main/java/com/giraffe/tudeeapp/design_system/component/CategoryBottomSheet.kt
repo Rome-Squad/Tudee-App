@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.design_system.component
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
