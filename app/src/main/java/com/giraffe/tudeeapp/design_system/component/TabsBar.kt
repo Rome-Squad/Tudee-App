@@ -83,7 +83,6 @@ fun TabsBar(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center,
                             text = title,
                             maxLines = 1,
