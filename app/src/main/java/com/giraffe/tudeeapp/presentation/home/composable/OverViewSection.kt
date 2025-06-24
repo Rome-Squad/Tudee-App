@@ -2,7 +2,6 @@ package com.giraffe.tudeeapp.presentation.home.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -64,8 +63,8 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
     ) {
         cardsData.forEach { cardData ->
             CardOverView(
-                modifier = Modifier.weight(1f)
-                    .aspectRatio(.85f),
+                modifier = Modifier
+                    .weight(1f),
                 color = cardData.color,
                 icon = painterResource(cardData.icon),
                 taskCount = cardData.taskCount,
