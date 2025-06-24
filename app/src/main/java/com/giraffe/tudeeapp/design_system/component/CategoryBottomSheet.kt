@@ -111,7 +111,11 @@ fun CategoryBottomSheet(
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     textValue = categoryTitle,
-                    onValueChange = { categoryTitle = it },
+                    onValueChange = {
+                        if (it.length <= 50) {
+                            categoryTitle = it
+                        }
+                    },
                     hint = stringResource(R.string.category_title),
                     iconRes = R.drawable.categories_unselected,
                 )
