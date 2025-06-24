@@ -36,7 +36,7 @@ val appModule = module {
     }
     viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
     viewModel { TaskEditorViewModel(get(), get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { MainViewModel(get()) }
     viewModel { CategoryViewModel(get()) }
     viewModel { (handle: SavedStateHandle) ->

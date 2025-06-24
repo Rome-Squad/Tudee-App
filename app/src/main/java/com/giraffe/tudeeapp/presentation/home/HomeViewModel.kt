@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
+import com.giraffe.tudeeapp.domain.service.TudeeAppService
 import com.giraffe.tudeeapp.domain.util.onError
 import com.giraffe.tudeeapp.domain.util.onSuccess
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
@@ -16,7 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val tasksService: TasksService
+    private val tasksService: TasksService,
+    private val appService: TudeeAppService
 ) : ViewModel(), HomeActions {
 
     private var _homeUiState = MutableStateFlow(HomeUiState())
@@ -26,6 +28,7 @@ class HomeViewModel(
     val events = _events.receiveAsFlow()
 
     init {
+        observeTheme()
         getAllTasks()
     }
 
@@ -90,6 +93,22 @@ class HomeViewModel(
             currentState.copy(isTaskEditorVisible = false, currentTaskId = null)
         }
         clearUiState()
+    }
+
+    override fun onToggleTheme() {
+        viewModelScope.launch {
+            appService.setCurrentTheme(!homeUiState.value.isDarkTheme)
+        }
+    }
+
+    private fun observeTheme() {
+        viewModelScope.launch {
+            appService.getCurrentTheme().collect { theme ->
+                _homeUiState.update { current ->
+                    current.copy(isDarkTheme = theme == true)
+                }
+            }
+        }
     }
 
     private fun clearUiState() {

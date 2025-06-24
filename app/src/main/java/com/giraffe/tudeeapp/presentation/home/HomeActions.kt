@@ -8,4 +8,5 @@ interface HomeActions {
     fun onEditTaskClick(taskId: Long?)
     fun onDismissTaskDetailsRequest()
     fun onDismissTaskEditorRequest()
+    fun onToggleTheme()
 }

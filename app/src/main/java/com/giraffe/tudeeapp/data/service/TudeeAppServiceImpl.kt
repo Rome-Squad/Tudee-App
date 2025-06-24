@@ -5,23 +5,24 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.giraffe.tudeeapp.domain.service.TudeeAppService
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class TudeeAppServiceImpl(private val dataStore: DataStore<Preferences>): TudeeAppService {
-    override suspend fun setCurrentTheme(isDark: Boolean) {
+class TudeeAppServiceImpl(private val dataStore: DataStore<Preferences>) : TudeeAppService {
+    override suspend fun setCurrentTheme(isDark: Boolean?) {
         dataStore.edit { preferences ->
-            preferences[IS_DARK_THEME_KEY] = isDark
+            if (isDark == null) preferences.remove(IS_DARK_THEME_KEY)
+            else
+                preferences[IS_DARK_THEME_KEY] = isDark
         }
     }
 
-    override suspend fun getCurrentTheme(): Boolean {
-        return dataStore.data
-            .map { preferences ->
-                preferences[IS_DARK_THEME_KEY] ?: false
-            }.first()
+    override fun getCurrentTheme(): Flow<Boolean?> = dataStore.data
+        .map { preferences ->
+            preferences[IS_DARK_THEME_KEY]
+        }
 
-    }
 
     override suspend fun setOnboardingShown(shown: Boolean) {
         dataStore.edit { preferences ->

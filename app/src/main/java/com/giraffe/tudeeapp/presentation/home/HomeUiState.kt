@@ -9,6 +9,7 @@ data class HomeUiState(
         TaskStatus.IN_PROGRESS to emptyList(),
         TaskStatus.DONE to emptyList()
     ),
+    val isDarkTheme: Boolean = false,
     val isTaskDetailsVisible: Boolean = false,
     val isTaskEditorVisible: Boolean = false,
     val currentTaskId: Long? = null,
