@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,10 +63,10 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
             .background(
                 color = Theme.color.overlay
             )
+            .systemBarsPadding()
     ) {
         Image(
             painter = painterResource(id = Theme.drawables.bacgroundImage),
@@ -77,7 +78,7 @@ fun OnboardingScreen(
         if (pagerState.currentPage < pages.lastIndex) {
             Text(
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 56.dp)
+                    .padding(16.dp)
                     .align(Alignment.TopStart)
                     .clickable {
                         scope.launch {
