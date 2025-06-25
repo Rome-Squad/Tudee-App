@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -151,6 +152,11 @@ fun TasksByCategoryContent(
             }
         )
         AlertBottomSheet(
+            title =  stringResource(R.string.delete_category),
+            subTitle = stringResource(R.string.are_you_sure_to_continue),
+            image = painterResource(R.drawable.sure_robot),
+            positiveButtonTitle = stringResource(R.string.delete),
+            negativeButtonTitle = stringResource(R.string.cancel),
             isVisible = state.isAlertBottomSheetVisible,
             onVisibilityChange = actions::setAlertBottomSheetVisibility,
             onRedBtnClick = { state.selectedCategory?.let { actions.deleteCategory(it) } },

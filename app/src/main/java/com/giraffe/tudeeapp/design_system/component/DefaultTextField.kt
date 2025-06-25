@@ -35,10 +35,10 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun DefaultTextField(
-    modifier: Modifier = Modifier,
     textValue: String,
     hint: String,
     icon: Painter,
+    modifier: Modifier = Modifier,
     isReadOnly: Boolean = false,
     onValueChange: (String) -> Unit = {}
 ) {
