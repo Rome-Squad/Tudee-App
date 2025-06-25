@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +39,9 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.taskdetails.components.TaskStatusBox
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
@@ -59,16 +61,16 @@ fun TaskDetailsBottomSheet(
     viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
     val context = LocalContext.current
-
+    val state by viewModel.state.collectAsState()
     LaunchedEffect(key1 = taskId) {
         viewModel.getTaskById(taskId)
     }
 
     EventListener(
-        events = viewModel.events,
+        events = viewModel.effect,
     ) {
         when (it) {
-            is TaskDetailsEvent.Error -> {
+            is TaskDetailsEffect.Error -> {
                 onError(context.errorToMessage(it.error))
             }
         }
@@ -83,7 +85,7 @@ fun TaskDetailsBottomSheet(
         containerColor = Theme.color.surface
     ) {
         TaskDetailsContent(
-            task = viewModel.taskDetailsState.task,
+            task = state.task,
             actions = viewModel,
             onEditTask = onEditTask
         )
@@ -94,7 +96,7 @@ fun TaskDetailsBottomSheet(
 @Composable
 fun TaskDetailsContent(
     task: Task?,
-    actions: TaskDetailsAction,
+    actions: TaskDetailsInteractionListener,
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {

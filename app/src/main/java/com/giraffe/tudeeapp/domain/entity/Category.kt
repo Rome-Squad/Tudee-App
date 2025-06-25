@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.domain.model
+package com.giraffe.tudeeapp.domain.entity
 
 data class Category(
     val id: Long = 0L,

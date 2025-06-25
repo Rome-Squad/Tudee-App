@@ -2,10 +2,10 @@ package com.giraffe.tudeeapp.data.service
 
 
 import com.giraffe.tudeeapp.data.database.CategoryDao
-import com.giraffe.tudeeapp.data.mapper.toCategory
 import com.giraffe.tudeeapp.data.mapper.toEntity
-import com.giraffe.tudeeapp.data.model.CategoryEntity
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.data.mapper.toDto
+import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.Result
@@ -41,14 +41,14 @@ class CategoryServiceImpTest {
     @Test
     fun `getAllCategories should returns flow mapped correctly`() = runTest {
         // Given
-        val entity = CategoryEntity(
+        val entity = CategoryDto(
             uid = 1L,
             name = "Study",
             imageUri = "content://study.png",
             isEditable = false,
             taskCount = 2
         )
-        val expected = entity.toCategory()
+        val expected = entity.toEntity()
 
         every { categoryDao.getAllCategories() } returns flowOf(listOf(entity))
 
@@ -74,14 +74,14 @@ class CategoryServiceImpTest {
     @Test
     fun `getCategoryById should returns mapped Category`() = runTest {
         val id = 1L
-        val entity = CategoryEntity(
+        val entity = CategoryDto(
             uid = id,
             name = "Work",
             imageUri = "content://image.png",
             isEditable = true,
             taskCount = 5
         )
-        val expected = entity.toCategory()
+        val expected = entity.toEntity()
 
         coEvery { categoryDao.getCategoryById(id) } returns entity
 
@@ -111,10 +111,10 @@ class CategoryServiceImpTest {
             taskCount = 0
         )
 
-        val entity = mockk<CategoryEntity>()
+        val entity = mockk<CategoryDto>()
 
         mockkStatic("com.giraffe.tudeeapp.data.mapper.CategoryMapperKt")
-        every { category.toEntity() } returns entity
+        every { category.toDto() } returns entity
         coEvery { categoryDao.createCategory(entity) } returns 42L
 
         val result = service.createCategory(category)
@@ -133,10 +133,10 @@ class CategoryServiceImpTest {
             taskCount = 0
         )
 
-        val entity = mockk<CategoryEntity>()
+        val entity = mockk<CategoryDto>()
 
         mockkStatic("com.giraffe.tudeeapp.data.mapper.CategoryMapperKt")
-        every { category.toEntity() } returns entity
+        every { category.toDto() } returns entity
         coEvery { categoryDao.updateCategory(entity) } just Runs
 
         val result = service.updateCategory(category)

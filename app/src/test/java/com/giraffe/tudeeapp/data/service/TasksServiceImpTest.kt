@@ -2,14 +2,13 @@ package com.giraffe.tudeeapp.data.service
 
 import TaskDao
 import com.giraffe.tudeeapp.data.database.CategoryDao
-import com.giraffe.tudeeapp.data.mapper.toCategory
 import com.giraffe.tudeeapp.data.mapper.toEntity
-import com.giraffe.tudeeapp.data.mapper.toTask
-import com.giraffe.tudeeapp.data.model.CategoryEntity
-import com.giraffe.tudeeapp.data.model.TaskEntity
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.data.mapper.toDto
+import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.data.dto.TaskDto
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.NotFoundError
 import com.giraffe.tudeeapp.domain.util.Result
@@ -46,7 +45,7 @@ class TasksServiceImpTest {
     fun `getTaskById should return Task`() = runTest {
         // Given
         val id = 1L
-        val entity = TaskEntity(
+        val entity = TaskDto(
             uid = id,
             title = "Test",
             description = "Description",
@@ -57,17 +56,17 @@ class TasksServiceImpTest {
             createdAt = "2025-06-20",
             updatedAt = "2025-06-20"
         )
-        val categoryEntity = CategoryEntity(
+        val categoryDto = CategoryDto(
             uid = 5L,
             name = "Work",
             imageUri = "content://sample",
             isEditable = true,
             taskCount = 10
         )
-        val expectedTask = entity.toTask(categoryEntity)
+        val expectedTask = entity.toEntity(categoryDto)
 
         coEvery { taskDao.getTaskById(id) } returns entity
-        coEvery { categoryDao.getCategoryById(5L) } returns categoryEntity
+        coEvery { categoryDao.getCategoryById(5L) } returns categoryDto
 
         // When
         val result = service.getTaskById(id)
@@ -95,21 +94,21 @@ class TasksServiceImpTest {
             description = "Test description",
             dueDate = LocalDate.parse("2025-06-20"),
             status = TaskStatus.TODO,
-            category = CategoryEntity(
+            category = CategoryDto(
                 uid = 5L,
                 name = "Work",
                 imageUri = "content://sample",
                 isEditable = true,
                 taskCount = 10
-            ).toCategory(),
+            ).toEntity(),
             taskPriority = TaskPriority.HIGH,
             createdAt = LocalDate.parse("2025-06-20"),
             updatedAt = LocalDate.parse("2025-06-20")
         )
 
-        val entity = mockk<TaskEntity>()
+        val entity = mockk<TaskDto>()
         mockkStatic("com.giraffe.tudeeapp.data.mapper.TaskMapperKt")
-        every { task.toEntity() } returns entity
+        every { task.toDto() } returns entity
         coEvery { taskDao.createTask(entity) } returns 101L
 
         val result = service.createTask(task)
@@ -121,7 +120,7 @@ class TasksServiceImpTest {
     @Test
     fun `getTasksByCategory should return mapped flow of tasks`() = runTest {
         val categoryId = 5L
-        val taskEntity = TaskEntity(
+        val taskDto = TaskDto(
             uid = 1L,
             title = "Task",
             description = "Description",
@@ -133,17 +132,17 @@ class TasksServiceImpTest {
             updatedAt = "2025-06-20"
         )
 
-        val categoryEntity = CategoryEntity(
+        val categoryDto = CategoryDto(
             uid = 5L,
             name = "Work",
             imageUri = "content://sample",
             isEditable = true,
             taskCount = 10
         )
-        val expectedTask = taskEntity.toTask(categoryEntity)
+        val expectedTask = taskDto.toEntity(categoryDto)
 
-        val tasksFlow = flowOf(listOf(taskEntity))
-        val categoriesFlow = flowOf(listOf(categoryEntity))
+        val tasksFlow = flowOf(listOf(taskDto))
+        val categoriesFlow = flowOf(listOf(categoryDto))
 
         every { taskDao.getTasksByCategory(categoryId) } returns tasksFlow
         every { categoryDao.getAllCategories() } returns categoriesFlow
@@ -158,7 +157,7 @@ class TasksServiceImpTest {
     @Test
     fun `getTasksByDate should return mapped flow of tasks`() = runTest {
         val date = LocalDate.parse("2025-06-20")
-        val taskEntity = TaskEntity(
+        val taskDto = TaskDto(
             uid = 1L,
             title = "Task",
             description = "Description",
@@ -169,17 +168,17 @@ class TasksServiceImpTest {
             createdAt = "2025-06-20",
             updatedAt = "2025-06-20"
         )
-        val categoryEntity = CategoryEntity(
+        val categoryDto = CategoryDto(
             uid = 5L,
             name = "Work",
             imageUri = "content://sample",
             isEditable = true,
             taskCount = 10
         )
-        val expectedTask = taskEntity.toTask(categoryEntity)
+        val expectedTask = taskDto.toEntity(categoryDto)
 
-        val tasksFlow = flowOf(listOf(taskEntity))
-        val categoriesFlow = flowOf(listOf(categoryEntity))
+        val tasksFlow = flowOf(listOf(taskDto))
+        val categoriesFlow = flowOf(listOf(categoryDto))
 
         every { taskDao.getTasksByDate(date.toString()) } returns tasksFlow
         every { categoryDao.getAllCategories() } returns categoriesFlow

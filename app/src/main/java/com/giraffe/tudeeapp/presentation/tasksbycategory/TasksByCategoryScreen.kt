@@ -46,14 +46,14 @@ fun TasksByCategoryScreen(
     onBackClick: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsState()
-    TasksByCategoryContent(state, viewModel, viewModel.events, onBackClick)
+    TasksByCategoryContent(state, viewModel, viewModel.effect, onBackClick)
 }
 
 @Composable
 fun TasksByCategoryContent(
     state: TasksByCategoryScreenState = TasksByCategoryScreenState(),
-    actions: TasksByCategoryScreenActions,
-    events: Flow<TasksByCategoryEvents>,
+    actions: TasksByCategoryScreenInteractionListener,
+    events: Flow<TasksByCategoryEffect>,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -61,38 +61,38 @@ fun TasksByCategoryContent(
     val coroutineScope = rememberCoroutineScope()
     EventListener(events) { event ->
         when (event) {
-            is TasksByCategoryEvents.CategoryDeleted -> {
+            is TasksByCategoryEffect.CategoryDeleted -> {
                 coroutineScope.launch {
                     snackState.showSuccessSnackbar(context.getString(R.string.category_deleted_successfully))
                     onBackClick()
                 }
             }
 
-            is TasksByCategoryEvents.CategoryEdited -> {
+            is TasksByCategoryEffect.CategoryEdited -> {
                 coroutineScope.launch {
                     snackState.showSuccessSnackbar(context.getString(R.string.category_updated_successfully))
                 }
             }
 
-            is TasksByCategoryEvents.GetCategoryError -> {
+            is TasksByCategoryEffect.GetCategoryError -> {
                 coroutineScope.launch {
                     snackState.showErrorSnackbar(context.getString(R.string.sorry_the_selected_category_could_not_be_found))
                 }
             }
 
-            is TasksByCategoryEvents.GetTasksError -> {
+            is TasksByCategoryEffect.GetTasksError -> {
                 coroutineScope.launch {
                     snackState.showErrorSnackbar(context.getString(R.string.failed_to_load_tasks))
                 }
             }
 
-            is TasksByCategoryEvents.DeleteCategoryError -> {
+            is TasksByCategoryEffect.DeleteCategoryError -> {
                 coroutineScope.launch {
                     snackState.showErrorSnackbar(context.getString(R.string.unable_to_delete_the_category))
                 }
             }
 
-            is TasksByCategoryEvents.EditCategoryError -> {
+            is TasksByCategoryEffect.EditCategoryError -> {
                 coroutineScope.launch {
                     snackState.showErrorSnackbar(context.getString(R.string.failed_to_update_the_category))
                 }

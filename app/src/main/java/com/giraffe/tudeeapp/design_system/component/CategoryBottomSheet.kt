@@ -50,7 +50,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.presentation.utils.copyImageToInternalStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +110,11 @@ fun CategoryBottomSheet(
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     textValue = categoryTitle,
-                    onValueChange = { categoryTitle = it },
+                    onValueChange = {
+                        if (it.length <= 50) {
+                            categoryTitle = it
+                        }
+                    },
                     hint = stringResource(R.string.category_title),
                     icon = painterResource(R.drawable.categories_unselected),
                 )

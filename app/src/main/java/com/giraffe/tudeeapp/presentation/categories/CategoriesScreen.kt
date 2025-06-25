@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.SnackbarHostState
@@ -43,21 +43,21 @@ fun CategoriesScreen(
     viewModel: CategoryViewModel = koinViewModel(),
     navigateToTaskByCategoryScreen: (categoryId: Long) -> Unit = {}
 ) {
-    val state = viewModel.categoriesUiState.collectAsState().value
+    val state = viewModel.state.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    EventListener(viewModel.events) { event ->
+    EventListener(viewModel.effect) { event ->
         when (event) {
-            is CategoriesScreenEvents.NavigateToTasksByCategoryScreen -> {
+            is CategoriesScreenEffect.NavigateToTasksByCategoryScreen -> {
                 navigateToTaskByCategoryScreen(event.categoryId)
             }
 
-            is CategoriesScreenEvents.CategoryAdded -> {
+            is CategoriesScreenEffect.CategoryAdded -> {
                 snackState.showSuccessSnackbar(context.getString(R.string.added_category_successfully))
             }
 
-            is CategoriesScreenEvents.Error -> {
+            is CategoriesScreenEffect.Error -> {
                 snackState.showErrorSnackbar(
                     context.errorToMessage(event.error)
                 )
@@ -74,14 +74,14 @@ fun CategoriesScreen(
 @Composable
 fun CategoriesContent(
     state: CategoriesScreenState,
-    actions: CategoriesScreenActions,
+    actions: CategoriesScreenInteractionListener,
     snackState: SnackbarHostState
 ) {
     Box(
         Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
-            .systemBarsPadding()
+            .statusBarsPadding()
     ) {
         Column {
             Text(

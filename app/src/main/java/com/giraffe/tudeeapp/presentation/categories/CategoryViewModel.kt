@@ -1,82 +1,65 @@
 package com.giraffe.tudeeapp.presentation.categories
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 
 class CategoryViewModel(
     private val categoriesService: CategoriesService,
-) : ViewModel(), CategoriesScreenActions {
-
-    private var _categoriesUiState = MutableStateFlow(CategoriesScreenState())
-    val categoriesUiState: StateFlow<CategoriesScreenState> = _categoriesUiState.asStateFlow()
-
-    private val _events = Channel<CategoriesScreenEvents>()
-    val events = _events.receiveAsFlow()
-
+) : BaseViewModel<CategoriesScreenState, CategoriesScreenEffect>(CategoriesScreenState()), CategoriesScreenInteractionListener {
 
     init {
         getAllCategories()
     }
 
     private fun getAllCategories() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _categoriesUiState.update { it.copy(isLoading = true) }
+        safeCollect(
+            onError = ::onGetAllCategoriesError,
+            onEmitNewValue = ::onGetAllCategoriesNewValue
+        ) {
             categoriesService.getAllCategories()
-                .onSuccess { flow ->
-                    flow.collect { categories ->
-                        _categoriesUiState.update { currentState ->
-                            currentState.copy(
-                                categories = categories.map { category -> category },
-                                isLoading = false,
-                            )
-                        }
-                    }
-                }.onError { error ->
-                    _categoriesUiState.update { it.copy(isLoading = false) }
-                    _events.send(CategoriesScreenEvents.Error(error))
-                }
-
         }
+
+    }
+
+    private fun onGetAllCategoriesNewValue(categories: List<Category>) {
+        updateState { currentState ->
+            currentState.copy(
+                categories = categories.map { category -> category },
+                isLoading = false,
+            )
+        }
+    }
+
+    private fun onGetAllCategoriesError(error: Throwable) {
+        updateState { it.copy(isLoading = false) }
+        sendEffect(CategoriesScreenEffect.Error(error))
     }
 
     override fun selectCategory(categoryId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _events.send(CategoriesScreenEvents.NavigateToTasksByCategoryScreen(categoryId))
-        }
+        sendEffect(CategoriesScreenEffect.NavigateToTasksByCategoryScreen(categoryId))
     }
 
     override fun setBottomSheetVisibility(isVisible: Boolean) {
-        _categoriesUiState.update { it.copy(isBottomSheetVisible = isVisible) }
+        updateState { it.copy(isBottomSheetVisible = isVisible) }
     }
 
     override fun addCategory(category: Category) {
-        viewModelScope.launch(Dispatchers.IO) {
+        safeExecute(
+            onError = ::onAddCategoryError,
+            onSuccess = { onAddCategorySuccess() },
+        ) {
             categoriesService.createCategory(category)
-                .onSuccess {
-                    _categoriesUiState.update {
-                        it.copy(isBottomSheetVisible = false)
-                    }
-                    _events.send(CategoriesScreenEvents.CategoryAdded)
-                }.onError { error ->
-                    _categoriesUiState.update {
-                        it.copy(
-                            isBottomSheetVisible = false
-                        )
-                    }
-                    _events.send(CategoriesScreenEvents.Error(error))
-                }
         }
+    }
+
+    private fun onAddCategorySuccess() {
+        updateState { it.copy(isBottomSheetVisible = false) }
+        sendEffect(CategoriesScreenEffect.CategoryAdded)
+    }
+
+    private fun onAddCategoryError(error: Throwable) {
+        updateState { it.copy(isBottomSheetVisible = false) }
+        sendEffect(CategoriesScreenEffect.Error(error))
     }
 }

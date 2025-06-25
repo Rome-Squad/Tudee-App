@@ -9,8 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.SnakeBarType
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import java.io.File
 import java.io.FileOutputStream
 

@@ -7,9 +7,9 @@ import androidx.sqlite.SQLiteConnection
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.database.TudeeDatabase
-import com.giraffe.tudeeapp.data.mapper.toEntity
+import com.giraffe.tudeeapp.data.mapper.toDto
 import com.giraffe.tudeeapp.data.util.Constants.DATABASE_NAME
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,7 +67,7 @@ suspend fun addDefaultCategories(dao: CategoryDao) {
             imageUri = ("android.resource://com.giraffe.tudeeapp/$res".toUri()).toString(),
             isEditable = false,
             taskCount = 0
-        ).toEntity()
+        ).toDto()
         dao.createCategory(category)
     }
 }

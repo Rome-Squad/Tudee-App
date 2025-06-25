@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,14 +63,14 @@ fun TaskScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     EventListener(
-        events = viewModel.events
+        events = viewModel.effect
     ) {
         when (it) {
-            is TasksScreenEvent.Error -> {
+            is TasksScreenEffect.Error -> {
                 snackBarHostState.showErrorSnackbar(context.errorToMessage(it.error))
             }
 
-            TasksScreenEvent.TaskDeletedSuccess -> {
+            TasksScreenEffect.TaskDeletedSuccess -> {
                 snackBarHostState.showSuccessSnackbar(context.getString(R.string.deleted_task_successfully))
             }
         }
@@ -98,7 +98,7 @@ fun TaskScreen(
 @Composable
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
-    actions: TasksScreenActions,
+    actions: TasksScreenInteractionListener,
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
 ) {
@@ -106,7 +106,7 @@ fun TaskScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
-            .systemBarsPadding()
+            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier
@@ -159,7 +159,11 @@ fun TaskScreenContent(
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable {
                                     actions.onTaskClick(task.id)
-                                }
+                                },
+                            onCollapsed = {
+                                actions.setSelectedTaskId(task.id)
+                                actions.onDeleteTaskClick()
+                            }
                         )
                     }
                 }
