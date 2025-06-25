@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.splash.viewmodel
+package com.giraffe.tudeeapp.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

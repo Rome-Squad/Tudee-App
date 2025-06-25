@@ -1,3 +1,3 @@
-package com.giraffe.tudeeapp.domain.model.task
+package com.giraffe.tudeeapp.domain.entity.task
 
 enum class TaskStatus { TODO, IN_PROGRESS, DONE }

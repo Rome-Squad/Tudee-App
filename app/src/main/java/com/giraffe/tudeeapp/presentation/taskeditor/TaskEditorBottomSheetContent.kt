@@ -44,18 +44,18 @@ import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
-    taskEditorUiState: TaskEditorUiState,
-    actions : TaskEditorActions,
+    taskEditorState: TaskEditorState,
+    actions : TaskEditorInteractionListener,
     isNewTask: Boolean
 ) {
 
-    val task = taskEditorUiState.task
+    val task = taskEditorState.task
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
     DatePickerDialog(
@@ -69,7 +69,7 @@ fun TaskEditorBottomSheetContent(
         }
     )
 
-    AnimatedVisibility(visible = taskEditorUiState.isLoading) {
+    AnimatedVisibility(visible = taskEditorState.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -172,7 +172,7 @@ fun TaskEditorBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                items(taskEditorUiState.categories) { category ->
+                items(taskEditorState.categories) { category ->
                     val painter = rememberAsyncImagePainter(model = category.imageUri)
 
                     CategoryItem(
@@ -197,8 +197,8 @@ fun TaskEditorBottomSheetContent(
         ) {
             PrimaryButton(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
-                isLoading = taskEditorUiState.isLoading,
-                isDisable = !taskEditorUiState.isValidTask,
+                isLoading = taskEditorState.isLoading,
+                isDisable = !taskEditorState.isValidTask,
                 onClick = {if (isNewTask) actions.addTask(task) else actions.editTask(task)},
                 modifier = Modifier
                     .fillMaxWidth()

@@ -27,7 +27,7 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.presentation.utils.emptyTask
 
 @Composable
