@@ -1,13 +1,13 @@
 package com.giraffe.tudeeapp.data.mapper
 
-import com.giraffe.tudeeapp.data.model.CategoryEntity
-import com.giraffe.tudeeapp.data.model.TaskEntity
-import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.data.dto.TaskDto
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import kotlinx.datetime.LocalDate
 
 
-fun Task.toEntity(): TaskEntity {
-    return TaskEntity(
+fun Task.toDto(): TaskDto {
+    return TaskDto(
         uid = this.id,
         title = this.title,
         description = this.description,
@@ -20,25 +20,25 @@ fun Task.toEntity(): TaskEntity {
     )
 }
 
-fun TaskEntity.toTask(category: CategoryEntity): Task {
+fun TaskDto.toEntity(category: CategoryDto): Task {
     return Task(
         id = this.uid,
         title = this.title,
         description = this.description,
         taskPriority = this.taskPriority,
         status = this.status,
-        category = category.toCategory(),
+        category = category.toEntity(),
         dueDate = LocalDate.parse(this.dueDate),
         createdAt = LocalDate.parse(this.createdAt),
         updatedAt = LocalDate.parse(this.updatedAt)
     )
 }
 
-fun List<TaskEntity>.toTaskList(categories: List<CategoryEntity>): List<Task> {
+fun List<TaskDto>.toEntityList(categories: List<CategoryDto>): List<Task> {
     val categoryMap = categories.associateBy { it.uid }
     return this.mapNotNull { task ->
         categoryMap[task.categoryId]?.let { category ->
-            task.toTask(category)
+            task.toEntity(category)
         }
     }
 }

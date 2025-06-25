@@ -64,7 +64,7 @@ fun TudeeAppBar(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_tudee),
+                    painter = painterResource(id = R.drawable.tudee),
                     contentDescription = "Tudee Logo",
                     contentScale = ContentScale.FillBounds,
                 )

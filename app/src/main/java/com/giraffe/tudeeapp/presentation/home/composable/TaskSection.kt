@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.Task
 
 @Composable
 fun TaskSection(
@@ -67,7 +67,7 @@ fun TaskSection(
                         style = Theme.textStyle.label.small
                     )
                     Icon(
-                        painter = painterResource(R.drawable.arrow_icon),
+                        painter = painterResource(R.drawable.arrow),
                         contentDescription = "arrow icon",
                         tint = Theme.color.body,
                     )

@@ -1,5 +1,7 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +16,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +39,17 @@ fun DefaultSnackBar(
     ) { snackBarData ->
         val isError = snackBarData.visuals.actionLabel == SnakeBarType.ERROR.name
         snackBarData.visuals.actionLabel
+
+        val backgroundColorBox by animateColorAsState(
+            targetValue = if (isError) Theme.color.errorVariant else Theme.color.greenVariant
+        )
+        val iconColor by animateColorAsState(
+            targetValue = if (isError) Theme.color.error else Theme.color.greenAccent
+        )
+        val iconAnimate by animateIntAsState(
+            targetValue = if (isError) R.drawable.error else R.drawable.success
+        )
+
         Snackbar(
             modifier = Modifier.height(56.dp),
             containerColor = Theme.color.surfaceHigh,
@@ -49,15 +63,15 @@ fun DefaultSnackBar(
                     modifier = Modifier
                         .size(40.dp)
                         .background(
-                            color = if (isError) Theme.color.errorVariant else Theme.color.greenVariant,
+                            color = backgroundColorBox,
                             shape = RoundedCornerShape(12.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = if (isError) R.drawable.ic_error else R.drawable.ic_success),
+                        painter = painterResource(id = iconAnimate),
                         contentDescription = null,
-                        tint = if (isError) Theme.color.error else Theme.color.greenAccent,
+                        tint = iconColor,
                         modifier = Modifier.size(21.5.dp)
                     )
                 }

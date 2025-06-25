@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,12 +39,13 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.taskdetails.components.TaskStatusBox
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.toStringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -58,16 +61,16 @@ fun TaskDetailsBottomSheet(
     viewModel: TaskDetailsViewModel = koinViewModel(parameters = { parametersOf(taskId) })
 ) {
     val context = LocalContext.current
-
+    val state by viewModel.state.collectAsState()
     LaunchedEffect(key1 = taskId) {
         viewModel.getTaskById(taskId)
     }
 
     EventListener(
-        events = viewModel.events,
+        events = viewModel.effect,
     ) {
         when (it) {
-            is TaskDetailsEvent.Error -> {
+            is TaskDetailsEffect.Error -> {
                 onError(context.errorToMessage(it.error))
             }
         }
@@ -82,7 +85,7 @@ fun TaskDetailsBottomSheet(
         containerColor = Theme.color.surface
     ) {
         TaskDetailsContent(
-            task = viewModel.taskDetailsState.task,
+            task = state.task,
             actions = viewModel,
             onEditTask = onEditTask
         )
@@ -93,10 +96,21 @@ fun TaskDetailsBottomSheet(
 @Composable
 fun TaskDetailsContent(
     task: Task?,
-    actions: TaskDetailsAction,
+    actions: TaskDetailsInteractionListener,
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val priorityType = task?.taskPriority ?: TaskPriority.LOW
+    val icon = when (priorityType) {
+        TaskPriority.HIGH -> R.drawable.flag
+        TaskPriority.MEDIUM -> R.drawable.alert
+        TaskPriority.LOW -> R.drawable.trade_down_icon
+    }
+    val selectedBackgroundColor = when (priorityType) {
+        TaskPriority.HIGH -> Theme.color.pinkAccent
+        TaskPriority.MEDIUM -> Theme.color.yellowAccent
+        TaskPriority.LOW -> Theme.color.greenAccent
+    }
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -150,7 +164,9 @@ fun TaskDetailsContent(
                 status = task?.status ?: TaskStatus.TODO
             )
             Priority(
-                priorityType = task?.taskPriority ?: TaskPriority.LOW,
+                icon = painterResource(icon),
+                selectedBackgroundColor = selectedBackgroundColor,
+                label = priorityType.toStringResource(),
                 isSelected = true
             )
         }
@@ -173,7 +189,7 @@ fun TaskDetailsContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_pencil_edit),
+                        painter = painterResource(R.drawable.pencil_edit),
                         contentDescription = stringResource(R.string.edit_task),
                         tint = Theme.color.primary
                     )

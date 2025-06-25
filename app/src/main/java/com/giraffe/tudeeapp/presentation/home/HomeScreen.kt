@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +36,6 @@ import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
@@ -53,25 +53,23 @@ import org.koin.androidx.compose.koinViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
     navigateToTasksScreen: (tabIndex: Int) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val state by viewModel.homeUiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     EventListener(
-        events = viewModel.events
+        events = viewModel.effect
     ) { event ->
         when (event) {
-            is HomeEvent.Error -> {
+            is HomeScreenEffect.Error -> {
                 snackBarHostState.showErrorSnackbar(context.errorToMessage(event.error))
             }
 
-            is HomeEvent.NavigateToTasksScreen -> {
+            is HomeScreenEffect.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
             }
         }
@@ -79,8 +77,6 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        onThemeSwitchToggle = onThemeSwitchToggle,
-        isDarkTheme = isDarkTheme,
         actions = viewModel,
         snackBarHostState = snackBarHostState,
         showSnackBar = { message, isError ->
@@ -95,16 +91,14 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
-    state: HomeUiState,
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
+    state: HomeScreenState,
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
-    actions: HomeActions,
+    actions: HomeScreenInteractionListener,
 ) {
     val screenSize = LocalWindowInfo.current.containerSize
     Scaffold(containerColor = Theme.color.primary) { paddingValues ->
@@ -113,6 +107,7 @@ fun HomeContent(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(Theme.color.surface)
+                .statusBarsPadding()
         ) {
             TudeeAppBar(
                 isDarkTheme = isDarkTheme,
@@ -233,4 +228,3 @@ fun HomeContent(
         }
     }
 }
-

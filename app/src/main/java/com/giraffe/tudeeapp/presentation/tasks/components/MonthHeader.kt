@@ -55,7 +55,7 @@ fun MonthHeader(
         ){
             Icon(
                 modifier = Modifier.scale(scaleX = if (layoutDirection == LayoutDirection.Rtl) -1f else 1f, scaleY = 1f),
-                painter = painterResource(R.drawable.leftarrow),
+                painter = painterResource(R.drawable.left_arrow),
                 contentDescription = "Previous Month",
                 tint = Theme.color.body
             )
@@ -74,7 +74,7 @@ fun MonthHeader(
             )
             Icon(
                 modifier= Modifier.padding(start = 4.dp),
-                painter = painterResource(R.drawable.droparrow),
+                painter = painterResource(R.drawable.drop_arrow),
                 contentDescription = "Select Date",
                 tint = Theme.color.body
             )
@@ -94,7 +94,7 @@ fun MonthHeader(
         ){
             Icon(
                 modifier = Modifier.scale(scaleX = if (layoutDirection == LayoutDirection.Rtl) -1f else 1f, scaleY = 1f),
-                painter = painterResource(R.drawable.rightarrow),
+                painter = painterResource(R.drawable.right_arrow),
                 contentDescription = "Next Month",
                 tint = Theme.color.body
             )
