@@ -66,14 +66,7 @@ fun CategoryBottomSheet(
     onDeleteClick: (Category) -> Unit = {},
 ) {
     val context = LocalContext.current
-    var categoryTitle by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.name ?: "") }
-    var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            uri?.let {
-                photoUri = uri.copyImageToInternalStorage(context)
-            }
-        }
+
     if (isVisible) {
         ModalBottomSheet(
             modifier = modifier,
@@ -82,6 +75,19 @@ fun CategoryBottomSheet(
                 onVisibilityChange(false)
             },
         ) {
+            var categoryTitle by remember(categoryToEdit) {
+                mutableStateOf(
+                    categoryToEdit?.name ?: ""
+                )
+            }
+            var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
+            val launcher =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                    uri?.let {
+                        photoUri = uri.copyImageToInternalStorage(context)
+                    }
+                }
+
             Column {
                 Row(
                     modifier = Modifier
@@ -111,12 +117,13 @@ fun CategoryBottomSheet(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     textValue = categoryTitle,
                     onValueChange = {
-                        if (it.length <= 50) {
+                        if (it.length <= 20) {
                             categoryTitle = it
                         }
                     },
                     hint = stringResource(R.string.category_title),
                     icon = painterResource(R.drawable.categories_unselected),
+
                 )
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),

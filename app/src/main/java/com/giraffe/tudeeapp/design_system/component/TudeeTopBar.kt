@@ -49,38 +49,33 @@ fun TudeeTopBar(
             onClick = onClickBack
         )
 
-        Column(modifier = Modifier.padding(start = 12.dp)) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 12.dp)
-            ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+        ) {
+            Text(
+                text = title,
+                color = Theme.color.title,
+                style = Theme.textStyle.title.large,
+                maxLines = 1,
+               overflow = TextOverflow.Ellipsis,
+            )
+
+            if (label != null) {
                 Text(
-                    text = title,
-                    color = Theme.color.title,
-                    style = Theme.textStyle.title.large,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState())
-                )
-
-                if (label != null) {
-                    Text(
-                        text = label,
-                        color = Theme.color.hint,
-                        style = Theme.textStyle.label.small,
-                    )
-                }
-            }
-
-            Spacer(Modifier.weight(1f))
-            AnimatedVisibility(withOption) {
-                CircleButton(
-                    iconRes = R.drawable.pencil_edit_transparent,
-                    onClick = onClickEdit
+                    text = label,
+                    color = Theme.color.hint,
+                    style = Theme.textStyle.label.small,
                 )
             }
+        }
+
+        Spacer(Modifier.weight(1f))
+        AnimatedVisibility(withOption) {
+            CircleButton(
+                iconRes = R.drawable.pencil_edit_transparent,
+                onClick = onClickEdit
+            )
         }
     }
 }
