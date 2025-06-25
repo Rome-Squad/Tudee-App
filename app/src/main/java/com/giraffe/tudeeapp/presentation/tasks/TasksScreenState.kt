@@ -7,6 +7,8 @@ import kotlinx.datetime.LocalDate
 
 data class TasksScreenState(
     val selectedDate: LocalDate = getCurrentLocalDate(),
+    val taskEditorDate: LocalDate = getCurrentLocalDate(),
+
     val selectedTab: TaskStatus = TaskStatus.DONE,
     val selectedTaskId: Long = 0L,
     val currentTaskId: Long? = null,

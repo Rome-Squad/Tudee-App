@@ -19,6 +19,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
@@ -29,7 +30,7 @@ fun TaskEditorBottomSheet(
     taskId: Long?,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    selectedDate: LocalDateTime,
+    selectedDate: LocalDate,
     onSuccess: (String) -> Unit = {},
     onError: (String) -> Unit = {},
     viewModel: TaskEditorViewModel = koinViewModel()

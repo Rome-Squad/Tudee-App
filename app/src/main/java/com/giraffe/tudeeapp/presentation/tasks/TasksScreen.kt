@@ -74,7 +74,7 @@ fun TaskScreen(
                 snackBarHostState.showSuccessSnackbar(context.getString(R.string.deleted_task_successfully))
             }
 
-            is TasksScreenEvent.OpenTaskEditor -> {
+            is TasksScreenEffect.OpenTaskEditor -> {
                 viewModel.setTaskEditorDate(it.selectedDate)
                 viewModel.showTaskEditor()
             }

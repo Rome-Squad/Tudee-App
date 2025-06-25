@@ -50,6 +50,8 @@ import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
+import com.giraffe.tudeeapp.presentation.utils.getTodayDate
 import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
 import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
@@ -110,8 +112,6 @@ fun HomeContent(
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeScreenInteractionListener,
 ) {
-    val selectedDate : LocalDateTime = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
 
     val screenSize = LocalWindowInfo.current.containerSize
     Box(
@@ -243,7 +243,7 @@ fun HomeContent(
                     onError = { error ->
                         showSnackBar(error, true,)
                     },
-                    selectedDate = selectedDate
+                    selectedDate = getCurrentLocalDate()
                 )
             }
 

@@ -260,12 +260,11 @@ class TaskEditorViewModel(
     }
 
 
-    fun setDueDate(date: LocalDateTime) {
-       // Log.d("TaskEditor", "due date: $date")
+    fun setDueDate(date: LocalDate) {
 
-        taskEditorUiState.update {
+        updateState{
             it.copy(
-                taskUi = it.taskUi.copy(dueDate = date)
+                task = it.task.copy(dueDate = date)
             )
         }
 

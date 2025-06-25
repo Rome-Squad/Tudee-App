@@ -1,24 +1,13 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.base.BaseViewModel
-import kotlinx.datetime.LocalDate
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.utils.toTaskUiList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 
 class TasksViewModel(
     private val tasksService: TasksService,
@@ -87,23 +76,18 @@ class TasksViewModel(
     }
 
     override fun onAddTaskClick() {
+        val selectedDate = state.value.selectedDate
 
-      /*  _state.update { currentState ->
-            currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = null,)
-
-        }*/
-
-        val selectedDate = _state.value.selectedDate
-        _state.update {
+        updateState {
             it.copy(
                 isTaskEditorBottomSheetVisible = true,
                 currentTaskId = null,
                 taskEditorDate = selectedDate
             )
+        }
 
-    }
         viewModelScope.launch {
-            _events.send(TasksScreenEvent.OpenTaskEditor(selectedDate))
+            sendEffect(TasksScreenEffect.OpenTaskEditor(selectedDate))
         }
     }
 
@@ -112,30 +96,17 @@ class TasksViewModel(
             currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = taskId)
         }
     }
-    fun setTaskEditorDate(date: LocalDateTime) {
-        _state.update {
+    fun setTaskEditorDate(date: LocalDate) {
+        updateState {
             it.copy(selectedDate = date)
         }
     }
 
     fun showTaskEditor() {
-        _state.update {
+        updateState {
             it.copy(isTaskEditorBottomSheetVisible = true)
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     override fun onDismissTaskDetailsBottomSheetRequest() {
         updateState { currentState ->
