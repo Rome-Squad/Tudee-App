@@ -124,7 +124,7 @@ fun CategoriesContent(
         }
 
         FabButton(
-            icon = painterResource(R.drawable.add_category_icon),
+            icon = painterResource(R.drawable.add_category),
             onClick = { actions.setBottomSheetVisibility(isVisible = true) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

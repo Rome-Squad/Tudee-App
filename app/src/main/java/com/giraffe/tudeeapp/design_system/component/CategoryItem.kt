@@ -66,7 +66,7 @@ fun CategoryItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.tick_double_02),
+                        painter = painterResource(R.drawable.tick_double),
                         contentDescription = stringResource(R.string.checkmark_container)
                     )
                 }
@@ -101,7 +101,7 @@ fun CategoryItem(
 @Composable
 fun CategoryItemWithCountPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open_icon),
+        icon = painterResource(R.drawable.book_open),
         categoryName = "Education",
         count = 16
     )
@@ -111,7 +111,7 @@ fun CategoryItemWithCountPreview() {
 @Composable
 fun CategoryItemWithSelectedPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open_icon),
+        icon = painterResource(R.drawable.book_open),
         categoryName = "Education",
         isSelected = true
     )

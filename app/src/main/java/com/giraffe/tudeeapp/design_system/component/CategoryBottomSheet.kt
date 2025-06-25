@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.design_system.component
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -113,7 +112,7 @@ fun CategoryBottomSheet(
                     textValue = categoryTitle,
                     onValueChange = { categoryTitle = it },
                     hint = stringResource(R.string.category_title),
-                    iconRes = R.drawable.categories_unselected,
+                    icon = painterResource(R.drawable.categories_unselected),
                 )
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -153,7 +152,7 @@ fun CategoryBottomSheet(
                         ) {
                             Icon(
                                 modifier = Modifier.size(22.dp),
-                                painter = painterResource(R.drawable.ic_add_image),
+                                painter = painterResource(R.drawable.add_image),
                                 contentDescription = "add image",
                                 tint = Theme.color.hint
                             )
@@ -184,7 +183,7 @@ fun CategoryBottomSheet(
                         ) {
                             Icon(
                                 modifier = Modifier.padding(6.dp),
-                                painter = painterResource(R.drawable.ic_pen),
+                                painter = painterResource(R.drawable.pen),
                                 contentDescription = "edit image",
                                 tint = Theme.color.secondary
                             )

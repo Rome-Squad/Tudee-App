@@ -215,7 +215,7 @@ fun HomeContent(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(12.dp),
-                icon = painterResource(R.drawable.add_task_icon),
+                icon = painterResource(R.drawable.add_task),
                 onClick = actions::onAddTaskClick
             )
 

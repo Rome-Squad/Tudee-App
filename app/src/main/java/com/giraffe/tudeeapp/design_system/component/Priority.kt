@@ -5,30 +5,26 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.model.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.toStringResource
 
 
 @Composable
 fun Priority(
-    priorityType: TaskPriority,
+    icon: Painter,
+    label: String,
+    selectedBackgroundColor: Color,
     isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var icon = when (priorityType) {
-        TaskPriority.HIGH -> R.drawable.flag_icon
-        TaskPriority.MEDIUM -> R.drawable.alert_icon
-        TaskPriority.LOW -> R.drawable.trade_down_icon
-    }
-    val selectedBackgroundColor = when (priorityType) {
-        TaskPriority.HIGH -> Theme.color.pinkAccent
-        TaskPriority.MEDIUM -> Theme.color.yellowAccent
-        TaskPriority.LOW -> Theme.color.greenAccent
-    }
+
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) selectedBackgroundColor else Theme.color.surfaceLow,
         animationSpec = tween(durationMillis = 300),
@@ -39,8 +35,8 @@ fun Priority(
     )
 
     LabelIconBox(
-        icon = painterResource(icon),
-        label = priorityType.toStringResource(),
+        icon = icon,
+        label = label,
         backgroundColor = backgroundColor,
         contentColor = contentColor,
         modifier = modifier
@@ -51,8 +47,12 @@ fun Priority(
 @Preview(showBackground = true)
 @Composable
 fun PriorityPreview() {
-    Priority(
-        priorityType = TaskPriority.LOW,
-        isSelected = true
-    )
+    TudeeTheme {
+        Priority(
+            icon = painterResource(R.drawable.trade_down_icon),
+            label = TaskPriority.LOW.toStringResource(),
+            selectedBackgroundColor = Theme.color.greenAccent,
+            isSelected = true
+        )
+    }
 }

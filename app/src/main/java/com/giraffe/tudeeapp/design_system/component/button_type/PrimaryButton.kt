@@ -16,8 +16,8 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun PrimaryButton(
-    modifier: Modifier = Modifier,
     text: String,
+    modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     isDisable: Boolean = false,
     onClick: () -> Unit

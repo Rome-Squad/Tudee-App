@@ -77,7 +77,7 @@ fun FabButton(
 fun TudeeButtonsPreview() {
     TudeeTheme {
         FabButton(
-            icon = painterResource(R.drawable.add_category_icon),
+            icon = painterResource(R.drawable.add_category),
             onClick = {},
             isLoading = true
         )

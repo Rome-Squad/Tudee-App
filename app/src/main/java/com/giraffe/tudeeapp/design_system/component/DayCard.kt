@@ -53,7 +53,7 @@ fun DayCard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = dayNumber.toString(),
+            text = dayNumber,
             style = Theme.textStyle.title.medium,
             color = dayNumberColor
         )

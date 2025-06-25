@@ -40,7 +40,7 @@ fun TudeeTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CircleButton(
-            iconRes = R.drawable.ic_back,
+            iconRes = R.drawable.back_arrow,
             onClick = onClickBack
         )
 
@@ -63,7 +63,7 @@ fun TudeeTopBar(
         Spacer(Modifier.weight(1f))
         AnimatedVisibility(withOption) {
             CircleButton(
-                iconRes = R.drawable.pencil_edit_01,
+                iconRes = R.drawable.pencil_edit_transparent,
                 onClick = onClickEdit
             )
         }
