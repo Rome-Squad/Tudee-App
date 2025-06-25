@@ -151,6 +151,11 @@ fun TasksByCategoryContent(
             }
         )
         AlertBottomSheet(
+            title =  stringResource(R.string.delete_category),
+            subTitle = stringResource(R.string.are_you_sure_to_continue),
+            imgRes = R.drawable.sure_robot,
+            redBtnTitle = stringResource(R.string.delete),
+            blueBtnTitle = stringResource(R.string.cancel),
             isVisible = state.isAlertBottomSheetVisible,
             onVisibilityChange = actions::setAlertBottomSheetVisibility,
             onRedBtnClick = { state.selectedCategory?.let { actions.deleteCategory(it) } },

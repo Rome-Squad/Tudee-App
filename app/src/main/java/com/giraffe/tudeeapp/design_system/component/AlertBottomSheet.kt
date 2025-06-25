@@ -30,12 +30,12 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 @Composable
 fun AlertBottomSheet(
     modifier: Modifier = Modifier,
-    title: String = stringResource(R.string.delete_category),
-    subTitle: String = stringResource(R.string.are_you_sure_to_continue),
-    imgRes: Int = R.drawable.sure_robot,
-    redBtnTitle: String = stringResource(R.string.delete),
-    blueBtnTitle: String = stringResource(R.string.cancel),
-    isVisible: Boolean = false,
+    title: String,
+    subTitle: String,
+    imgRes: Int,
+    redBtnTitle: String,
+    blueBtnTitle: String,
+    isVisible: Boolean,
     onVisibilityChange: (Boolean) -> Unit = {},
     onRedBtnClick: () -> Unit = {},
     onBlueBtnClick: () -> Unit = {},
@@ -51,73 +51,102 @@ fun AlertBottomSheet(
             },
             sheetState = sheetState
         ) {
-            Column {
-                Text(
-                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    text = title,
-                    style = Theme.textStyle.title.large,
-                    color = Theme.color.title
-                )
-                Text(
-                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    text = subTitle,
-                    style = Theme.textStyle.body.large,
-                    color = Theme.color.body
-                )
-                Image(
+            Content(
+                title = title,
+                subTitle = subTitle,
+                imgRes = imgRes,
+                redBtnTitle = redBtnTitle,
+                blueBtnTitle = blueBtnTitle,
+                onVisibilityChange = onVisibilityChange,
+                onRedBtnClick = onRedBtnClick,
+                onBlueBtnClick = onBlueBtnClick,
+            )
+        }
+    }
+}
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-                    painter = painterResource(imgRes),
-                    contentDescription = "robot",
-                )
-                Column(
-                    modifier = Modifier
-                        .background(color = Theme.color.surfaceHigh)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors().copy(
-                            containerColor = Theme.color.errorVariant,
-                            contentColor = Theme.color.error,
-                        ),
-                        shape = RoundedCornerShape(100.dp),
-                        contentPadding = PaddingValues(18.5.dp),
-                        onClick = {
-                            onRedBtnClick()
-                            onVisibilityChange(false)
-                        }) {
-                        Text(text = redBtnTitle, style = Theme.textStyle.label.large)
-                    }
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors().copy(
-                            containerColor = Theme.color.surfaceHigh,
-                            contentColor = Theme.color.primary,
-                        ),
-                        shape = RoundedCornerShape(100.dp),
-                        contentPadding = PaddingValues(18.5.dp),
-                        border = BorderStroke(width = 1.dp, color = Theme.color.stroke),
-                        onClick = {
-                            onBlueBtnClick()
-                            onVisibilityChange(false)
-                        }) {
-                        Text(text = blueBtnTitle, style = Theme.textStyle.label.large)
-                    }
-                }
+@Composable
+private fun Content(
+    modifier: Modifier = Modifier,
+    title: String,
+    subTitle: String,
+    imgRes: Int,
+    redBtnTitle: String,
+    blueBtnTitle: String,
+    onVisibilityChange: (Boolean) -> Unit = {},
+    onRedBtnClick: () -> Unit = {},
+    onBlueBtnClick: () -> Unit = {},
+) {
+    Column(modifier) {
+        Text(
+            modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+            text = title,
+            style = Theme.textStyle.title.large,
+            color = Theme.color.title
+        )
+        Text(
+            modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
+            text = subTitle,
+            style = Theme.textStyle.body.large,
+            color = Theme.color.body
+        )
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
+            painter = painterResource(imgRes),
+            contentDescription = stringResource(R.string.sure_robot),
+        )
+        Column(
+            modifier = Modifier
+                .background(color = Theme.color.surfaceHigh)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Theme.color.errorVariant,
+                    contentColor = Theme.color.error,
+                ),
+                shape = RoundedCornerShape(100.dp),
+                contentPadding = PaddingValues(18.5.dp),
+                onClick = {
+                    onRedBtnClick()
+                    onVisibilityChange(false)
+                }) {
+                Text(text = redBtnTitle, style = Theme.textStyle.label.large)
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Theme.color.surfaceHigh,
+                    contentColor = Theme.color.primary,
+                ),
+                shape = RoundedCornerShape(100.dp),
+                contentPadding = PaddingValues(18.5.dp),
+                border = BorderStroke(width = 1.dp, color = Theme.color.stroke),
+                onClick = {
+                    onBlueBtnClick()
+                    onVisibilityChange(false)
+                }) {
+                Text(text = blueBtnTitle, style = Theme.textStyle.label.large)
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun Preview() {
     TudeeTheme {
-        AlertBottomSheet()
+        Content(
+            title = stringResource(R.string.delete_task),
+            subTitle = stringResource(R.string.are_you_sure_to_continue),
+            imgRes = R.drawable.sure_robot,
+            redBtnTitle = stringResource(R.string.delete),
+            blueBtnTitle = stringResource(R.string.cancel),
+        )
     }
 }
