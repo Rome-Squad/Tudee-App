@@ -13,9 +13,9 @@ class HomeViewModel(
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeScreenInteractionListener {
 
     init {
+        observeTheme()
         getTodayTasks()
     }
-
     private fun getTodayTasks() {
         updateState { it.copy(isLoading = true)}
         safeCollect(
@@ -25,20 +25,20 @@ class HomeViewModel(
             tasksService.getTasksByDate(getCurrentLocalDate())
         }
     }
-    
+
     private fun onGetTodayTasksNewValue(tasks: List<Task>) {
         val taskMap = TaskStatus.entries.associateWith { status ->
             tasks.filter { it.status == status }
         }
-        
-        updateState { 
+
+        updateState {
             it.copy(
                 tasks = taskMap,
                 isLoading = false
             )
         }
     }
-    
+
     private fun onGetTodayTasksError(error: Throwable) {
         updateState { it.copy(isLoading = false) }
         sendEffect(HomeScreenEffect.Error(error))
@@ -48,7 +48,7 @@ class HomeViewModel(
         clearUiState()
         sendEffect(HomeScreenEffect.NavigateToTasksScreen(tabIndex))
     }
-    
+
     override fun onAddTaskClick() {
         updateState { currentState ->
             currentState.copy(isTaskEditorVisible = true, currentTaskId = null)
@@ -85,7 +85,6 @@ class HomeViewModel(
         safeExecute {
             appService.setDarkThemeStatus(!state.value.isDarkTheme)
         }
-        observeTheme()
     }
 
     private fun observeTheme() {

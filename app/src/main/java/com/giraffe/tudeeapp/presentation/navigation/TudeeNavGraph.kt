@@ -4,20 +4,23 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.DefaultNavigationBar
-import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.categories.categoriesRoute
 import com.giraffe.tudeeapp.presentation.home.homeRoute
 import com.giraffe.tudeeapp.presentation.screen.onboard.onboardingRoute
@@ -28,9 +31,7 @@ import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.tasksByCategoryR
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TudeeNavGraph(
-    modifier: Modifier = Modifier,
-) {
+fun TudeeNavGraph(modifier: Modifier = Modifier) {
     val screensWithoutBottomNav = listOf(
         Screen.SplashScreen.route,
         Screen.OnboardingScreen.route,
@@ -42,40 +43,42 @@ fun TudeeNavGraph(
     val showBottomNav =
         currentRoute != null && !screensWithoutBottomNav.any { currentRoute.contains(it) }
     val animationTime = 500
-
-    Column(
-        modifier = modifier
-            .background(Theme.color.surfaceHigh)
+    val animatedPadding = animateDpAsState(
+        targetValue = if (showBottomNav) 74.dp else 0.dp,
+        animationSpec = tween(animationTime)
+    )
+    Scaffold(
+        modifier = Modifier
+            .navigationBarsPadding(),
+        bottomBar = {
+            AnimatedVisibility(
+                visible = showBottomNav,
+                enter = slideInVertically(
+                    animationSpec = tween(animationTime),
+                    initialOffsetY = { it }
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(animationTime),
+                    targetOffsetY = { it }),
+            ) {
+                DefaultNavigationBar(
+                    modifier = Modifier.height(74.dp),
+                    navController = navController,
+                )
+            }
+        },
     ) {
         NavHost(
             navController = navController,
             startDestination = Screen.SplashScreen.route,
-            modifier = Modifier
-                .weight(1f)
+            modifier = modifier.padding(bottom = animatedPadding.value)
         ) {
             splashRoute(navController)
             onboardingRoute(navController)
-            homeRoute(
-                navController = navController,
-            )
+            homeRoute(navController)
             tasksRoute(navController)
             categoriesRoute(navController)
             tasksByCategoryRoute(navController)
-        }
-
-        AnimatedVisibility(
-            visible = showBottomNav,
-            enter = slideInVertically(
-                animationSpec = tween(animationTime),
-                initialOffsetY = { it }
-            ),
-            exit = slideOutVertically(
-                animationSpec = tween(animationTime),
-                targetOffsetY = { it }),
-        ) {
-            DefaultNavigationBar(
-                navController = navController,
-            )
         }
     }
 }
