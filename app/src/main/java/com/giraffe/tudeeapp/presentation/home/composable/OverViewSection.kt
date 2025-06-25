@@ -37,19 +37,19 @@ fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeScreenState) 
     val cardsData = listOf(
         TaskCardData(
             color = Theme.color.greenAccent,
-            icon = R.drawable.done_task_card_icon,
+            icon = R.drawable.done_task_card,
             taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.DONE]!!.size.toString()),
             taskStatus = stringResource(R.string.done_tasks),
         ),
         TaskCardData(
             color = Theme.color.yellowAccent,
-            icon = R.drawable.in_progress_task_card_icon,
+            icon = R.drawable.in_progress_task_card,
             taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.IN_PROGRESS]!!.size.toString()),
             taskStatus = stringResource(R.string.in_progress_tasks)
         ),
         TaskCardData(
             color = Theme.color.purpleAccent,
-            icon = R.drawable.to_do_task_card_icon,
+            icon = R.drawable.to_do_task_card,
             taskCount = convertToArabicNumbers(tasksState.tasks[TaskStatus.TODO]!!.size.toString()),
             taskStatus = stringResource(R.string.to_do_tasks)
         )

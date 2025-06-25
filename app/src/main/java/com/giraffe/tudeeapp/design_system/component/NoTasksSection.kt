@@ -31,8 +31,8 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 @Composable
 fun NoTasksSection(
     modifier: Modifier = Modifier,
-    title: String = stringResource(R.string.no_tasks_here),
-    description: String = stringResource(R.string.tap_the_button_to_add_your_first_one)
+    title: String? = null,
+    description: String? = null
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val shouldFlip = layoutDirection == LayoutDirection.Rtl
@@ -44,7 +44,6 @@ fun NoTasksSection(
         Column(
             modifier = Modifier
                 .width(203.dp)
-
                 .align(Alignment.Top)
                 .offset(x = 15.dp, y = (-18).dp)
                 .zIndex(1f)
@@ -72,28 +71,30 @@ fun NoTasksSection(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = title,
-                style = Theme.textStyle.title.small, color = Theme.color.body
-
+                text = title ?: stringResource(R.string.no_tasks_here),
+                style = Theme.textStyle.title.small,
+                color = Theme.color.body
             )
             Text(
-                text = description,
-                style = Theme.textStyle.body.small, color = Theme.color.hint
+                text = description ?: stringResource(R.string.tap_the_button_to_add_your_first_one),
+                style = Theme.textStyle.body.small,
+                color = Theme.color.hint
             )
         }
+
         Image(
             modifier = Modifier
                 .offset(x = (-15).dp)
                 .graphicsLayer {
-                scaleX = if (shouldFlip) -1f else 1f
-            },
+                    scaleX = if (shouldFlip) -1f else 1f
+                },
             painter = painterResource(Theme.drawables.emptyListRobot),
-            contentDescription = "empty list robot"
+            contentDescription = stringResource(R.string.empty_list_robot)
         )
     }
 }
 
-@Preview(showBackground = true,locale = "en")
+@Preview(showBackground = true, locale = "en")
 @Composable
 fun NoTasksSectionPreview() {
     TudeeTheme(isDarkTheme = true) {

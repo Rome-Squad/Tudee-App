@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +30,7 @@ fun CategoryItem(
     categoryName: String,
     modifier: Modifier = Modifier,
     count: Int = 0,
-    isShowCount : Boolean = true,
+    isShowCount: Boolean = true,
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -52,7 +50,9 @@ fun CategoryItem(
                 Image(
                     painter = icon,
                     contentDescription = stringResource(R.string.category_icon),
-                    modifier = Modifier.padding(23.dp).size(32.dp),
+                    modifier = Modifier
+                        .padding(23.dp)
+                        .size(32.dp),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -67,27 +67,24 @@ fun CategoryItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.tick_double_02),
+                        painter = painterResource(R.drawable.tick_double),
                         contentDescription = stringResource(R.string.checkmark_container)
                     )
                 }
-            } else {
-                if (isShowCount) {
-
-                    Box(
-                        Modifier
-                            .clip(RoundedCornerShape(100.dp))
-                            .background(LocalTudeeColors.current.surfaceLow)
-                            .padding(vertical = 2.dp, horizontal = 10.5.dp)
-                            .align(Alignment.TopEnd),
-                    ) {
-                        Text(
-                            text = count.toString(),
-                            style = Theme.textStyle.label.small,
-                            color = LocalTudeeColors.current.hint,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+            } else if (isShowCount) {
+                Box(
+                    Modifier
+                        .clip(RoundedCornerShape(100.dp))
+                        .background(LocalTudeeColors.current.surfaceLow)
+                        .padding(vertical = 2.dp, horizontal = 10.5.dp)
+                        .align(Alignment.TopEnd),
+                ) {
+                    Text(
+                        text = count.toString(),
+                        style = Theme.textStyle.label.small,
+                        color = LocalTudeeColors.current.hint,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
@@ -105,20 +102,20 @@ fun CategoryItem(
 
 @Preview(showBackground = true)
 @Composable
-fun CategoryItemPreview() {
-    Column {
-        CategoryItem(
-            icon = painterResource(R.drawable.book_open_icon),
-            categoryName = "Education",
-            isSelected = true
-        )
-        Spacer(Modifier.height(10.dp))
-        CategoryItem(
-            icon = painterResource(R.drawable.book_open_icon),
-            categoryName = "Education",
-            count = 16
-        )
+fun CategoryItemWithCountPreview() {
+    CategoryItem(
+        icon = painterResource(R.drawable.book_open),
+        categoryName = "Education",
+        count = 16
+    )
+}
 
-    }
-
+@Preview(showBackground = true)
+@Composable
+fun CategoryItemWithSelectedPreview() {
+    CategoryItem(
+        icon = painterResource(R.drawable.book_open),
+        categoryName = "Education",
+        isSelected = true
+    )
 }

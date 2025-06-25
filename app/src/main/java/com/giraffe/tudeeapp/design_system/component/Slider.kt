@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun Slider(
@@ -91,18 +92,20 @@ data class Slider(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SliderPreview() {
-    Column(
-        modifier = Modifier
-            .background(Color(0xFFF5F5F5))
-            .padding(16.dp)
-    ) {
-        Spacer(modifier = Modifier.height(60.dp))
-        Slider(
-            image = painterResource(R.drawable.tudee_slider_image),
-            title = stringResource(R.string.nothing_on_your_list),
-            subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
-            status = painterResource(R.drawable.tudde_emoji_empty_tasks),
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+    TudeeTheme {
+        Column(
+            modifier = Modifier
+                .background(Color(0xFFF5F5F5))
+                .padding(16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(60.dp))
+            Slider(
+                image = painterResource(R.drawable.tudee_slider_image),
+                title = stringResource(R.string.nothing_on_your_list),
+                subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
+                status = painterResource(R.drawable.in_love),
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+        }
     }
 }

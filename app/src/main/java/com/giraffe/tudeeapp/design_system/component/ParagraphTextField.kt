@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -16,37 +17,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun ParagraphTextField(
     modifier: Modifier = Modifier,
-    textValue: String = "",
-    onValueChange: (String) -> Unit = {},
-    hint: String = "Full name",
+    textValue: String? = null,
+    hint: String? = null,
+    onValueChange: (String) -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val borderColor by animateColorAsState(
+        targetValue = if (isFocused) Theme.color.primary else Theme.color.stroke
+    )
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(168.dp)
             .border(
                 width = 1.dp,
-                color = if (isFocused) Theme.color.primary else Theme.color.stroke,
+                color = borderColor,
                 shape = RoundedCornerShape(16.dp)
             ),
     ) {
         TextField(
             interactionSource = interactionSource,
             modifier = Modifier.fillMaxSize(),
-            value = textValue,
+            value = textValue ?: "",
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = hint,
+                    text = hint ?: stringResource(R.string.hint),
                     style = Theme.textStyle.label.medium,
                     color = Theme.color.hint
                 )
@@ -69,8 +76,10 @@ fun ParagraphTextField(
 
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun Preview() {
-    ParagraphTextField()
+private fun ParagraphTextFieldPreview() {
+    TudeeTheme {
+        ParagraphTextField()
+    }
 }

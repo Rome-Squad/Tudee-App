@@ -45,6 +45,7 @@ import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.taskdetails.components.TaskStatusBox
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.toStringResource
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -99,6 +100,17 @@ fun TaskDetailsContent(
     onEditTask: (Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val priorityType = task?.taskPriority ?: TaskPriority.LOW
+    val icon = when (priorityType) {
+        TaskPriority.HIGH -> R.drawable.flag
+        TaskPriority.MEDIUM -> R.drawable.alert
+        TaskPriority.LOW -> R.drawable.trade_down_icon
+    }
+    val selectedBackgroundColor = when (priorityType) {
+        TaskPriority.HIGH -> Theme.color.pinkAccent
+        TaskPriority.MEDIUM -> Theme.color.yellowAccent
+        TaskPriority.LOW -> Theme.color.greenAccent
+    }
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -152,7 +164,9 @@ fun TaskDetailsContent(
                 status = task?.status ?: TaskStatus.TODO
             )
             Priority(
-                priorityType = task?.taskPriority ?: TaskPriority.LOW,
+                icon = painterResource(icon),
+                selectedBackgroundColor = selectedBackgroundColor,
+                label = priorityType.toStringResource(),
                 isSelected = true
             )
         }
@@ -175,7 +189,7 @@ fun TaskDetailsContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_pencil_edit),
+                        painter = painterResource(R.drawable.pencil_edit),
                         contentDescription = stringResource(R.string.edit_task),
                         tint = Theme.color.primary
                     )

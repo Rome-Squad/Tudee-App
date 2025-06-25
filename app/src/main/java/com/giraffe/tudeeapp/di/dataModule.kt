@@ -38,24 +38,24 @@ val defaultCategoryNames = listOf(
 
 fun getCategoryIcon(categoryName: String): Int {
     return when (categoryName) {
-        "Education" -> R.drawable.book_open_icon
-        "Adoration" -> R.drawable.quran_icon
-        "Family & friend" -> R.drawable.user_multiple_icon
+        "Education" -> R.drawable.book_open
+        "Adoration" -> R.drawable.quran
+        "Family & friend" -> R.drawable.user_multiple
         "Cooking" -> R.drawable.chef
-        "Traveling" -> R.drawable.airplane_01
+        "Traveling" -> R.drawable.airplane
         "Coding" -> R.drawable.developer
-        "Fixing bugs" -> R.drawable.bug_01
+        "Fixing bugs" -> R.drawable.bug
         "Medical" -> R.drawable.hospital_location
-        "Shopping" -> R.drawable.shopping_cart_02
-        "Agriculture" -> R.drawable.plant_02
+        "Shopping" -> R.drawable.shopping_cart
+        "Agriculture" -> R.drawable.plant
         "Entertainment" -> R.drawable.baseball
         "Gym" -> R.drawable.body_part_muscle
-        "Cleaning" -> R.drawable.blush_brush_02
-        "Work" -> R.drawable.briefcase_05
-        "Event" -> R.drawable.birthday_cake_icon
-        "Budgeting" -> R.drawable.money_bag_01
+        "Cleaning" -> R.drawable.blush_brush
+        "Work" -> R.drawable.briefcase
+        "Event" -> R.drawable.birthday_cake
+        "Budgeting" -> R.drawable.money_bag
         "Self-care" -> R.drawable.in_love
-        else -> R.drawable.book_open_icon
+        else -> R.drawable.book_open
     }
 }
 
