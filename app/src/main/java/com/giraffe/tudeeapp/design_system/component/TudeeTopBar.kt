@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,42 +50,37 @@ fun TudeeTopBar(
         )
 
         Column(modifier = Modifier.padding(start = 12.dp)) {
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(horizontal = 12.dp)
-        ) {
-            Text(
-                text = title,
-                color = Theme.color.title,
-                style = Theme.textStyle.title.large,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            Column(
                 modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-            )
-
-            if (label != null) {
+                    .weight(1f)
+                    .padding(horizontal = 12.dp)
+            ) {
                 Text(
-                    text = label,
-                    color = Theme.color.hint,
-                    style = Theme.textStyle.label.small,
+                    text = title,
+                    color = Theme.color.title,
+                    style = Theme.textStyle.title.large,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                )
+
+                if (label != null) {
+                    Text(
+                        text = label,
+                        color = Theme.color.hint,
+                        style = Theme.textStyle.label.small,
+                    )
+                }
+            }
+
+            Spacer(Modifier.weight(1f))
+            AnimatedVisibility(withOption) {
+                CircleButton(
+                    iconRes = R.drawable.pencil_edit_transparent,
+                    onClick = onClickEdit
                 )
             }
-        }
-
-        Spacer(Modifier.weight(1f))
-        AnimatedVisibility(withOption) {
-            CircleButton(
-                iconRes = R.drawable.pencil_edit_transparent,
-                onClick = onClickEdit
-        if (withOption)
-            circleButton(
-                iconRes = iconEditRes,
-                onClick = onClickEdit,
-                background = background,
-                iconColor = iconColor,
-                borderColor = borderColor,
-            )
         }
     }
 }

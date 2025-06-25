@@ -53,7 +53,7 @@ import com.giraffe.tudeeapp.presentation.utils.toStringResource
 @Composable
 fun TaskEditorBottomSheetContent(
     taskEditorState: TaskEditorState,
-    actions : TaskEditorInteractionListener,
+    actions: TaskEditorInteractionListener,
     isNewTask: Boolean
 ) {
 
@@ -211,12 +211,9 @@ fun TaskEditorBottomSheetContent(
         ) {
             PrimaryButton(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
-                isLoading = taskEditorUiState.isLoading,
-                isDisable = !taskEditorUiState.isValidTask,
-                onClick = { if (isNewTask) actions.addTask(task) else actions.editTask(task) },
                 isLoading = taskEditorState.isLoading,
                 isDisable = !taskEditorState.isValidTask,
-                onClick = {if (isNewTask) actions.addTask(task) else actions.editTask(task)},
+                onClick = { if (isNewTask) actions.addTask(task) else actions.editTask(task) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -234,5 +231,4 @@ fun TaskEditorBottomSheetContent(
             )
         }
     }
-
 }
