@@ -51,7 +51,6 @@ fun TudeeTopBar(
 
         Column(
             modifier = Modifier
-                .weight(1f)
                 .padding(horizontal = 12.dp)
         ) {
             Text(
@@ -59,9 +58,7 @@ fun TudeeTopBar(
                 color = Theme.color.title,
                 style = Theme.textStyle.title.large,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
+               overflow = TextOverflow.Ellipsis,
             )
 
             if (label != null) {

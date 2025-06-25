@@ -117,12 +117,13 @@ fun CategoryBottomSheet(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     textValue = categoryTitle,
                     onValueChange = {
-                        if (it.length <= 50) {
+                        if (it.length <= 20) {
                             categoryTitle = it
                         }
                     },
                     hint = stringResource(R.string.category_title),
                     icon = painterResource(R.drawable.categories_unselected),
+
                 )
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
