@@ -23,13 +23,10 @@ class AppViewModel(
 
     override fun isDarkTheme() {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(isDarkTheme = appService.isDarkTheme()) }
-        }
-    }
-
-    override fun onToggleTheme() {
-        viewModelScope.launch(Dispatchers.IO) {
-            appService.setDarkThemeStatus(_state.value.isDarkTheme != true)
+            appService.isDarkTheme()
+                .collect { isDarkTheme ->
+                    _state.update { it.copy(isDarkTheme = isDarkTheme) }
+                }
         }
     }
 

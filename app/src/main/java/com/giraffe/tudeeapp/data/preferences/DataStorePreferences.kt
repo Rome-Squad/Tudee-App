@@ -35,9 +35,9 @@ class DataStorePreferences(private val context: Context) {
         }
     }
 
-    suspend fun isDarkTheme() = context.dataStore.data.map { preferences ->
+    fun isDarkTheme() = context.dataStore.data.map { preferences ->
         preferences[booleanPreferencesKey(IS_DARK_THEME)] != false
-    }.first()
+    }
 
     companion object {
         const val IS_FIRST_TIME = "IS_FIRST_TIME"

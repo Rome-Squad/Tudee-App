@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.design_system.component
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,7 +50,7 @@ import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.presentation.utils.copyImageToInternalStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,9 +110,13 @@ fun CategoryBottomSheet(
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
                     textValue = categoryTitle,
-                    onValueChange = { categoryTitle = it },
+                    onValueChange = {
+                        if (it.length <= 50) {
+                            categoryTitle = it
+                        }
+                    },
                     hint = stringResource(R.string.category_title),
-                    iconRes = R.drawable.categories_unselected,
+                    icon = painterResource(R.drawable.categories_unselected),
                 )
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -153,7 +156,7 @@ fun CategoryBottomSheet(
                         ) {
                             Icon(
                                 modifier = Modifier.size(22.dp),
-                                painter = painterResource(R.drawable.ic_add_image),
+                                painter = painterResource(R.drawable.add_image),
                                 contentDescription = "add image",
                                 tint = Theme.color.hint
                             )
@@ -184,7 +187,7 @@ fun CategoryBottomSheet(
                         ) {
                             Icon(
                                 modifier = Modifier.padding(6.dp),
-                                painter = painterResource(R.drawable.ic_pen),
+                                painter = painterResource(R.drawable.pen),
                                 contentDescription = "edit image",
                                 tint = Theme.color.secondary
                             )

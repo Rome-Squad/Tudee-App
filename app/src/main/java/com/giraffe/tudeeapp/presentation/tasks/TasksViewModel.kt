@@ -1,139 +1,125 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 import kotlinx.datetime.LocalDate
 
 class TasksViewModel(
     private val tasksService: TasksService,
     savedStateHandle: SavedStateHandle
-) : ViewModel(), TasksScreenActions {
-
-    private val _state = MutableStateFlow(
-        TasksScreenState(
-            selectedTab = TaskStatus.entries[TasksArgs(savedStateHandle).tabIndex]
-        )
+) : BaseViewModel<TasksScreenState, TasksScreenEffect>(
+    TasksScreenState(
+        selectedTab = TaskStatus.entries[TasksArgs(savedStateHandle).tabIndex]
     )
-    val state = _state.asStateFlow()
-
-    private val _events = Channel<TasksScreenEvent>()
-    val events = _events.receiveAsFlow()
+), TasksScreenInteractionListener {
 
     init {
         val tabIndex = TasksArgs(savedStateHandle).tabIndex
         setSelectedTab(TaskStatus.entries[tabIndex])
-        getTasks(_state.value.selectedDate)
+        getTasks(state.value.selectedDate)
     }
 
     private fun getTasks(date: LocalDate) {
-        viewModelScope.launch(Dispatchers.IO) {
+        safeCollect(
+            onError = ::onGetTasksError,
+            onEmitNewValue = { onGetTasksNewValue(it, date) }
+        ) {
             tasksService.getTasksByDate(date)
-                .onError {
-                    _events.send(TasksScreenEvent.Error(it))
-                }
-                .onSuccess { tasksFlow ->
-                    tasksFlow.collect { taskUiList ->
-                        val taskMap = TaskStatus.entries.associateWith { status ->
-                            taskUiList.filter { it.status == status }
-                        }
+        }
+    }
 
-                        _state.update { currentState ->
-                            currentState.copy(
-                                tasks = taskMap,
-                                selectedDate = date,
-                            )
-                        }
-                    }
-                }
+    private fun onGetTasksError(error: Throwable) {
+        sendEffect(TasksScreenEffect.Error(error))
+    }
+
+    private fun onGetTasksNewValue(tasks: List<Task>, date: LocalDate) {
+        val taskMap = TaskStatus.entries.associateWith { status ->
+            tasks.filter { it.status == status }
+        }
+
+        updateState { currentState ->
+            currentState.copy(
+                tasks = taskMap,
+                selectedDate = date,
+            )
         }
     }
 
     override fun setSelectedDate(date: LocalDate) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(selectedDate = date) }
-            getTasks(date)
-        }
+        updateState { it.copy(selectedDate = date) }
+        getTasks(date)
     }
 
     override fun setSelectedTab(tab: TaskStatus) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(selectedTab = tab) }
-        }
+        updateState { it.copy(selectedTab = tab) }
     }
 
     override fun setSelectedTaskId(taskId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.update { it.copy(selectedTaskId = taskId) }
-        }
+        updateState { it.copy(selectedTaskId = taskId) }
     }
 
     override fun onTaskClick(taskId: Long) {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskDetailsBottomSheetVisible = true, currentTaskId = taskId)
         }
     }
 
     override fun onDeleteTaskClick() {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isDeleteTaskBottomSheetVisible = true)
         }
     }
 
     override fun onAddTaskClick() {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = null)
         }
     }
 
     override fun onEditTaskClick(taskId: Long?) {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = taskId)
         }
     }
 
     override fun onDismissTaskDetailsBottomSheetRequest() {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskDetailsBottomSheetVisible = false, currentTaskId = null)
         }
     }
 
     override fun onDismissTaskEditorBottomSheetRequest() {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskEditorBottomSheetVisible = false, currentTaskId = null)
         }
     }
 
     override fun onDismissDeleteTaskBottomSheetRequest() {
-        _state.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isDeleteTaskBottomSheetVisible = false, currentTaskId = null)
         }
     }
 
     override fun onConfirmDeleteTask(taskId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        safeExecute(
+            onError = ::onConfirmDeleteTaskError,
+            onSuccess = { onConfirmDeleteTaskSuccess() }
+        ) {
             tasksService.deleteTask(taskId)
-                .onSuccess {
-                    onDismissDeleteTaskBottomSheetRequest()
-                    _events.send(TasksScreenEvent.TaskDeletedSuccess)
-                }
-                .onError { error ->
-                    onDismissDeleteTaskBottomSheetRequest()
-                    _events.send(TasksScreenEvent.Error(error))
-                }
         }
     }
 
+    private fun onConfirmDeleteTaskError(error: Throwable) {
+        onDismissDeleteTaskBottomSheetRequest()
+        sendEffect(TasksScreenEffect.Error(error))
+    }
+
+    private fun onConfirmDeleteTaskSuccess() {
+        onDismissDeleteTaskBottomSheetRequest()
+        sendEffect(TasksScreenEffect.TaskDeletedSuccess)
+    }
 }
 

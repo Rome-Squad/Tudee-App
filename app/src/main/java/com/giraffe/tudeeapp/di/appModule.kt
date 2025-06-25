@@ -23,9 +23,9 @@ val appModule = module {
     single<CategoriesService> { CategoryServiceImp(get()) }
 
     viewModel { (handle: SavedStateHandle) -> TasksViewModel(get(), handle) }
-    viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
+    viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get()) }
     viewModel { TaskEditorViewModel(get(), get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { AppViewModel(get()) }
     viewModel { CategoryViewModel(get()) }
     viewModel { (handle: SavedStateHandle) -> TasksByCategoryViewModel(get(), get(), handle) }
