@@ -89,4 +89,6 @@
     <string name="unable_to_delete_the_category">Unable to delete the category</string>
     <string name="failed_to_update_the_category">Failed to update the category</string>
     <string name="overview">Overview</string>
+    <string name="loading">_loading\n</string>
+    <string name="IconName">icon_name</string>
 </resources>

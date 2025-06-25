@@ -69,7 +69,7 @@ fun SecondaryButton(
             if (isLoading && icon != null) {
                 Icon(
                     painterResource(R.drawable.loading),
-                    "contentDescription",
+                    R.string.loading.toString(),
                     Modifier.size(24.dp)
                 )
             }

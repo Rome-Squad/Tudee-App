@@ -64,7 +64,7 @@ fun TextButton(
         ) {
             Text(text, style = Theme.textStyle.label.large)
             if (isLoading) {
-                Icon(painterResource(R.drawable.loading), "contentDescription", Modifier.size(24.dp))
+                Icon(painterResource(R.drawable.loading), R.string.loading.toString(), Modifier.size(24.dp))
             }
         }
     }

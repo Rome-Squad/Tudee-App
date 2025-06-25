@@ -77,7 +77,7 @@ fun NegativeButton(
             if (isLoading)
                 Icon(
                     painter = painterResource(R.drawable.loading),
-                    contentDescription = "contentDescription",
+                    contentDescription = R.string.loading.toString(),
                     modifier = Modifier.size(24.dp)
                 )
 

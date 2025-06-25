@@ -98,7 +98,7 @@ fun PrimaryButton(
                 if (isLoading)
                     Icon(
                         painter = painterResource(R.drawable.loading),
-                        contentDescription = null,
+                        contentDescription = R.string.loading.toString(),
                         modifier = Modifier.size(24.dp)
                     )
             }

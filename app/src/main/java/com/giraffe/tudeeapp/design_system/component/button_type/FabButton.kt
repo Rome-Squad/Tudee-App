@@ -65,15 +65,15 @@ fun FabButton(
         val isRtl = layoutDirection == LayoutDirection.Rtl
         if (isLoading)
             Icon(
-                painterResource(R.drawable.loading),
-                "contentDescription",
+               painter =  painterResource(R.drawable.loading),
+                contentDescription = R.string.loading.toString(),
                 modifier = Modifier.size(24.dp)
                 .graphicsLayer {
                     scaleX = if (isRtl) -1f else 1f
                 }
             )
         else
-            Icon(icon, "contentDescription", modifier = Modifier)
+            Icon(icon, R.string.IconName.toString(), modifier = Modifier)
 
     }
 }
