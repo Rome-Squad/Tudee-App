@@ -73,6 +73,11 @@ fun TaskScreen(
             TasksScreenEffect.TaskDeletedSuccess -> {
                 snackBarHostState.showSuccessSnackbar(context.getString(R.string.deleted_task_successfully))
             }
+
+            is TasksScreenEffect.OpenTaskEditor -> {
+                viewModel.setTaskEditorDate(it.selectedDate)
+                viewModel.showTaskEditor()
+            }
         }
     }
 
@@ -215,6 +220,7 @@ fun TaskScreenContent(
                 taskId = state.currentTaskId,
                 onDismissRequest = actions::onDismissTaskEditorBottomSheetRequest,
                 modifier = Modifier.align(Alignment.BottomCenter),
+                selectedDate = state.taskEditorDate,
                 onSuccess = { message ->
                     showSnackBar(message, false)
                 },

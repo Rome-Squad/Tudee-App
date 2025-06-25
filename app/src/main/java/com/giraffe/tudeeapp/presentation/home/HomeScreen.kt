@@ -45,9 +45,15 @@ import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
+import com.giraffe.tudeeapp.presentation.utils.getTodayDate
 import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
 import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,6 +66,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
+
 
     EventListener(
         events = viewModel.effect
@@ -100,6 +107,7 @@ fun HomeContent(
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeScreenInteractionListener,
 ) {
+
     val screenSize = LocalWindowInfo.current.containerSize
     Box(
         Modifier
@@ -221,7 +229,21 @@ fun HomeContent(
                         }
                     )
                 }
-
+            if (state.isTaskEditorVisible) {
+                TaskEditorBottomSheet(
+                    taskId = state.currentTaskId,
+                    onDismissRequest = actions::onDismissTaskEditorRequest,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
+                    onSuccess = { message ->
+                        showSnackBar(message, false)
+                    },
+                    onError = { error ->
+                        showSnackBar(error, true,)
+                    },
+                    selectedDate = getCurrentLocalDate()
+                )
             }
         }
         DefaultSnackBar(

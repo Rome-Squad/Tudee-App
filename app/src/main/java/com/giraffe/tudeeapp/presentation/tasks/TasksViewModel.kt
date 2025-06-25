@@ -1,10 +1,12 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.base.BaseViewModel
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
 class TasksViewModel(
@@ -74,14 +76,35 @@ class TasksViewModel(
     }
 
     override fun onAddTaskClick() {
-        updateState { currentState ->
-            currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = null)
+        val selectedDate = state.value.selectedDate
+
+        updateState {
+            it.copy(
+                isTaskEditorBottomSheetVisible = true,
+                currentTaskId = null,
+                taskEditorDate = selectedDate
+            )
+        }
+
+        viewModelScope.launch {
+            sendEffect(TasksScreenEffect.OpenTaskEditor(selectedDate))
         }
     }
 
     override fun onEditTaskClick(taskId: Long?) {
         updateState { currentState ->
             currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = taskId)
+        }
+    }
+    fun setTaskEditorDate(date: LocalDate) {
+        updateState {
+            it.copy(selectedDate = date)
+        }
+    }
+
+    fun showTaskEditor() {
+        updateState {
+            it.copy(isTaskEditorBottomSheetVisible = true)
         }
     }
 
@@ -121,5 +144,6 @@ class TasksViewModel(
         onDismissDeleteTaskBottomSheetRequest()
         sendEffect(TasksScreenEffect.TaskDeletedSuccess)
     }
+
 }
 

@@ -258,4 +258,15 @@ class TaskEditorViewModel(
             )
         }
     }
+
+
+    fun setDueDate(date: LocalDate) {
+
+        updateState{
+            it.copy(
+                task = it.task.copy(dueDate = date)
+            )
+        }
+
+    }
 }
