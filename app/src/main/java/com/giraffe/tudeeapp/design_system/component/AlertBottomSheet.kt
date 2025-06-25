@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,13 +30,13 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertBottomSheet(
-    modifier: Modifier = Modifier,
     title: String,
     subTitle: String,
-    imgRes: Int,
-    redBtnTitle: String,
-    blueBtnTitle: String,
-    isVisible: Boolean,
+    image: Painter,
+    positiveButtonTitle: String,
+    negativeButtonTitle: String,
+    modifier: Modifier = Modifier,
+    isVisible: Boolean = false,
     onVisibilityChange: (Boolean) -> Unit = {},
     onRedBtnClick: () -> Unit = {},
     onBlueBtnClick: () -> Unit = {},
@@ -54,9 +55,9 @@ fun AlertBottomSheet(
             Content(
                 title = title,
                 subTitle = subTitle,
-                imgRes = imgRes,
-                redBtnTitle = redBtnTitle,
-                blueBtnTitle = blueBtnTitle,
+                image = image,
+                positiveButtonTitle = positiveButtonTitle,
+                negativeButtonTitle = negativeButtonTitle,
                 onVisibilityChange = onVisibilityChange,
                 onRedBtnClick = onRedBtnClick,
                 onBlueBtnClick = onBlueBtnClick,
@@ -70,9 +71,9 @@ private fun Content(
     modifier: Modifier = Modifier,
     title: String,
     subTitle: String,
-    imgRes: Int,
-    redBtnTitle: String,
-    blueBtnTitle: String,
+    image: Painter,
+    positiveButtonTitle: String,
+    negativeButtonTitle: String,
     onVisibilityChange: (Boolean) -> Unit = {},
     onRedBtnClick: () -> Unit = {},
     onBlueBtnClick: () -> Unit = {},
@@ -95,7 +96,7 @@ private fun Content(
                 .fillMaxWidth()
                 .height(100.dp)
                 .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-            painter = painterResource(imgRes),
+            painter = image,
             contentDescription = stringResource(R.string.sure_robot),
         )
         Column(
@@ -116,7 +117,7 @@ private fun Content(
                     onRedBtnClick()
                     onVisibilityChange(false)
                 }) {
-                Text(text = redBtnTitle, style = Theme.textStyle.label.large)
+                Text(text = positiveButtonTitle, style = Theme.textStyle.label.large)
             }
             Button(
                 modifier = Modifier.fillMaxWidth(),
@@ -131,7 +132,7 @@ private fun Content(
                     onBlueBtnClick()
                     onVisibilityChange(false)
                 }) {
-                Text(text = blueBtnTitle, style = Theme.textStyle.label.large)
+                Text(text = negativeButtonTitle, style = Theme.textStyle.label.large)
             }
         }
     }
@@ -144,9 +145,9 @@ private fun Preview() {
         Content(
             title = stringResource(R.string.delete_task),
             subTitle = stringResource(R.string.are_you_sure_to_continue),
-            imgRes = R.drawable.sure_robot,
-            redBtnTitle = stringResource(R.string.delete),
-            blueBtnTitle = stringResource(R.string.cancel),
+            image = painterResource(R.drawable.sure_robot),
+            positiveButtonTitle = stringResource(R.string.delete),
+            negativeButtonTitle = stringResource(R.string.cancel),
         )
     }
 }

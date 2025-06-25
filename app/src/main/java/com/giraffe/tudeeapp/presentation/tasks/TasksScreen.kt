@@ -184,9 +184,9 @@ fun TaskScreenContent(
         AlertBottomSheet(
             title = stringResource(R.string.delete_task),
             subTitle = stringResource(R.string.are_you_sure_to_continue),
-            imgRes = R.drawable.sure_robot,
-            redBtnTitle = stringResource(R.string.delete),
-            blueBtnTitle = stringResource(R.string.cancel),
+            image = painterResource(R.drawable.sure_robot),
+            positiveButtonTitle = stringResource(R.string.delete),
+            negativeButtonTitle = stringResource(R.string.cancel),
             isVisible = state.isDeleteTaskBottomSheetVisible,
             onRedBtnClick = {
                 actions.onConfirmDeleteTask(state.selectedTaskId)
