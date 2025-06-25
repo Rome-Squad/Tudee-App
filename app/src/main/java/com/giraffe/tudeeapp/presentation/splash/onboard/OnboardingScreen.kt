@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.splash.SplashViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

@@ -7,10 +7,10 @@ import androidx.compose.ui.res.stringResource
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.Slider
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.home.HomeUiState
+import com.giraffe.tudeeapp.presentation.home.HomeScreenState
 
 @Composable
-fun SliderStatus(state: HomeUiState, modifier: Modifier = Modifier) {
+fun SliderStatus(state: HomeScreenState, modifier: Modifier = Modifier) {
     val slider = when {
         state.tasks.values.flatten().isEmpty() -> Slider(
             image = painterResource(R.drawable.tudee_slider_image),

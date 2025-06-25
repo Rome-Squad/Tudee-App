@@ -62,19 +62,19 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val state by viewModel.homeUiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     EventListener(
-        events = viewModel.events
+        events = viewModel.effect
     ) { event ->
         when (event) {
-            is HomeEvent.Error -> {
+            is HomeScreenEffect.Error -> {
                 snackBarHostState.showErrorSnackbar(context.errorToMessage(event.error))
             }
 
-            is HomeEvent.NavigateToTasksScreen -> {
+            is HomeScreenEffect.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
             }
         }
@@ -100,10 +100,10 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
-    state: HomeUiState,
+    state: HomeScreenState,
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
-    actions: HomeActions,
+    actions: HomeScreenInteractionListener,
 ) {
     val screenSize = LocalWindowInfo.current.containerSize
     Box(

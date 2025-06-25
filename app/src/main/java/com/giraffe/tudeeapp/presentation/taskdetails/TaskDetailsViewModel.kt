@@ -1,80 +1,80 @@
 package com.giraffe.tudeeapp.presentation.taskdetails
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
-import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
+import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 
 class TaskDetailsViewModel(
     private val taskId: Long,
-    val taskService: TasksService,
-    val categoryService: CategoriesService
-) : ViewModel(), TaskDetailsAction {
-    var taskDetailsState by mutableStateOf<TaskDetailsState>(TaskDetailsState())
-        private set
+    val taskService: TasksService
+) : BaseViewModel<TaskDetailsState, TaskDetailsEffect>(TaskDetailsState()), TaskDetailsInteractionListener {
 
-    private val _events = Channel<TaskDetailsEvent>()
-    val events = _events.receiveAsFlow()
     init {
         getTaskById(taskId)
     }
 
-    fun getTaskById(taskId: Long) = viewModelScope.launch {
-        taskDetailsState = taskDetailsState.copy(
-            isLoading = true
-        )
-        taskService.getTaskById(taskId)
-            .onSuccess { task ->
-                categoryService.getCategoryById(task.category.id)
-                    .onSuccess { category ->
-                        taskDetailsState = taskDetailsState.copy(
-                            task = task,
-                            isLoading = false
-                        )
-                    }
-                    .onError {
-                        _events.send(TaskDetailsEvent.Error(it))
-                    }
-            }
-            .onError {
-                _events.send(TaskDetailsEvent.Error(it))
-                taskDetailsState = taskDetailsState.copy(
-                    isLoading = false
-                )
-            }
+    fun getTaskById(taskId: Long) {
+        updateState { currentState ->
+            currentState.copy(isLoading = true)
+        }
+        safeExecute(
+            onError = ::onGetTaskError,
+            onSuccess = ::onGetTaskSuccess
+        ) {
+            taskService.getTaskById(taskId)
+        }
+    }
+
+    private fun onGetTaskSuccess(task: Task) {
+        updateState { currentState ->
+            currentState.copy(
+                task = task,
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onGetTaskError(error: Throwable) {
+        updateState { currentState ->
+            currentState.copy(
+                isLoading = false
+            )
+        }
+        sendEffect(TaskDetailsEffect.Error(error))
     }
 
     override fun changeTaskStatus(newStatus: TaskStatus) {
-        viewModelScope.launch {
-            taskDetailsState = taskDetailsState.copy(
-                isLoading = true
-            )
-            if (taskDetailsState.task != null) {
-                taskService.changeStatus(taskDetailsState.task!!.id, newStatus)
-                    .onSuccess {
-                        taskDetailsState = taskDetailsState.copy(
-                            task = taskDetailsState.task!!.copy(
-                                status = newStatus
-                            ),
-                            isLoading = false
-                        )
-                    }
-                    .onError {
-                        _events.send(TaskDetailsEvent.Error(it))
-                        taskDetailsState = taskDetailsState.copy(
-                            isLoading = false
-                        )
-                    }
+        updateState { currentState ->
+            currentState.copy(isLoading = true)
+        }
+        if (state.value.task != null) {
+            safeExecute(
+                onError = ::onchangeStatusError,
+                onSuccess = { onchangeStatusSuccess(newStatus) }
+            ) {
+                taskService.changeStatus(state.value.task!!.id, newStatus)
             }
         }
+    }
+
+    private fun onchangeStatusSuccess(newStatus: TaskStatus) {
+        updateState { currentState ->
+            currentState.copy(
+                task = state.value.task!!.copy(
+                    status = newStatus
+                ),
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onchangeStatusError(error: Throwable) {
+        updateState { currentState ->
+            currentState.copy(
+                isLoading = false
+            )
+        }
+        sendEffect(TaskDetailsEffect.Error(error))
     }
 }

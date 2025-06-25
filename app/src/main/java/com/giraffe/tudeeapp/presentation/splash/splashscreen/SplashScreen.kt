@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.splash.SplashViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 

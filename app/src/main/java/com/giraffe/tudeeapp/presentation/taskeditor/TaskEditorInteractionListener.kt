@@ -5,7 +5,7 @@ import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import kotlinx.datetime.LocalDate
 
-interface TaskEditorActions {
+interface TaskEditorInteractionListener {
     fun cancel()
 
     fun onChangeTaskTitleValue(title: String)

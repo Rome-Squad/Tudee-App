@@ -1,118 +1,109 @@
 package com.giraffe.tudeeapp.presentation.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.service.TudeeAppService
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
+import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val tasksService: TasksService,
     private val appService: TudeeAppService
-) : ViewModel(), HomeActions {
-
-    private var _homeUiState = MutableStateFlow(HomeUiState())
-    val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
-
-    private var _events = Channel<HomeEvent>()
-    val events = _events.receiveAsFlow()
+) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeScreenInteractionListener {
 
     init {
         observeTheme()
-        getAllTasks()
+        getTodayTasks()
     }
 
-    private fun getAllTasks() = viewModelScope.launch {
-        _homeUiState.update { it.copy(isLoading = true) }
-
-        tasksService.getTasksByDate(getCurrentLocalDate())
-            .onError {
-                _events.send(HomeEvent.Error(it))
-            }
-            .onSuccess { tasksFlow ->
-                tasksFlow.collect { taskUiList ->
-                    val taskMap = TaskStatus.entries.associateWith { status ->
-                        taskUiList.filter { it.status == status }
-                    }
-                    _homeUiState.update { currentState ->
-                        currentState.copy(
-                            tasks = taskMap,
-                            isLoading = false
-                        )
-                    }
-                }
-            }
-
+    private fun getTodayTasks() {
+        updateState { it.copy(isLoading = true)}
+        safeCollect(
+            onError = ::onGetTodayTasksError,
+            onEmitNewValue = ::onGetTodayTasksNewValue
+        ) {
+            tasksService.getTasksByDate(getCurrentLocalDate())
+        }
+    }
+    
+    private fun onGetTodayTasksNewValue(tasks: List<Task>) {
+        val taskMap = TaskStatus.entries.associateWith { status ->
+            tasks.filter { it.status == status }
+        }
+        
+        updateState { 
+            it.copy(
+                tasks = taskMap,
+                isLoading = false
+            )
+        }
+    }
+    
+    private fun onGetTodayTasksError(error: Throwable) {
+        updateState { it.copy(isLoading = false) }
+        sendEffect(HomeScreenEffect.Error(error))
     }
 
     override fun onTasksLinkClick(tabIndex: Int) {
-        viewModelScope.launch {
-            clearUiState()
-            _events.send(HomeEvent.NavigateToTasksScreen(tabIndex))
-        }
+        clearUiState()
+        sendEffect(HomeScreenEffect.NavigateToTasksScreen(tabIndex))
     }
-
-
+    
     override fun onAddTaskClick() {
-        _homeUiState.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskEditorVisible = true, currentTaskId = null)
         }
     }
 
     override fun onTaskClick(taskId: Long) {
-        _homeUiState.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskDetailsVisible = true, currentTaskId = taskId)
         }
     }
 
     override fun onEditTaskClick(taskId: Long?) {
-        _homeUiState.update { currentState ->
+        updateState { currentState ->
             currentState.copy(isTaskEditorVisible = true, currentTaskId = taskId)
         }
     }
 
     override fun onDismissTaskDetailsRequest() {
-        _homeUiState.update { currentState ->
+         updateState { currentState ->
             currentState.copy(isTaskDetailsVisible = false, currentTaskId = null)
         }
         clearUiState()
     }
 
     override fun onDismissTaskEditorRequest() {
-        _homeUiState.update { currentState ->
+         updateState { currentState ->
             currentState.copy(isTaskEditorVisible = false, currentTaskId = null)
         }
         clearUiState()
     }
 
     override fun onToggleTheme() {
-        viewModelScope.launch {
-            appService.setCurrentTheme(!homeUiState.value.isDarkTheme)
+        safeExecute {
+            appService.setCurrentTheme(!state.value.isDarkTheme)
         }
     }
 
     private fun observeTheme() {
-        viewModelScope.launch {
-            appService.getCurrentTheme().collect { theme ->
-                _homeUiState.update { current ->
-                    current.copy(isDarkTheme = theme == true)
-                }
-            }
+        safeCollect(
+            onEmitNewValue = ::onGetCurrentThemeNewValue
+        ) {
+            appService.getCurrentTheme()
+        }
+    }
+
+    private fun onGetCurrentThemeNewValue(isDarkTheme: Boolean?) {
+        updateState { currentState ->
+            currentState.copy(isDarkTheme = isDarkTheme == true)
         }
     }
 
     private fun clearUiState() {
-        _homeUiState.update { currentState ->
+        updateState { currentState ->
             currentState.copy(
                 isTaskDetailsVisible = false,
                 isTaskEditorVisible = false,

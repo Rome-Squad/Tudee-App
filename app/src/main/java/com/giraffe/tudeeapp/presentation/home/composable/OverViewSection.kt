@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.home.HomeUiState
+import com.giraffe.tudeeapp.presentation.home.HomeScreenState
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 
 data class TaskCardData(
@@ -25,7 +25,7 @@ data class TaskCardData(
 )
 
 @Composable
-fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeUiState) {
+fun OverViewSection(modifier: Modifier = Modifier, tasksState: HomeScreenState) {
     Text(
         modifier = modifier
             .padding(start = 12.dp, end = 12.dp, top = 8.dp),

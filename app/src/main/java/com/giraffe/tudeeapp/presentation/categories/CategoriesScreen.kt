@@ -42,21 +42,21 @@ fun CategoriesScreen(
     viewModel: CategoryViewModel = koinViewModel(),
     navigateToTaskByCategoryScreen: (categoryId: Long) -> Unit = {}
 ) {
-    val state = viewModel.categoriesUiState.collectAsState().value
+    val state = viewModel.state.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    EventListener(viewModel.events) { event ->
+    EventListener(viewModel.effect) { event ->
         when (event) {
-            is CategoriesScreenEvents.NavigateToTasksByCategoryScreen -> {
+            is CategoriesScreenEffect.NavigateToTasksByCategoryScreen -> {
                 navigateToTaskByCategoryScreen(event.categoryId)
             }
 
-            is CategoriesScreenEvents.CategoryAdded -> {
+            is CategoriesScreenEffect.CategoryAdded -> {
                 snackState.showSuccessSnackbar(context.getString(R.string.added_category_successfully))
             }
 
-            is CategoriesScreenEvents.Error -> {
+            is CategoriesScreenEffect.Error -> {
                 snackState.showErrorSnackbar(
                     context.errorToMessage(event.error)
                 )
@@ -73,7 +73,7 @@ fun CategoriesScreen(
 @Composable
 fun CategoriesContent(
     state: CategoriesScreenState,
-    actions: CategoriesScreenActions,
+    actions: CategoriesScreenInteractionListener,
     snackState: SnackbarHostState
 ) {
     Box(

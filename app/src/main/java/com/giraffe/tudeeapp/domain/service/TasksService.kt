@@ -12,8 +12,8 @@ interface TasksService {
 
     suspend fun createTask(task: Task): Long
     suspend fun getTaskById(id: Long): Task
-    suspend fun updateTask(task: Task): Unit
-    suspend fun deleteTask(id: Long): Unit
+    suspend fun updateTask(task: Task)
+    suspend fun deleteTask(id: Long)
 
-    suspend fun changeStatus(id: Long, newStatus: TaskStatus): Unit
+    suspend fun changeStatus(id: Long, newStatus: TaskStatus)
 }
