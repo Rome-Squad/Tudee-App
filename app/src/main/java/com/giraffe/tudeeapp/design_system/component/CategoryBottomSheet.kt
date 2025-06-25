@@ -66,14 +66,7 @@ fun CategoryBottomSheet(
     onDeleteClick: (Category) -> Unit = {},
 ) {
     val context = LocalContext.current
-    var categoryTitle by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.name ?: "") }
-    var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            uri?.let {
-                photoUri = uri.copyImageToInternalStorage(context)
-            }
-        }
+
     if (isVisible) {
         ModalBottomSheet(
             modifier = modifier,
@@ -82,6 +75,19 @@ fun CategoryBottomSheet(
                 onVisibilityChange(false)
             },
         ) {
+            var categoryTitle by remember(categoryToEdit) {
+                mutableStateOf(
+                    categoryToEdit?.name ?: ""
+                )
+            }
+            var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
+            val launcher =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                    uri?.let {
+                        photoUri = uri.copyImageToInternalStorage(context)
+                    }
+                }
+
             Column {
                 Row(
                     modifier = Modifier
