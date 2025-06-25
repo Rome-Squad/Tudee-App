@@ -1,25 +1,17 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
-import kotlinx.datetime.Clock
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 data class TasksScreenState(
-    val selectedDate: LocalDateTime = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault()),
-
-    val taskEditorDate :LocalDateTime = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault()),
-
+    val selectedDate: LocalDate = getCurrentLocalDate(),
     val selectedTab: TaskStatus = TaskStatus.DONE,
     val selectedTaskId: Long = 0L,
     val currentTaskId: Long? = null,
 
-    val tasks: Map<TaskStatus, List<TaskUi>> = mapOf(
+    val tasks: Map<TaskStatus, List<Task>> = mapOf(
         TaskStatus.TODO to emptyList(),
         TaskStatus.IN_PROGRESS to emptyList(),
         TaskStatus.DONE to emptyList()

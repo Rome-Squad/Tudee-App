@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.splash.SplashViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -56,14 +56,14 @@ fun SplashScreen(
                 )
         ) {
             Image(
-                painter = painterResource(id = Theme.resources.bacgroundImage),
+                painter = painterResource(id = Theme.drawables.bacgroundImage),
                 contentDescription = stringResource(R.string.splash_background),
                 modifier = Modifier
                     .fillMaxWidth(), contentScale = ContentScale.FillWidth
             )
 
             Image(
-                painter = painterResource(id = Theme.resources.logoImageResId),
+                painter = painterResource(id = Theme.drawables.logoImageResId),
                 contentDescription = stringResource(R.string.splash_logo),
                 modifier = Modifier.align(Alignment.Center)
             )

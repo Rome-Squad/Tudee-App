@@ -1,12 +1,13 @@
 package com.giraffe.tudeeapp.data.mapper
 
-import com.giraffe.tudeeapp.data.model.CategoryEntity
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.data.dto.TaskDto
+import com.giraffe.tudeeapp.domain.entity.Category
+import com.giraffe.tudeeapp.domain.entity.task.Task
 
 
-fun Category.toEntity(): CategoryEntity {
-
-    return CategoryEntity(
+fun Category.toDto(): CategoryDto {
+    return CategoryDto(
         uid = this.id,
         name = this.name,
         imageUri = this.imageUri,
@@ -16,7 +17,7 @@ fun Category.toEntity(): CategoryEntity {
 
 }
 
-fun CategoryEntity.toCategory():Category{
+fun CategoryDto.toEntity():Category{
     return Category(
         id = this.uid,
         name=this.name,
@@ -24,4 +25,10 @@ fun CategoryEntity.toCategory():Category{
         isEditable = this.isEditable,
         taskCount = this.taskCount
     )
+}
+
+fun List<CategoryDto>.toEntityList(): List<Category> {
+    return this.map { categoryDto ->
+        categoryDto.toEntity()
+    }
 }

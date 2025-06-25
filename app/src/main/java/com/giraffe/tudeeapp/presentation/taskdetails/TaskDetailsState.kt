@@ -1,9 +1,8 @@
 package com.giraffe.tudeeapp.presentation.taskdetails
 
-import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
+import com.giraffe.tudeeapp.domain.entity.task.Task
 
 data class TaskDetailsState(
-    val task: TaskUi? = null,
+    val task: Task? = null,
     val isLoading: Boolean = false
 )

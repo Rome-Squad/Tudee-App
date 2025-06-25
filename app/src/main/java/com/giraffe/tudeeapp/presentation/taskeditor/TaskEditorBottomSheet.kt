@@ -38,7 +38,7 @@ fun TaskEditorBottomSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val taskEditorUiState by viewModel.taskEditorUiState.collectAsState()
+    val taskEditorUiState by viewModel.state.collectAsState()
 
     LaunchedEffect(key1 = taskId,selectedDate) {
         if (taskId == null) {
@@ -48,13 +48,13 @@ fun TaskEditorBottomSheet(
             viewModel.loadTask(taskId)
         }}
     EventListener(
-        events = viewModel.events,
+        events = viewModel.effect,
     ) { event ->
         when (event) {
-            TaskEditorEvent.TaskAddedSuccess -> onSuccess(context.getString(R.string.task_added_successfully))
-            is TaskEditorEvent.Error -> onError(context.errorToMessage(event.error))
-            TaskEditorEvent.TaskEditedSuccess -> onSuccess(context.getString(R.string.task_edited_successfully))
-            TaskEditorEvent.DismissTaskEditor -> onDismissRequest()
+            TaskEditorEffect.TaskAddedSuccess -> onSuccess(context.getString(R.string.task_added_successfully))
+            is TaskEditorEffect.Error -> onError(context.errorToMessage(event.error))
+            TaskEditorEffect.TaskEditedSuccess -> onSuccess(context.getString(R.string.task_edited_successfully))
+            TaskEditorEffect.DismissTaskEditor -> onDismissRequest()
         }
 
     }
@@ -71,7 +71,7 @@ fun TaskEditorBottomSheet(
     ) {
 
         TaskEditorBottomSheetContent(
-            taskEditorUiState = taskEditorUiState,
+            taskEditorState = taskEditorUiState,
             actions  = viewModel,
             isNewTask = taskId == null
         )

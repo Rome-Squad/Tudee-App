@@ -1,27 +1,19 @@
 package com.giraffe.tudeeapp.data.util
 
-import com.giraffe.tudeeapp.domain.util.*
+import com.giraffe.tudeeapp.domain.exceptions.*
 import kotlinx.coroutines.flow.Flow
 
 suspend fun <T> safeCall(
     block: suspend () -> T
-): Result<T, DomainError> {
+): T {
     return try {
-        Result.Success(block())
+        block()
     } catch (e: Throwable) {
-        Result.Error(mapExceptionToDomainError(e))
+        throw mapExceptionToTudeeError(e)
     }
 }
 
-fun <T> safeFlowCall(block: () -> Flow<T>): Result<Flow<T>, DomainError> {
-    return try {
-            Result.Success(block())
-    } catch (e: Exception) {
-        Result.Error(mapExceptionToDomainError(e))
-    }
-}
-
-fun mapExceptionToDomainError(e: Throwable): DomainError {
+fun mapExceptionToTudeeError(e: Throwable): Throwable {
     return when (e) {
         is NoSuchElementException -> NotFoundError()
         is IllegalArgumentException -> ValidationError()

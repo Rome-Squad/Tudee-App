@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -27,7 +29,6 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.CategoryBottomSheet
 import com.giraffe.tudeeapp.design_system.component.CategoryItem
 import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
-import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
@@ -42,22 +43,21 @@ fun CategoriesScreen(
     viewModel: CategoryViewModel = koinViewModel(),
     navigateToTaskByCategoryScreen: (categoryId: Long) -> Unit = {}
 ) {
-
-    val state = viewModel.categoriesUiState.collectAsState().value
+    val state = viewModel.state.collectAsState().value
     val snackState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    EventListener(viewModel.events) { event ->
+    EventListener(viewModel.effect) { event ->
         when (event) {
-            is CategoriesScreenEvents.NavigateToTasksByCategoryScreen -> {
+            is CategoriesScreenEffect.NavigateToTasksByCategoryScreen -> {
                 navigateToTaskByCategoryScreen(event.categoryId)
             }
 
-            is CategoriesScreenEvents.CategoryAdded -> {
+            is CategoriesScreenEffect.CategoryAdded -> {
                 snackState.showSuccessSnackbar(context.getString(R.string.added_category_successfully))
             }
 
-            is CategoriesScreenEvents.Error -> {
+            is CategoriesScreenEffect.Error -> {
                 snackState.showErrorSnackbar(
                     context.errorToMessage(event.error)
                 )
@@ -74,17 +74,25 @@ fun CategoriesScreen(
 @Composable
 fun CategoriesContent(
     state: CategoriesScreenState,
-    actions: CategoriesScreenActions,
+    actions: CategoriesScreenInteractionListener,
     snackState: SnackbarHostState
 ) {
     Box(
         Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
-            .systemBarsPadding()
+            .statusBarsPadding()
     ) {
         Column {
-            HeaderContent(stringResource(R.string.categories))
+            Text(
+                text = stringResource(R.string.categories),
+                style = Theme.textStyle.title.large,
+                color = Theme.color.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.color.surfaceHigh)
+                    .padding(vertical = 20.dp, horizontal = 16.dp)
+            )
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 104.dp),
                 modifier = Modifier
@@ -116,11 +124,11 @@ fun CategoriesContent(
         }
 
         FabButton(
-            icon = painterResource(R.drawable.add_category_icon),
+            icon = painterResource(R.drawable.add_category),
             onClick = { actions.setBottomSheetVisibility(isVisible = true) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp)
+                .padding(12.dp)
         )
 
         CategoryBottomSheet(

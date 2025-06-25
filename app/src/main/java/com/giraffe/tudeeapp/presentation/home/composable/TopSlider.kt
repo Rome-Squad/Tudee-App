@@ -23,7 +23,7 @@ fun TopSlider(modifier: Modifier = Modifier) {
         Icon(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            painter = painterResource(id = R.drawable.calendar_icon),
+            painter = painterResource(id = R.drawable.calendar_star),
             tint = Theme.color.body,
             contentDescription = stringResource(R.string.calendar_icon),
         )

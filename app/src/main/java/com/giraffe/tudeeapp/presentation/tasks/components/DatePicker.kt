@@ -28,14 +28,17 @@ import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import java.text.NumberFormat
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
-
 
 data class DayData(
     val date: LocalDate,
@@ -47,39 +50,50 @@ data class DayData(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
-    onDateSelected: (LocalDateTime) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDateSelected: (LocalDate) -> Unit = {}
 ) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val currentMonth = YearMonth.from(selectedDate)
+    var selectedDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.UTC).date) }
+    val currentMonth = selectedDate.monthNumber
+    val currentYear = selectedDate.year
     var isDialogVisible by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val currentLocale = LocalConfiguration.current.locales[0]
 
-    val displayedDays by remember(currentMonth) {
+    val daysInMonth = remember(currentYear, currentMonth) {
+        Month(currentMonth).length(isLeapYear(currentYear))
+    }
+
+    val displayedDays by remember(currentYear, currentMonth) {
         mutableStateOf(
-            (1..currentMonth.lengthOfMonth()).map { day ->
-                val date = currentMonth.atDay(day)
+            (1..daysInMonth).map { day ->
+                val date = LocalDate(currentYear, currentMonth, day)
+                val dayOfWeek = date.dayOfWeek
                 DayData(
                     date = date,
-                    dayName = date.dayOfWeek.getDisplayName(TextStyle.SHORT, currentLocale),
-                    dayNumber = date.dayOfMonth.toLocaleNumbers(currentLocale)
+                    dayName = dayOfWeek.getDisplayName(TextStyle.SHORT, currentLocale),
+                    dayNumber = day.toString().toInt().toLocaleNumbers(currentLocale)
                 )
             }
         )
     }
 
     Column(modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-        val monthName=currentMonth.month.getDisplayName(TextStyle.FULL,currentLocale)
-        val yearInLocal=currentMonth.year.toLocaleNumbers(currentLocale)
-        val formatedDate="$monthName, $yearInLocal"
+        val monthName = Month(currentMonth).getDisplayName(TextStyle.FULL, currentLocale)
+        val yearInLocal = currentYear.toLocaleNumbers(currentLocale)
+        val formattedDate = "$monthName, $yearInLocal"
+
         MonthHeader(
-            monthYearLabel = formatedDate,
-            onPreviousClick = { selectedDate = selectedDate.minusMonths(1)
-                onDateSelected(convertToLocalDateTime(selectedDate))},
-            onNextClick = { selectedDate = selectedDate.plusMonths(1)
-                onDateSelected(convertToLocalDateTime(selectedDate))},
+            monthYearLabel = formattedDate,
+            onPreviousClick = {
+                selectedDate = selectedDate.minus(DatePeriod(months = 1))
+                onDateSelected(selectedDate)
+            },
+            onNextClick = {
+                selectedDate = selectedDate.plus(DatePeriod(months = 1))
+                onDateSelected(selectedDate)
+            },
             onMonthClick = { isDialogVisible = true }
         )
 
@@ -91,15 +105,14 @@ fun DatePicker(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             reverseLayout = currentLocale.language == "ar"
         ) {
-            items(items = displayedDays, key = { it.date }) { dayData ->
+            items(items = displayedDays, key = { it.date.toString() }) { dayData ->
                 DayCard(
                     dayNumber = dayData.dayNumber,
                     dayName = dayData.dayName,
                     isSelected = dayData.date == selectedDate,
                     onClick = {
                         selectedDate = dayData.date
-                        onDateSelected(convertToLocalDateTime(selectedDate))
-                    }
+                        onDateSelected(selectedDate)                    }
                 )
             }
         }
@@ -118,28 +131,20 @@ fun DatePicker(
         showDialog = isDialogVisible,
         onDismissRequest = { isDialogVisible = false },
         onDateSelected = {
-            selectedDate = LocalDate.of(it.year, it.monthNumber, it.dayOfMonth)
+            selectedDate = LocalDate(it.year, it.monthNumber, it.dayOfMonth)
             onDateSelected(it)
         }
     )
 }
-private fun Int.toLocaleNumbers(locale: Locale): String{
+
+private fun Int.toLocaleNumbers(locale: Locale): String {
     val formatter = NumberFormat.getInstance(locale)
     formatter.isGroupingUsed = false
     return formatter.format(this)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun convertToLocalDateTime(date: LocalDate): LocalDateTime {
-    return LocalDateTime(
-        year = date.year,
-        monthNumber = date.monthValue,
-        dayOfMonth = date.dayOfMonth,
-        hour = 0,
-        minute = 0,
-        second = 0,
-        nanosecond = 0
-    )
+private fun isLeapYear(year: Int): Boolean {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

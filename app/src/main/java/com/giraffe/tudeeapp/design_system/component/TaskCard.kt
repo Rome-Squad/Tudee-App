@@ -27,15 +27,28 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.presentation.utils.emptyTask
+import com.giraffe.tudeeapp.presentation.utils.toStringResource
 
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
-    task: TaskUi,
+    task: Task,
     isDateVisible: Boolean = true,
 ) {
     val blurColor = getColorForCategoryIcon(task.category.name).copy(alpha = .08f)
+    val icon = when (task.taskPriority) {
+        TaskPriority.HIGH -> R.drawable.flag
+        TaskPriority.MEDIUM -> R.drawable.alert
+        TaskPriority.LOW -> R.drawable.trade_down_icon
+    }
+    val selectedBackgroundColor = when (task.taskPriority) {
+        TaskPriority.HIGH -> Theme.color.pinkAccent
+        TaskPriority.MEDIUM -> Theme.color.yellowAccent
+        TaskPriority.LOW -> Theme.color.greenAccent
+    }
     Column(
         modifier
             .background(color = Theme.color.surfaceHigh, shape = RoundedCornerShape(16.dp))
@@ -79,16 +92,17 @@ fun TaskCard(
                     LabelIconBox(
                         backgroundColor = Theme.color.surface,
                         contentColor = Theme.color.body,
-                        icon = painterResource(R.drawable.calendar_icon),
-                        label = task.dueDate.date.toString()
+                        icon = painterResource(R.drawable.calendar_star),
+                        label = task.dueDate.toString()
                     )
                 }
                 Priority(
-                    priorityType = task.priorityType,
+                    icon = painterResource(icon),
+                    selectedBackgroundColor = selectedBackgroundColor,
+                    label = task.taskPriority.toStringResource(),
                     isSelected = true
                 )
             }
-
 
         }
         Text(
@@ -138,6 +152,6 @@ fun getColorForCategoryIcon(categoryName: String): Color {
 @Composable
 fun TaskCardPreview() {
     Column {
-        TaskCard(task = TaskUi())
+        TaskCard(task = emptyTask())
     }
 }

@@ -13,7 +13,7 @@ import com.giraffe.tudeeapp.domain.service.TudeeAppService
 import com.giraffe.tudeeapp.presentation.MainViewModel
 import com.giraffe.tudeeapp.presentation.categories.CategoryViewModel
 import com.giraffe.tudeeapp.presentation.home.HomeViewModel
-import com.giraffe.tudeeapp.presentation.splash.viewmodel.SplashViewModel
+import com.giraffe.tudeeapp.presentation.splash.SplashViewModel
 import com.giraffe.tudeeapp.presentation.taskdetails.TaskDetailsViewModel
 import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorViewModel
 import com.giraffe.tudeeapp.presentation.tasks.TasksViewModel
@@ -26,15 +26,15 @@ val appModule = module {
     single<DataStore<Preferences>> { androidContext().tudeeDataStore }
     single<TudeeAppService> { TudeeAppServiceImpl(get()) }
 
-    single<TasksService> { TasksServiceImp(get()) }
+    single<TasksService> { TasksServiceImp(get(), get()) }
     single<CategoriesService> { CategoryServiceImp(get()) }
 
 
     viewModel { SplashViewModel(get()) }
     viewModel { (handle: SavedStateHandle) ->
-        TasksViewModel(get(), get(), handle)
+        TasksViewModel(get(), handle)
     }
-    viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get(), get()) }
+    viewModel { (taskId: Long) -> TaskDetailsViewModel(taskId, get()) }
     viewModel { TaskEditorViewModel(get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { MainViewModel(get()) }

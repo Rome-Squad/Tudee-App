@@ -1,221 +1,200 @@
 package com.giraffe.tudeeapp.presentation.taskeditor
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giraffe.tudeeapp.domain.model.Category
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.Category
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
+import com.giraffe.tudeeapp.domain.exceptions.NotFoundError
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.util.NotFoundError
-import com.giraffe.tudeeapp.domain.util.onError
-import com.giraffe.tudeeapp.domain.util.onSuccess
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
-import com.giraffe.tudeeapp.presentation.uimodel.toTaskUi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.giraffe.tudeeapp.presentation.base.BaseViewModel
+import com.giraffe.tudeeapp.presentation.utils.emptyTask
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 
 class TaskEditorViewModel(
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
-) : ViewModel(), TaskEditorActions {
-    var taskEditorUiState = MutableStateFlow(TaskEditorUiState())
-        private set
-
-    private val _events = Channel<TaskEditorEvent>()
-    val events = _events.receiveAsFlow()
-
+) : BaseViewModel<TaskEditorState, TaskEditorEffect>(TaskEditorState()), TaskEditorInteractionListener {
 
     init {
         loadCategories()
     }
 
     private fun loadCategories() {
-        viewModelScope.launch {
-            taskEditorUiState.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-
+        updateState {
+            it.copy(
+                isLoading = true
+            )
+        }
+        safeCollect(
+            onError = ::onLoadCategoriesError,
+            onEmitNewValue = ::onLoadCategoriesNewValue
+        ) { 
             categoriesService.getAllCategories()
-                .onSuccess { flow ->
-                    val categories = flow.first()
-                    taskEditorUiState.update {
-                        it.copy(
-                            categories = categories,
-                            isLoading = false
-                        )
-                    }
-
-                }
-                .onError { error ->
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.Error(error))
-                }
+        }
+    }
+    
+    private fun onLoadCategoriesError(error: Throwable) {
+        updateState { it.copy(isLoading = false) }
+        sendEffect(TaskEditorEffect.Error(error))
+    }
+    
+    private fun onLoadCategoriesNewValue(categories: List<Category>) {
+        updateState {
+            it.copy(
+                categories = categories,
+                isLoading = false
+            )
         }
     }
 
     fun loadTask(taskId: Long) {
-        if (taskId == taskEditorUiState.value.taskUi.id ) return
-        taskEditorUiState.update {
+        if (taskId == state.value.task.id) return
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(id = taskId),
+                task = it.task.copy(id = taskId),
                 isLoading = true
             )
         }
-        viewModelScope.launch {
+        safeExecute(
+            onError = ::onLoadTaskError,
+            onSuccess = ::onLoadTaskSuccess
+        ) { 
             tasksService.getTaskById(taskId)
-                .onSuccess { task ->
-                    val category = getCategoryById(task.categoryId)
-                    if (category != null) {
-                        taskEditorUiState.update {
-                            it.copy(
-                                taskUi = task.toTaskUi(category),
-                                isLoading = false,
-                                isValidTask = isValidTask()
-                            )
-                        }
-                    } else {
-                        taskEditorUiState.update {
-                            it.copy(
-                                isLoading = false
-                            )
-                        }
-                        _events.send(TaskEditorEvent.Error(NotFoundError()))
-                    }
-                }
-                .onError { error ->
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.Error(error))
-                }
+        }
+    }
+    
+    private fun onLoadTaskError(error: Throwable) {
+        updateState { it.copy(isLoading = false) }
+        sendEffect(TaskEditorEffect.Error(error))
+    }
+    
+    private fun onLoadTaskSuccess(task: Task) {
+        updateState {
+            it.copy(
+                task = task,
+                isLoading = false,
+                isValidTask = isValidTask()
+            )
         }
     }
 
     private fun getCategoryById(id: Long): Category? {
-        return taskEditorUiState.value.categories.find { category ->
+        return state.value.categories.find { category ->
             category.id == id
         }
     }
 
 
     override fun addTask(task: Task) {
-        viewModelScope.launch {
-            taskEditorUiState.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-
+        updateState {
+            it.copy(
+                isLoading = true
+            )
+        }
+        safeExecute(
+            onError = ::onAddTaskError,
+            onSuccess = { onAddTaskSuccess() }
+        ) { 
             tasksService.createTask(task)
-                .onSuccess {
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.TaskAddedSuccess)
-                    _events.send(TaskEditorEvent.DismissTaskEditor)
-                    clearTask()
-                }
-                .onError {
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.Error(it))
-                    _events.send(TaskEditorEvent.DismissTaskEditor)
-                    clearTask()
-                }
-
         }
     }
-
-    override fun editTask(task: Task) {
-        viewModelScope.launch {
-            taskEditorUiState.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-
-            tasksService.updateTask(task)
-                .onSuccess {
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.TaskEditedSuccess)
-                    _events.send(TaskEditorEvent.DismissTaskEditor)
-                    clearTask()
-                }
-                .onError {
-                    taskEditorUiState.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    _events.send(TaskEditorEvent.Error(it))
-                    _events.send(TaskEditorEvent.DismissTaskEditor)
-                    clearTask()
-                }
+    
+    private fun onAddTaskError(error: Throwable) {
+        updateState {
+            it.copy(
+                isLoading = false
+            )
         }
+        sendEffect(TaskEditorEffect.Error(error))
+        sendEffect(TaskEditorEffect.DismissTaskEditor)
+        clearTask()
+    }
+
+    private fun onAddTaskSuccess() {
+        updateState {
+            it.copy(
+                isLoading = false
+            )
+        }
+        sendEffect(TaskEditorEffect.TaskAddedSuccess)
+        sendEffect(TaskEditorEffect.DismissTaskEditor)
+        clearTask()
+    }
+    override fun editTask(task: Task) {
+        updateState {
+            it.copy(
+                isLoading = true
+            )
+        }
+        safeExecute(
+            onError = ::onEditTaskError,
+            onSuccess = { onEditTaskSuccess() }
+        ) { 
+            tasksService.updateTask(task)
+        }
+    }
+    
+    private fun onEditTaskError(error: Throwable) {
+        updateState {
+            it.copy(
+                isLoading = false
+            )
+        }
+        sendEffect(TaskEditorEffect.Error(error))
+        sendEffect(TaskEditorEffect.DismissTaskEditor)
+        clearTask()
+    }
+    
+    private fun onEditTaskSuccess() {
+        updateState {
+            it.copy(
+                isLoading = false
+            )
+        }
+        sendEffect(TaskEditorEffect.TaskEditedSuccess)
+        sendEffect(TaskEditorEffect.DismissTaskEditor)
+        clearTask()
     }
 
     override fun cancel() {
-        viewModelScope.launch {
-            clearTask()
-            _events.send(TaskEditorEvent.DismissTaskEditor)
-        }
+        clearTask()
+        sendEffect(TaskEditorEffect.DismissTaskEditor)
     }
 
     override fun onChangeTaskTitleValue(title: String) {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(title = title)
+                task = it.task.copy(title = title)
             )
         }
         validateTask()
     }
 
     override fun onChangeTaskDescriptionValue(description: String) {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(description = description)
+                task = it.task.copy(description = description)
             )
         }
         validateTask()
     }
 
-    override fun onChangeTaskDueDateValue(dueDate: LocalDateTime) {
-        taskEditorUiState.update {
+    override fun onChangeTaskDueDateValue(dueDate: LocalDate) {
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(dueDate = dueDate)
+                task = it.task.copy(dueDate = dueDate)
             )
         }
         validateTask()
     }
 
     override fun onChangeTaskPriorityValue(priority: TaskPriority) {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(priorityType = priority)
+                task = it.task.copy(taskPriority = priority)
             )
         }
         validateTask()
@@ -225,43 +204,43 @@ class TaskEditorViewModel(
         viewModelScope.launch {
             val category = getCategoryById(categoryId)
             if (category != null) {
-                taskEditorUiState.update {
+                 updateState {
                     it.copy(
-                        taskUi = it.taskUi.copy(category = category),
+                        task = it.task.copy(category = category),
                         isLoading = false,
                         isValidTask = isValidTask()
                     )
                 }
                 validateTask()
             } else {
-                taskEditorUiState.update {
+                 updateState {
                     it.copy(
                         isLoading = false
                     )
                 }
-                _events.send(TaskEditorEvent.Error(NotFoundError()))
+                sendEffect(TaskEditorEffect.Error(NotFoundError()))
             }
         }
     }
 
     override fun onChangeTaskStatusValue(status: TaskStatus) {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
-                taskUi = it.taskUi.copy(status = status)
+                task = it.task.copy(status = status)
             )
         }
     }
 
     private fun isValidTask(): Boolean {
-        return !(taskEditorUiState.value.taskUi.title.isBlank() ||
-                taskEditorUiState.value.taskUi.description.isBlank() ||
-                taskEditorUiState.value.taskUi.category.name.isBlank() ||
-                taskEditorUiState.value.taskUi.category.imageUri.isBlank()
+        return !(state.value.task.title.isBlank() ||
+                state.value.task.description.isBlank() ||
+                state.value.task.category.name.isBlank() ||
+                state.value.task.category.imageUri.isBlank()
                 )
     }
 
     private fun validateTask() {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
                 isValidTask = isValidTask()
             )
@@ -269,9 +248,9 @@ class TaskEditorViewModel(
     }
 
     private fun clearTask() {
-        taskEditorUiState.update {
+         updateState {
             it.copy(
-                taskUi = TaskUi(),
+                task = emptyTask(),
                 isLoading = false,
                 isValidTask = false,
                 isSuccessAdded = false,

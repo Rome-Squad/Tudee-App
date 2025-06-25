@@ -22,14 +22,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
 @Composable
 fun SwipableTask(
-    taskUi: TaskUi,
+    task: Task,
     modifier: Modifier = Modifier,
     isRevealed: Boolean = false,
     onExpanded: () -> Unit = {},
@@ -99,7 +99,7 @@ fun SwipableTask(
             color = Color.Transparent,
             shadowElevation = 0.dp
         ) {
-            TaskCard(isDateVisible = false, task = taskUi)
+            TaskCard(isDateVisible = false, task = task)
         }
     }
 }
