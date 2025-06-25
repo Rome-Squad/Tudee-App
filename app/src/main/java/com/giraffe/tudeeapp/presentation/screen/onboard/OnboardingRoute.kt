@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.splash.onboard
+package com.giraffe.tudeeapp.presentation.screen.onboard
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

@@ -72,6 +72,7 @@ fun DefaultTextField(
         Spacer(
             modifier = Modifier
                 .fillMaxHeight()
+                .padding(vertical = 13.dp)
                 .width(1.dp)
                 .background(color = Theme.color.stroke)
                 .align(Alignment.CenterVertically)

@@ -11,7 +11,7 @@ interface CategoriesService {
 
     suspend fun createCategory(category: Category): Long
 
-    suspend fun updateCategory(category: Category): Unit
+    suspend fun updateCategory(category: Category)
 
-    suspend fun deleteCategory(id: Long): Unit
+    suspend fun deleteCategory(id: Long)
 }
