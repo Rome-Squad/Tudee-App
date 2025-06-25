@@ -23,10 +23,10 @@ import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.design_system.component.DefaultNavigationBar
 import com.giraffe.tudeeapp.presentation.categories.categoriesRoute
 import com.giraffe.tudeeapp.presentation.home.homeRoute
-import com.giraffe.tudeeapp.presentation.splash.onboard.onboardingRoute
-import com.giraffe.tudeeapp.presentation.splash.splashscreen.splashRoute
+import com.giraffe.tudeeapp.presentation.screen.onboard.onboardingRoute
+import com.giraffe.tudeeapp.presentation.screen.splash.splashRoute
 import com.giraffe.tudeeapp.presentation.tasks.tasksRoute
-import com.giraffe.tudeeapp.presentation.tasksbycategory.tasksByCategoryRoute
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.tasksByCategoryRoute
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)

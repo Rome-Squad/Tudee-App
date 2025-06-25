@@ -8,6 +8,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.data.database.CategoryDao
 import com.giraffe.tudeeapp.data.database.TudeeDatabase
 import com.giraffe.tudeeapp.data.mapper.toEntity
+import com.giraffe.tudeeapp.data.preferences.DataStorePreferences
 import com.giraffe.tudeeapp.data.util.Constants.DATABASE_NAME
 import com.giraffe.tudeeapp.domain.model.Category
 import kotlinx.coroutines.CoroutineScope
@@ -73,6 +74,8 @@ suspend fun addDefaultCategories(dao: CategoryDao) {
 }
 
 val dataModule = module {
+    single { DataStorePreferences(androidContext()) }
+
     single {
         val database = get<TudeeDatabase>()
         database.taskDao()
