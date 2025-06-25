@@ -1,7 +1,9 @@
 package com.giraffe.tudeeapp.data.mapper
 
 import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.data.dto.TaskDto
 import com.giraffe.tudeeapp.domain.entity.Category
+import com.giraffe.tudeeapp.domain.entity.task.Task
 
 
 fun Category.toDto(): CategoryDto {
@@ -23,4 +25,10 @@ fun CategoryDto.toEntity():Category{
         isEditable = this.isEditable,
         taskCount = this.taskCount
     )
+}
+
+fun List<CategoryDto>.toEntityList(): List<Category> {
+    return this.map { categoryDto ->
+        categoryDto.toEntity()
+    }
 }

@@ -1,19 +1,17 @@
 package com.giraffe.tudeeapp.domain.service
 
 import com.giraffe.tudeeapp.domain.entity.Category
-import com.giraffe.tudeeapp.domain.util.DomainError
-import com.giraffe.tudeeapp.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
 interface CategoriesService {
 
-    fun getAllCategories(): Result<Flow<List<Category>>, DomainError>
+    fun getAllCategories(): Flow<List<Category>>
 
-    suspend fun getCategoryById(id: Long): Result<Category, DomainError>
+    suspend fun getCategoryById(id: Long): Category
 
-    suspend fun createCategory(category: Category): Result<Long, DomainError>
+    suspend fun createCategory(category: Category): Long
 
-    suspend fun updateCategory(category: Category): Result<Unit, DomainError>
+    suspend fun updateCategory(category: Category): Unit
 
-    suspend fun deleteCategory(id: Long): Result<Unit, DomainError>
+    suspend fun deleteCategory(id: Long): Unit
 }
