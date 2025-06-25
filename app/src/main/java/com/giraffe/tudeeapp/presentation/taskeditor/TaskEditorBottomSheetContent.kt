@@ -44,7 +44,7 @@ import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 
 @RequiresApi(Build.VERSION_CODES.O)

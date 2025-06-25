@@ -1,6 +1,6 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import kotlinx.datetime.LocalDate
 
 interface TasksScreenActions {

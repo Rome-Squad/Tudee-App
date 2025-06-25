@@ -1,6 +1,6 @@
-package com.giraffe.tudeeapp.domain.model.task
+package com.giraffe.tudeeapp.domain.entity.task
 
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 import kotlinx.datetime.LocalDate
 
 data class Task(

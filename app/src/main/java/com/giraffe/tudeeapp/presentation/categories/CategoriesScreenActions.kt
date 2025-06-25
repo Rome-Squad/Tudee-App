@@ -1,6 +1,6 @@
 package com.giraffe.tudeeapp.presentation.categories
 
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.domain.entity.Category
 
 interface CategoriesScreenActions {
     fun selectCategory(categoryId: Long)

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.TaskCard
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.Task
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

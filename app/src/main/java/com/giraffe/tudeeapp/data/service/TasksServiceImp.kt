@@ -2,13 +2,13 @@ package com.giraffe.tudeeapp.data.service
 
 import TaskDao
 import com.giraffe.tudeeapp.data.database.CategoryDao
+import com.giraffe.tudeeapp.data.mapper.toDto
 import com.giraffe.tudeeapp.data.mapper.toEntity
-import com.giraffe.tudeeapp.data.mapper.toTask
-import com.giraffe.tudeeapp.data.mapper.toTaskList
+import com.giraffe.tudeeapp.data.mapper.toEntityList
 import com.giraffe.tudeeapp.data.util.safeCall
 import com.giraffe.tudeeapp.data.util.safeFlowCall
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.domain.util.DomainError
 import com.giraffe.tudeeapp.domain.util.Result
@@ -26,7 +26,7 @@ class TasksServiceImp(
             val categoriesFlow = categoryDao.getAllCategories()
 
             combine(tasksFlow, categoriesFlow) { tasks, categories ->
-                tasks.toTaskList(categories)
+                tasks.toEntityList(categories)
             }
         }
     }
@@ -37,7 +37,7 @@ class TasksServiceImp(
             val categoriesFlow = categoryDao.getAllCategories()
 
             combine(tasksFlow, categoriesFlow) { tasks, categories ->
-                tasks.toTaskList(categories)
+                tasks.toEntityList(categories)
             }
         }
     }
@@ -46,20 +46,20 @@ class TasksServiceImp(
         return safeCall {
             val taskEntity = taskDao.getTaskById(id)
             val category = categoryDao.getCategoryById(taskEntity.categoryId)
-            taskEntity.toTask(category)
+            taskEntity.toEntity(category)
         }
     }
 
     override suspend fun createTask(task: Task): Result<Long, DomainError> {
         return safeCall {
-            val dataTask = task.toEntity()
+            val dataTask = task.toDto()
             taskDao.createTask(dataTask)
         }
     }
 
     override suspend fun updateTask(task: Task): Result<Unit, DomainError> {
         return safeCall {
-            val dataTask = task.toEntity()
+            val dataTask = task.toDto()
             taskDao.updateTask(dataTask)
         }
     }

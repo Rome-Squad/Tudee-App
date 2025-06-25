@@ -1,8 +1,8 @@
 package com.giraffe.tudeeapp.presentation.tasksbycategory
 
-import com.giraffe.tudeeapp.domain.model.Category
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.Category
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 
 data class TasksByCategoryScreenState(
     val selectedCategory: Category? = null,

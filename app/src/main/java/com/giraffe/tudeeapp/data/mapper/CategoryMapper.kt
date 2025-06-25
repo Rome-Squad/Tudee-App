@@ -1,11 +1,11 @@
 package com.giraffe.tudeeapp.data.mapper
 
-import com.giraffe.tudeeapp.data.model.CategoryEntity
-import com.giraffe.tudeeapp.domain.model.Category
+import com.giraffe.tudeeapp.data.dto.CategoryDto
+import com.giraffe.tudeeapp.domain.entity.Category
 
 
-fun Category.toEntity(): CategoryEntity {
-    return CategoryEntity(
+fun Category.toDto(): CategoryDto {
+    return CategoryDto(
         uid = this.id,
         name = this.name,
         imageUri = this.imageUri,
@@ -15,7 +15,7 @@ fun Category.toEntity(): CategoryEntity {
 
 }
 
-fun CategoryEntity.toCategory():Category{
+fun CategoryDto.toEntity():Category{
     return Category(
         id = this.uid,
         name=this.name,

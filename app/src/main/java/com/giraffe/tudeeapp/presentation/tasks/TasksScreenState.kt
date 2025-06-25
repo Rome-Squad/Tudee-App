@@ -1,7 +1,7 @@
 package com.giraffe.tudeeapp.presentation.tasks
 
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 import kotlinx.datetime.LocalDate
 
