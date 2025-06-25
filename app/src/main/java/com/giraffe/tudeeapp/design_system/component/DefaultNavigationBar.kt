@@ -32,25 +32,9 @@ import com.giraffe.tudeeapp.presentation.navigation.Screen
 fun DefaultNavigationBar(
     modifier: Modifier = Modifier,
     navController: NavController,
+    items: List<BottomNavigationItem>,
     onNavigation: (String) -> Unit = {},
 ) {
-    val items = listOf(
-        BottomNavigationItem(
-            route = Screen.HomeScreen.route,
-            selectedIcon = R.drawable.home_selected,
-            unselectedIcon = R.drawable.home_unselected
-        ),
-        BottomNavigationItem(
-            route = "${Screen.TaskScreen.route}/${0}",
-            selectedIcon = R.drawable.task_selected,
-            unselectedIcon = R.drawable.tasks_unselected
-        ),
-        BottomNavigationItem(
-            route = Screen.CategoriesScreen.route,
-            selectedIcon = R.drawable.categories_selected,
-            unselectedIcon = R.drawable.categories_unselected
-        )
-    )
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     CompositionLocalProvider(LocalRippleConfiguration provides null) {
@@ -105,5 +89,24 @@ data class BottomNavigationItem(
 @Preview
 @Composable
 fun NavBarPreview() {
-    DefaultNavigationBar(navController = rememberNavController())
+    DefaultNavigationBar(
+        navController = rememberNavController(),
+        items = listOf(
+            BottomNavigationItem(
+                route = Screen.HomeScreen.route,
+                selectedIcon = R.drawable.home_selected,
+                unselectedIcon = R.drawable.home_unselected
+            ),
+            BottomNavigationItem(
+                route = "${Screen.TaskScreen.route}/${0}",
+                selectedIcon = R.drawable.task_selected,
+                unselectedIcon = R.drawable.tasks_unselected
+            ),
+            BottomNavigationItem(
+                route = Screen.CategoriesScreen.route,
+                selectedIcon = R.drawable.categories_selected,
+                unselectedIcon = R.drawable.categories_unselected
+            )
+        )
+    )
 }
