@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component.button_type
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,22 +41,30 @@ fun PrimaryButton(
     onClick: () -> Unit,
 ) {
 
+    val startColor by animateColorAsState(
+        targetValue = if (isDisable) Theme.color.disable else Theme.color.primaryGradient.startGradient,
+        label = "StartGradientAnimation"
+    )
+
+    val endColor by animateColorAsState(
+        targetValue = if (isDisable) Theme.color.disable else Theme.color.primaryGradient.endGradient,
+        label = "EndGradientAnimation"
+    )
+
     val backgroundBrush = if (isDisable) {
-        SolidColor(Theme.color.disable)
+        SolidColor(startColor)
     } else {
         Brush.verticalGradient(
-            colors = listOf(
-                Theme.color.primaryGradient.startGradient,
-                Theme.color.primaryGradient.endGradient
-            )
+            colors = listOf(startColor, endColor)
         )
     }
-    val content = Theme.color.onPrimary
 
+    val contentColor = Theme.color.onPrimary
     val shape = RoundedCornerShape(100.dp)
+
     val animatedWidth by animateDpAsState(
-        if (isLoading) 140.dp else Dp.Unspecified,
-        label = ""
+        targetValue = if (isLoading) 140.dp else Dp.Unspecified,
+        label = "WidthAnimation"
     )
     Box(
         modifier = modifier
@@ -73,7 +82,7 @@ fun PrimaryButton(
             shape = shape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
-                contentColor = content,
+                contentColor = contentColor,
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Theme.color.stroke
             ),

@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component.button_type
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,9 +36,16 @@ fun NegativeButton(
     onClick: () -> Unit,
 ) {
 
-    val background =
-        if (isDisable) Theme.color.disable else Theme.color.errorVariant
-    val content = Theme.color.error
+
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue =   if (isDisable) Theme.color.disable else Theme.color.errorVariant,
+        label = "BackgroundColorAnimation"
+    )
+
+    val animatedContentColor by animateColorAsState(
+        targetValue =  Theme.color.error,
+        label = "ContentColorAnimation"
+    )
 
     val shape = RoundedCornerShape(100.dp)
     val animatedWidth by animateDpAsState(
@@ -54,8 +62,8 @@ fun NegativeButton(
             .widthIn(min = animatedWidth)
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = background,
-            contentColor = content,
+            containerColor = animatedBackgroundColor,
+            contentColor = animatedContentColor,
             disabledContainerColor = Theme.color.disable,
             disabledContentColor = Theme.color.stroke
         ),
