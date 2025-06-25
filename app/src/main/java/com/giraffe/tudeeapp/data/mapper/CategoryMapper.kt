@@ -1,9 +1,7 @@
 package com.giraffe.tudeeapp.data.mapper
 
 import com.giraffe.tudeeapp.data.dto.CategoryDto
-import com.giraffe.tudeeapp.data.dto.TaskDto
 import com.giraffe.tudeeapp.domain.entity.Category
-import com.giraffe.tudeeapp.domain.entity.task.Task
 
 
 fun Category.toDto(): CategoryDto {

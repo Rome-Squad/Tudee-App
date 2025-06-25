@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasksbycategory
+package com.giraffe.tudeeapp.presentation.screen.tasksbycategory
 
 import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.domain.entity.task.Task
