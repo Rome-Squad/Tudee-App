@@ -1,4 +1,4 @@
-package com.giraffe.tudeeapp.presentation.tasksbycategory
+package com.giraffe.tudeeapp.presentation.screen.tasksbycategory
 
 import androidx.lifecycle.SavedStateHandle
 import com.giraffe.tudeeapp.domain.entity.Category
@@ -7,12 +7,12 @@ import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.domain.service.TasksService
 import com.giraffe.tudeeapp.presentation.base.BaseViewModel
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.CategoryDeleted
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.CategoryEdited
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.DeleteCategoryError
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.EditCategoryError
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.GetCategoryError
-import com.giraffe.tudeeapp.presentation.tasksbycategory.TasksByCategoryEffect.GetTasksError
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.CategoryDeleted
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.CategoryEdited
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.DeleteCategoryError
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.EditCategoryError
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.GetCategoryError
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.GetTasksError
 
 
 class TasksByCategoryViewModel(

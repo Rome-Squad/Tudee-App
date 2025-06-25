@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.data.util
 
 import com.giraffe.tudeeapp.domain.exceptions.*
-import kotlinx.coroutines.flow.Flow
 
 suspend fun <T> safeCall(
     block: suspend () -> T

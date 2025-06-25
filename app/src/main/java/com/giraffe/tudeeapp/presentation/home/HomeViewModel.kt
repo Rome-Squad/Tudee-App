@@ -2,18 +2,17 @@ package com.giraffe.tudeeapp.presentation.home
 
 import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
+import com.giraffe.tudeeapp.domain.service.AppService
 import com.giraffe.tudeeapp.domain.service.TasksService
-import com.giraffe.tudeeapp.domain.service.TudeeAppService
 import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 
 class HomeViewModel(
     private val tasksService: TasksService,
-    private val appService: TudeeAppService
+    private val appService: AppService
 ) : BaseViewModel<HomeScreenState, HomeScreenEffect>(HomeScreenState()), HomeScreenInteractionListener {
 
     init {
-        observeTheme()
         getTodayTasks()
     }
 
@@ -84,15 +83,16 @@ class HomeViewModel(
 
     override fun onToggleTheme() {
         safeExecute {
-            appService.setCurrentTheme(!state.value.isDarkTheme)
+            appService.setDarkThemeStatus(!state.value.isDarkTheme)
         }
+        observeTheme()
     }
 
     private fun observeTheme() {
         safeCollect(
             onEmitNewValue = ::onGetCurrentThemeNewValue
         ) {
-            appService.getCurrentTheme()
+            appService.isDarkTheme()
         }
     }
 
