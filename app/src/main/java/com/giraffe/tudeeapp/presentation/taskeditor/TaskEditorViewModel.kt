@@ -279,4 +279,16 @@ class TaskEditorViewModel(
             )
         }
     }
+
+
+    fun setDueDate(date: LocalDateTime) {
+       // Log.d("TaskEditor", "due date: $date")
+
+        taskEditorUiState.update {
+            it.copy(
+                taskUi = it.taskUi.copy(dueDate = date)
+            )
+        }
+
+    }
 }

@@ -3,6 +3,7 @@ package com.giraffe.tudeeapp.presentation.tasks
 import com.giraffe.tudeeapp.domain.model.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.uimodel.TaskUi
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -10,6 +11,10 @@ import kotlinx.datetime.toLocalDateTime
 data class TasksScreenState(
     val selectedDate: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
+
+    val taskEditorDate :LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault()),
+
     val selectedTab: TaskStatus = TaskStatus.DONE,
     val selectedTaskId: Long = 0L,
     val currentTaskId: Long? = null,

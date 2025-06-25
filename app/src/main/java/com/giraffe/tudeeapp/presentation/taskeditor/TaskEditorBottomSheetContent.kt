@@ -126,7 +126,7 @@ fun TaskEditorBottomSheetContent(
                     .clickable { showDatePickerDialog = true },
                 isReadOnly = true,
                 textValue = formattedDate,
-                hint = stringResource(R.string.due_date_hint),
+                hint = taskUi.dueDate.toString(),
                 iconRes = R.drawable.calendar
             )
 

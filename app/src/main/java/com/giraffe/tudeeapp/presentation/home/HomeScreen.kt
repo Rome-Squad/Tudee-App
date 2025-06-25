@@ -53,6 +53,10 @@ import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
 import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -67,6 +71,7 @@ fun HomeScreen(
     val state by viewModel.homeUiState.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
+
 
     EventListener(
         events = viewModel.events
@@ -111,6 +116,9 @@ fun HomeContent(
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
     actions: HomeActions,
 ) {
+    val selectedDate : LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+
     val screenSize = LocalWindowInfo.current.containerSize
     Box(
         modifier = Modifier
@@ -239,8 +247,9 @@ fun HomeContent(
                         showSnackBar(message, false)
                     },
                     onError = { error ->
-                        showSnackBar(error, true)
-                    }
+                        showSnackBar(error, true,)
+                    },
+                    selectedDate = selectedDate
                 )
             }
 

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 class TasksViewModel(
@@ -105,16 +106,58 @@ class TasksViewModel(
     }
 
     override fun onAddTaskClick() {
-        _state.update { currentState ->
-            currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = null)
+
+      /*  _state.update { currentState ->
+            currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = null,)
+
+        }*/
+
+        val selectedDate = _state.value.selectedDate
+        _state.update {
+            it.copy(
+                isTaskEditorBottomSheetVisible = true,
+                currentTaskId = null,
+                taskEditorDate = selectedDate
+            )
+
+    }
+        viewModelScope.launch {
+            _events.send(TasksScreenEvent.OpenTaskEditor(selectedDate))
         }
+
     }
 
     override fun onEditTaskClick(taskId: Long?) {
         _state.update { currentState ->
             currentState.copy(isTaskEditorBottomSheetVisible = true, currentTaskId = taskId)
         }
+
+
     }
+    fun setTaskEditorDate(date: LocalDateTime) {
+        _state.update {
+            it.copy(selectedDate = date)
+        }
+    }
+
+    fun showTaskEditor() {
+        _state.update {
+            it.copy(isTaskEditorBottomSheetVisible = true)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     override fun onDismissTaskDetailsBottomSheetRequest() {
         _state.update { currentState ->
