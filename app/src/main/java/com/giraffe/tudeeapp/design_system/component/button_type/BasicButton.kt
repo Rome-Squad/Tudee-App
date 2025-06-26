@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component.button_type
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +42,16 @@ fun BasicButton(
         label = ""
     )
 
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isDisable) disabledContainerColor else containerColor,
+        label = "ContainerColorAnimation"
+    )
+
+    val foregroundColor by animateColorAsState(
+        targetValue = if (isDisable) disabledContentColor else contentColor,
+        label = "ContentColorAnimation"
+    )
+
     Button(
         onClick = onClick,
         enabled = !isDisable,
@@ -49,8 +60,8 @@ fun BasicButton(
             .widthIn(min = animatedWidth)
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
+            containerColor = backgroundColor,
+            contentColor = foregroundColor,
             disabledContainerColor = disabledContainerColor,
             disabledContentColor = disabledContentColor
         ),
