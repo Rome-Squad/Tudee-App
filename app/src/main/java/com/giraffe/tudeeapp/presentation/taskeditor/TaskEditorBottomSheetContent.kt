@@ -130,9 +130,9 @@ fun TaskEditorBottomSheetContent(
             DefaultTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { showDatePickerDialog = true },
+                    .clip(RoundedCornerShape(16.dp)),
                 isReadOnly = true,
+                onClicked = { showDatePickerDialog = true },
                 textValue = formattedDate,
                 hint = stringResource(R.string.due_date_hint),
                 icon = painterResource(R.drawable.calendar_plus)
