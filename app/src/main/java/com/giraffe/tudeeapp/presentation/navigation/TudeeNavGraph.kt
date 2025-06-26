@@ -8,7 +8,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.BottomNavigationItem
 import com.giraffe.tudeeapp.design_system.component.DefaultNavigationBar
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.presentation.screen.categories.categoriesRoute
 import com.giraffe.tudeeapp.presentation.screen.home.homeRoute
 import com.giraffe.tudeeapp.presentation.screen.onboard.onboardingRoute
@@ -50,8 +51,7 @@ fun TudeeNavGraph(modifier: Modifier = Modifier) {
         animationSpec = tween(animationTime)
     )
     Scaffold(
-        modifier = Modifier
-            .navigationBarsPadding(),
+        containerColor = Theme.color.surfaceHigh,
         bottomBar = {
             AnimatedVisibility(
                 visible = showBottomNav,
@@ -64,7 +64,6 @@ fun TudeeNavGraph(modifier: Modifier = Modifier) {
                     targetOffsetY = { it }),
             ) {
                 DefaultNavigationBar(
-                    modifier = Modifier.height(74.dp),
                     navController = navController,
                     items = listOf(
                         BottomNavigationItem(
@@ -90,7 +89,10 @@ fun TudeeNavGraph(modifier: Modifier = Modifier) {
         NavHost(
             navController = navController,
             startDestination = Screen.SplashScreen.route,
-            modifier = modifier.padding(bottom = animatedPadding.value)
+            modifier = modifier
+                .background(Theme.color.surfaceHigh)
+                .padding(bottom = animatedPadding.value)
+                .navigationBarsPadding()
         ) {
             splashRoute(navController)
             onboardingRoute(navController)
