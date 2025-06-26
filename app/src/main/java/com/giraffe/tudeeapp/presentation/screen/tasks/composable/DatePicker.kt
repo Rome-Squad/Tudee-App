@@ -2,13 +2,11 @@ package com.giraffe.tudeeapp.presentation.screen.tasks.composable
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -26,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DayCard
+import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 import kotlinx.coroutines.launch
@@ -77,9 +76,11 @@ fun DatePicker(
         )
     }
 
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp)) {
+    Column(
+        modifier = modifier
+            .background(Theme.color.surfaceHigh)
+            .fillMaxWidth()
+    ) {
         val monthName = Month(currentMonth).getDisplayName(TextStyle.FULL, currentLocale)
         val yearInLocal = currentYear.toLocaleNumbers(currentLocale)
         val formattedDate = "$monthName, $yearInLocal"
@@ -97,11 +98,9 @@ fun DatePicker(
             onMonthClick = { isDialogVisible = true }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         LazyRow(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             reverseLayout = currentLocale.language == "ar"
         ) {

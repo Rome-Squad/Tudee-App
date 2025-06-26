@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +55,7 @@ fun SwipableTask(
     }
     Box(
         modifier = modifier
-            .background(Theme.color.errorVariant)
+            .background(color =Theme.color.errorVariant, shape = RoundedCornerShape(16.dp))
     ) {
         TaskDeleteButton(
             onClick = action,
