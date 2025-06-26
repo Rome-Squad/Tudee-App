@@ -6,8 +6,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.giraffe.tudeeapp.data.dto.CategoryDto
-import com.giraffe.tudeeapp.data.util.Constants.CATEGORY_TABLE_NAME
-import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
+import com.giraffe.tudeeapp.data.util.DatabaseConfig.CATEGORY_TABLE_NAME
+import com.giraffe.tudeeapp.data.util.DatabaseConfig.TASK_TABLE_NAME
 import kotlinx.coroutines.flow.Flow
 
 @Dao
