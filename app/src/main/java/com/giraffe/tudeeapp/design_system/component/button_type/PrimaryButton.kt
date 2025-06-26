@@ -1,7 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component.button_type
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,7 +36,6 @@ fun PrimaryButton(
     BasicButton(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth()
             .background(backgroundBrush, RoundedCornerShape(100.dp)),
         text = text,
         containerColor = Color.Transparent,

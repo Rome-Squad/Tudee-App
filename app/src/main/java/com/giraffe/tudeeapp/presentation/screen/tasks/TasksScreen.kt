@@ -220,7 +220,7 @@ fun TaskScreenContent(
                 taskId = state.currentTaskId,
                 onDismissRequest = actions::onDismissTaskEditorBottomSheetRequest,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                selectedDate = state.taskEditorDate,
+                selectedDate = state.selectedDate,
                 onSuccess = { message ->
                     showSnackBar(message, false)
                 },

@@ -1,6 +1,5 @@
 package com.giraffe.tudeeapp.presentation.screen.taskeditor
 
-
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -59,7 +58,10 @@ import com.giraffe.tudeeapp.presentation.utils.errorToMessage
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 import com.giraffe.tudeeapp.presentation.utils.toStringResource
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -74,12 +76,10 @@ fun TaskEditorBottomSheet(
     onError: (String) -> Unit = {},
     viewModel: TaskEditorViewModel = koinViewModel()
 ) {
-
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val taskEditorUiState by viewModel.state.collectAsState()
-
     LaunchedEffect(key1 = taskId, selectedDate) {
         if (taskId == null) {
             viewModel.setDueDate(selectedDate)
@@ -113,6 +113,7 @@ fun TaskEditorBottomSheet(
         TaskEditorBottomSheetContent(
             taskEditorState = taskEditorUiState,
             actions = viewModel,
+            selectedDate = selectedDate,
             isNewTask = taskId == null
         )
     }
@@ -120,11 +121,11 @@ fun TaskEditorBottomSheet(
 
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun TaskEditorBottomSheetContent(
     taskEditorState: TaskEditorState,
+    selectedDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date,
     actions: TaskEditorInteractionListener,
     isNewTask: Boolean
 ) {
@@ -137,6 +138,7 @@ private fun TaskEditorBottomSheetContent(
         onDismissRequest = {
             showDatePickerDialog = false
         },
+        selectedDate = selectedDate,
         onDateSelected = { selectedDate ->
             actions.onChangeTaskDueDateValue(selectedDate)
             showDatePickerDialog = false
@@ -196,9 +198,9 @@ private fun TaskEditorBottomSheetContent(
             DefaultTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { showDatePickerDialog = true },
+                    .clip(RoundedCornerShape(16.dp)),
                 isReadOnly = true,
+                onClicked = { showDatePickerDialog = true },
                 textValue = formattedDate,
                 hint = stringResource(R.string.due_date_hint),
                 icon = painterResource(R.drawable.calendar_plus)
@@ -304,4 +306,3 @@ private fun TaskEditorBottomSheetContent(
         }
     }
 }
-

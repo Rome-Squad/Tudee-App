@@ -3,6 +3,7 @@ package com.giraffe.tudeeapp.design_system.component
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Row
@@ -19,12 +20,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,21 +40,31 @@ import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun DefaultTextField(
+    modifier: Modifier = Modifier,
     textValue: String,
     hint: String,
     icon: Painter,
-    modifier: Modifier = Modifier,
     isReadOnly: Boolean = false,
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
+    onClicked: () -> Unit = {},
 ) {
+
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val borderColor by animateColorAsState(
-        targetValue = if (isFocused) Theme.color.primary else Theme.color.stroke
+        targetValue = if (isFocused && !isReadOnly) Theme.color.primary else Theme.color.stroke
     )
     val iconColor by animateColorAsState(
         targetValue = if (textValue.isBlank()) Theme.color.hint else Theme.color.body
     )
+    LaunchedEffect(isFocused) {
+        if (isFocused && isReadOnly) {
+            onClicked()
+            focusManager.clearFocus()
+        }
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -58,7 +73,11 @@ fun DefaultTextField(
                 width = 1.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(16.dp)
-            ),
+            )
+            .clickable(
+                indication = null,
+                interactionSource = null
+            ) { onClicked() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -80,7 +99,9 @@ fun DefaultTextField(
         TextField(
             readOnly = isReadOnly,
             interactionSource = interactionSource,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester),
             value = textValue,
             onValueChange = onValueChange,
             maxLines = 1,
