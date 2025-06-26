@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,10 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
@@ -58,14 +55,18 @@ import com.giraffe.tudeeapp.presentation.utils.copyImageToInternalStorage
 fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.add_new_category),
-    categoryToEdit: Category? = null,
+    categoryTitle: String? = null,
+    categoryImageUri: Uri? = null,
     isVisible: Boolean = false,
     onVisibilityChange: (Boolean) -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onTitleChanged: (title: String) -> Unit = {},
+    onImageChanged: (uri: Uri) -> Unit = {},
     onAddClick: (Category) -> Unit = {},
-    onEditClick: (Category) -> Unit = {},
-    onDeleteClick: (Category) -> Unit = {},
+    onSaveClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val isToEdit = rememberSaveable { categoryTitle != null }
 
     if (isVisible) {
         ModalBottomSheet(
@@ -75,19 +76,12 @@ fun CategoryBottomSheet(
                 onVisibilityChange(false)
             },
         ) {
-            var categoryTitle by remember(categoryToEdit) {
-                mutableStateOf(
-                    categoryToEdit?.name ?: ""
-                )
-            }
-            var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
             val launcher =
                 rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                    uri?.let {
-                        photoUri = uri.copyImageToInternalStorage(context)
+                    uri?.copyImageToInternalStorage(context)?.let {
+                        onImageChanged(it)
                     }
                 }
-
             Column {
                 Row(
                     modifier = Modifier
@@ -102,10 +96,10 @@ fun CategoryBottomSheet(
                         style = Theme.textStyle.title.large,
                         color = Theme.color.title
                     )
-                    if (categoryToEdit != null) {
+                    if (isToEdit) {
                         Text(
                             modifier = Modifier
-                                .clickable(onClick = { onDeleteClick(categoryToEdit) }),
+                                .clickable(onClick = { onDeleteClick() }),
                             text = stringResource(R.string.delete),
                             style = Theme.textStyle.label.large,
                             color = Theme.color.error
@@ -115,15 +109,14 @@ fun CategoryBottomSheet(
 
                 DefaultTextField(
                     modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    textValue = categoryTitle,
+                    textValue = categoryTitle ?: "",
                     onValueChange = {
                         if (it.length <= 20) {
-                            categoryTitle = it
+                            onTitleChanged(it)
                         }
                     },
                     hint = stringResource(R.string.category_title),
                     icon = painterResource(R.drawable.categories_unselected),
-
                 )
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -137,7 +130,7 @@ fun CategoryBottomSheet(
                         .width(112.dp)
                         .height(113.dp)
                         .background(
-                            color = if (photoUri == null) Theme.color.surface else Color.Black.copy(
+                            color = if (categoryImageUri == null) Theme.color.surface else Color.Black.copy(
                                 .1f
                             ),
                             shape = RoundedCornerShape(16.dp)
@@ -156,7 +149,7 @@ fun CategoryBottomSheet(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (photoUri == null && categoryToEdit?.imageUri == null) {
+                    if (categoryImageUri == null) {
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -178,7 +171,7 @@ fun CategoryBottomSheet(
                             painter = rememberAsyncImagePainter(
                                 ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(data = photoUri ?: categoryToEdit?.imageUri)
+                                    .data(data = categoryImageUri)
                                     .build()
                             ),
                             contentDescription = "selected photo"
@@ -211,23 +204,16 @@ fun CategoryBottomSheet(
                 ) {
                     PrimaryButton(
                         modifier = Modifier.fillMaxWidth(),
-                        text = if (categoryToEdit != null) stringResource(R.string.sava) else stringResource(
-                            R.string.add
-                        ),
-                        isDisable = categoryTitle.isBlank() || photoUri == null
+                        text = if (isToEdit) stringResource(R.string.sava) else stringResource(R.string.add),
+                        isDisable = categoryTitle.isNullOrEmpty() || categoryImageUri == null
                     ) {
-                        if (categoryToEdit != null) {
-                            onEditClick(
-                                categoryToEdit.copy(
-                                    name = categoryTitle,
-                                    imageUri = photoUri.toString(),
-                                )
-                            )
+                        if (isToEdit) {
+                            onSaveClick()
                         } else {
                             onAddClick(
                                 Category(
-                                    name = categoryTitle,
-                                    imageUri = photoUri.toString(),
+                                    name = categoryTitle ?: "",
+                                    imageUri = categoryImageUri.toString(),
                                     taskCount = 0,
                                     isEditable = true
                                 )

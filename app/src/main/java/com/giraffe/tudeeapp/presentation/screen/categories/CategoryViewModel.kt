@@ -1,12 +1,14 @@
 package com.giraffe.tudeeapp.presentation.screen.categories
 
+import android.net.Uri
 import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.domain.service.CategoriesService
 import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 
 class CategoryViewModel(
     private val categoriesService: CategoriesService,
-) : BaseViewModel<CategoriesScreenState, CategoriesScreenEffect>(CategoriesScreenState()), CategoriesScreenInteractionListener {
+) : BaseViewModel<CategoriesScreenState, CategoriesScreenEffect>(CategoriesScreenState()),
+    CategoriesScreenInteractionListener {
 
     init {
         getAllCategories()
@@ -53,8 +55,20 @@ class CategoryViewModel(
         }
     }
 
+    override fun onCategoryTitleChanged(title: String) =
+        updateState { it.copy(selectedCategoryTitle = title) }
+
+    override fun onCategoryImageChanged(uri: Uri) =
+        updateState { it.copy(selectedCategoryImageUri = uri) }
+
     private fun onAddCategorySuccess() {
-        updateState { it.copy(isBottomSheetVisible = false) }
+        updateState {
+            it.copy(
+                selectedCategoryTitle = null,
+                selectedCategoryImageUri = null,
+                isBottomSheetVisible = false
+            )
+        }
         sendEffect(CategoriesScreenEffect.CategoryAdded)
     }
 

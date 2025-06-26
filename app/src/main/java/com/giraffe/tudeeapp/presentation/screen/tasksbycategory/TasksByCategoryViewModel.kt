@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.screen.tasksbycategory
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import com.giraffe.tudeeapp.domain.entity.Category
 import com.giraffe.tudeeapp.domain.entity.task.Task
@@ -19,7 +20,8 @@ class TasksByCategoryViewModel(
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel<TasksByCategoryScreenState, TasksByCategoryEffect>(TasksByCategoryScreenState()), TasksByCategoryScreenInteractionListener {
+) : BaseViewModel<TasksByCategoryScreenState, TasksByCategoryEffect>(TasksByCategoryScreenState()),
+    TasksByCategoryScreenInteractionListener {
 
     init {
         getCategoryById(CategoriesArgs(savedStateHandle = savedStateHandle).categoryId)
@@ -42,6 +44,8 @@ class TasksByCategoryViewModel(
         updateState { state ->
             state.copy(
                 selectedCategory = category,
+                selectedCategoryTitle = category.name,
+                selectedCategoryImageUri = category.imageUri
             )
         }
         getTasks(category)
@@ -79,12 +83,17 @@ class TasksByCategoryViewModel(
         updateState { it.copy(isBottomSheetVisible = isVisible) }
     }
 
-    override fun editCategory(category: Category) {
-        safeExecute(
-            onError = ::onEditCategoryError,
-            onSuccess = { onEditCategorySuccess(category) }
-        ) {
-            categoriesService.updateCategory(category)
+    override fun onSaveClick() {
+        state.value.selectedCategory?.copy(
+            name = state.value.selectedCategoryTitle ?: "",
+            imageUri = state.value.selectedCategoryImageUri ?: ""
+        )?.let { category ->
+            safeExecute(
+                onError = ::onEditCategoryError,
+                onSuccess = { onEditCategorySuccess(category) }
+            ) {
+                categoriesService.updateCategory(category)
+            }
         }
     }
 
@@ -109,6 +118,14 @@ class TasksByCategoryViewModel(
         ) {
             categoriesService.deleteCategory(category.id)
         }
+    }
+
+    override fun onTitleChanged(title: String) {
+        updateState { it.copy(selectedCategoryTitle = title) }
+    }
+
+    override fun onImageUriChanged(uri: Uri) {
+        updateState { it.copy(selectedCategoryImageUri = uri.toString()) }
     }
 
     private fun onDeleteCategoryError(error: Throwable) {

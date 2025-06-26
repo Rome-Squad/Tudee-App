@@ -40,6 +40,8 @@ import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+import androidx.core.net.toUri
+
 
 @Composable
 fun TasksByCategoryScreen(
@@ -120,7 +122,7 @@ fun TasksByCategoryContent(
                 onTabSelected = actions::selectTab
             )
             if (state.tasks[state.selectedTab].isNullOrEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     NoTasksSection()
                 }
             } else {
@@ -141,18 +143,22 @@ fun TasksByCategoryContent(
             modifier = Modifier.align(Alignment.TopCenter),
             snackState = snackState,
         )
-        CategoryBottomSheet(
-            title = stringResource(R.string.edit_category),
-            isVisible = state.isBottomSheetVisible,
-            onVisibilityChange = actions::setBottomSheetVisibility,
-            categoryToEdit = state.selectedCategory,
-            onEditClick = actions::editCategory,
-            onDeleteClick = { category ->
-                actions.setAlertBottomSheetVisibility(true)
-            }
-        )
+        state.selectedCategory?.let {
+            CategoryBottomSheet(
+                title = stringResource(R.string.edit_category),
+                isVisible = state.isBottomSheetVisible,
+                onVisibilityChange = actions::setBottomSheetVisibility,
+                categoryTitle = state.selectedCategoryTitle,
+                categoryImageUri = state.selectedCategoryImageUri?.toUri(),
+                onTitleChanged = actions::onTitleChanged,
+                onImageChanged = actions::onImageUriChanged,
+                onSaveClick = actions::onSaveClick,
+                onDeleteClick = { actions.setAlertBottomSheetVisibility(true) }
+            )
+        }
+
         AlertBottomSheet(
-            title =  stringResource(R.string.delete_category),
+            title = stringResource(R.string.delete_category),
             subTitle = stringResource(R.string.are_you_sure_to_continue),
             image = painterResource(R.drawable.sure_robot),
             positiveButtonTitle = stringResource(R.string.delete),
