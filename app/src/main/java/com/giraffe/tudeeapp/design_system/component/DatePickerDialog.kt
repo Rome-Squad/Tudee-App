@@ -28,7 +28,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.TextButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -41,11 +41,12 @@ import kotlinx.datetime.toLocalDateTime
 fun DatePickerDialog(
     modifier: Modifier = Modifier,
     showDialog: Boolean,
+    selectedDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date,
     onDismissRequest: () -> Unit,
     onDateSelected: (LocalDate) -> Unit
 ) {
     if (showDialog) {
-        var selectedDate by remember { mutableStateOf(getCurrentLocalDate()) }
+        var selectedDate by remember { mutableStateOf(selectedDate) }
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = selectedDate.atStartOfDayIn(TimeZone.UTC)
                 .toEpochMilliseconds()

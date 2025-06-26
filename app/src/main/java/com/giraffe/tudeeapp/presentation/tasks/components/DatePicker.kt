@@ -53,7 +53,11 @@ fun DatePicker(
     modifier: Modifier = Modifier,
     onDateSelected: (LocalDate) -> Unit = {}
 ) {
-    var selectedDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.UTC).date) }
+    var selectedDate by remember {
+        mutableStateOf(
+            Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+        )
+    }
     val currentMonth = selectedDate.monthNumber
     val currentYear = selectedDate.year
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -79,7 +83,9 @@ fun DatePicker(
         )
     }
 
-    Column(modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .padding(bottom = 8.dp)) {
         val monthName = Month(currentMonth).getDisplayName(TextStyle.FULL, currentLocale)
         val yearInLocal = currentYear.toLocaleNumbers(currentLocale)
         val formattedDate = "$monthName, $yearInLocal"
@@ -112,7 +118,8 @@ fun DatePicker(
                     isSelected = dayData.date == selectedDate,
                     onClick = {
                         selectedDate = dayData.date
-                        onDateSelected(selectedDate)                    }
+                        onDateSelected(selectedDate)
+                    }
                 )
             }
         }
@@ -130,6 +137,7 @@ fun DatePicker(
     DatePickerDialog(
         showDialog = isDialogVisible,
         onDismissRequest = { isDialogVisible = false },
+        selectedDate = selectedDate,
         onDateSelected = {
             selectedDate = LocalDate(it.year, it.monthNumber, it.dayOfMonth)
             onDateSelected(it)

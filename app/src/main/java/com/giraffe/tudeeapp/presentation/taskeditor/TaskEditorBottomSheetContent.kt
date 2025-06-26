@@ -48,11 +48,16 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 import com.giraffe.tudeeapp.presentation.utils.toStringResource
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
     taskEditorState: TaskEditorState,
+    selectedDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.UTC).date,
     actions: TaskEditorInteractionListener,
     isNewTask: Boolean
 ) {
@@ -65,6 +70,7 @@ fun TaskEditorBottomSheetContent(
         onDismissRequest = {
             showDatePickerDialog = false
         },
+        selectedDate = selectedDate,
         onDateSelected = { selectedDate ->
             actions.onChangeTaskDueDateValue(selectedDate)
             showDatePickerDialog = false
