@@ -76,15 +76,9 @@ suspend fun addDefaultCategories(dao: CategoryDao) {
 val dataModule = module {
     single { DataStorePreferences(androidContext()) }
 
-    single {
-        val database = get<TudeeDatabase>()
-        database.taskDao()
-    }
+    single { get<TudeeDatabase>().taskDao() }
 
-    single {
-        val database = get<TudeeDatabase>()
-        database.categoryDao()
-    }
+    single { get<TudeeDatabase>().categoryDao() }
 
     single {
         Room.databaseBuilder(
