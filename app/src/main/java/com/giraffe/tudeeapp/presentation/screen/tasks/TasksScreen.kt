@@ -164,11 +164,7 @@ fun TaskScreenContent(
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable {
                                     actions.onTaskClick(task.id)
-                                },
-                            onCollapsed = {
-                                actions.setSelectedTaskId(task.id)
-                                actions.onDeleteTaskClick()
-                            }
+                                }
                         )
                     }
                 }
