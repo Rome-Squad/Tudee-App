@@ -39,7 +39,7 @@ import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
-import com.giraffe.tudeeapp.presentation.AppViewModel
+import com.giraffe.tudeeapp.presentation.app.AppViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
