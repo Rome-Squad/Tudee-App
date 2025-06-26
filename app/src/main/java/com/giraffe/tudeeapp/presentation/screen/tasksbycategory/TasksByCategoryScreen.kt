@@ -40,8 +40,6 @@ import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
-import androidx.core.net.toUri
-
 
 @Composable
 fun TasksByCategoryScreen(
@@ -148,12 +146,10 @@ fun TasksByCategoryContent(
                 title = stringResource(R.string.edit_category),
                 isVisible = state.isBottomSheetVisible,
                 onVisibilityChange = actions::setBottomSheetVisibility,
-                categoryTitle = state.selectedCategoryTitle,
-                categoryImageUri = state.selectedCategoryImageUri?.toUri(),
-                onTitleChanged = actions::onTitleChanged,
-                onImageChanged = actions::onImageUriChanged,
-                onSaveClick = actions::onSaveClick,
-                onDeleteClick = { actions.setAlertBottomSheetVisibility(true) }
+                categoryTitle = state.selectedCategory.name,
+                categoryImageUri = state.selectedCategory.imageUri,
+                onDelete = { actions.setAlertBottomSheetVisibility(true) },
+                onConfirm = actions::onSaveClick
             )
         }
 

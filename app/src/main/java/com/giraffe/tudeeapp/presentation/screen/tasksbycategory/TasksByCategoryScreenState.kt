@@ -14,7 +14,5 @@ data class TasksByCategoryScreenState(
     ),
     val isAlertBottomSheetVisible: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
-    val selectedCategoryImageUri: String? = null,
-    val selectedCategoryTitle: String? = null
 )
 
