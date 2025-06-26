@@ -27,15 +27,13 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.design_system.component.DatePickerDialog
 import com.giraffe.tudeeapp.design_system.component.DayCard
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import java.text.NumberFormat
 import java.time.format.TextStyle
 import java.util.Locale
@@ -51,13 +49,9 @@ data class DayData(
 @Composable
 fun DatePicker(
     modifier: Modifier = Modifier,
-    onDateSelected: (LocalDate) -> Unit = {}
+    onDateSelected: (LocalDate) -> Unit = {},
+    selectedDate: LocalDate = getCurrentLocalDate()
 ) {
-    var selectedDate by remember {
-        mutableStateOf(
-            Clock.System.now().toLocalDateTime(TimeZone.UTC).date
-        )
-    }
     val currentMonth = selectedDate.monthNumber
     val currentYear = selectedDate.year
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -93,11 +87,11 @@ fun DatePicker(
         MonthHeader(
             monthYearLabel = formattedDate,
             onPreviousClick = {
-                selectedDate = selectedDate.minus(DatePeriod(months = 1))
+                onDateSelected(selectedDate.minus(DatePeriod(months = 1)))
                 onDateSelected(selectedDate)
             },
             onNextClick = {
-                selectedDate = selectedDate.plus(DatePeriod(months = 1))
+                onDateSelected(selectedDate.plus(DatePeriod(months = 1)))
                 onDateSelected(selectedDate)
             },
             onMonthClick = { isDialogVisible = true }
@@ -117,7 +111,7 @@ fun DatePicker(
                     dayName = dayData.dayName,
                     isSelected = dayData.date == selectedDate,
                     onClick = {
-                        selectedDate = dayData.date
+                        onDateSelected(dayData.date)
                         onDateSelected(selectedDate)
                     }
                 )
@@ -139,7 +133,7 @@ fun DatePicker(
         onDismissRequest = { isDialogVisible = false },
         selectedDate = selectedDate,
         onDateSelected = {
-            selectedDate = LocalDate(it.year, it.monthNumber, it.dayOfMonth)
+            onDateSelected(LocalDate(it.year, it.monthNumber, it.dayOfMonth))
             onDateSelected(it)
         }
     )
@@ -160,6 +154,6 @@ private fun isLeapYear(year: Int): Boolean {
 @Composable
 fun DatePickerComponentPreview() {
     TudeeTheme {
-        DatePicker()
+        //DatePicker()
     }
 }

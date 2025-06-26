@@ -30,6 +30,7 @@ import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.domain.entity.task.Task
 import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.emptyTask
+import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
 import com.giraffe.tudeeapp.presentation.utils.toStringResource
 
 @Composable
@@ -38,6 +39,7 @@ fun TaskCard(
     task: Task,
     isDateVisible: Boolean = true,
 ) {
+    val context = LocalContext.current
     val blurColor = getColorForCategoryIcon(task.category.name).copy(alpha = .08f)
     val icon = when (task.taskPriority) {
         TaskPriority.HIGH -> R.drawable.flag
@@ -93,7 +95,7 @@ fun TaskCard(
                         backgroundColor = Theme.color.surface,
                         contentColor = Theme.color.body,
                         icon = painterResource(R.drawable.calendar_star),
-                        label = task.dueDate.toString()
+                        label = task.dueDate.formatAsLocalizedDate(context)
                     )
                 }
                 Priority(

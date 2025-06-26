@@ -127,7 +127,7 @@ fun TaskScreenContent(
                     .padding(vertical = 20.dp, horizontal = 16.dp)
             )
 
-            DatePicker(onDateSelected = actions::setSelectedDate)
+            DatePicker(onDateSelected = actions::setSelectedDate, selectedDate = state.selectedDate)
             TabsBar(
                 startTab = state.selectedTab,
                 onTabSelected = actions::setSelectedTab,

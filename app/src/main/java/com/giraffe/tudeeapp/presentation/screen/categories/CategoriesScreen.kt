@@ -137,7 +137,9 @@ fun CategoriesContent(
             onVisibilityChange = actions::setBottomSheetVisibility,
             onAddClick = actions::addCategory,
         )
-        DefaultSnackBar(snackState = snackState)
+        DefaultSnackBar(
+            modifier = Modifier.align(Alignment.TopCenter),
+            snackState = snackState)
     }
 
 }
