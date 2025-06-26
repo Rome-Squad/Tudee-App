@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.presentation.screen.tasks
 
+import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -8,8 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -113,66 +117,27 @@ fun TaskScreenContent(
             .background(Theme.color.surfaceHigh)
             .statusBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Text(
-                text = stringResource(R.string.tasks),
-                style = Theme.textStyle.title.large,
-                color = Theme.color.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Theme.color.surfaceHigh)
-                    .padding(vertical = 20.dp, horizontal = 16.dp)
-            )
 
-            DatePicker(onDateSelected = actions::setSelectedDate, selectedDate = state.selectedDate)
-            TabsBar(
-                startTab = state.selectedTab,
-                onTabSelected = actions::setSelectedTab,
-                tasks = state.tasks.mapValues { (_, value) -> value.size }
-            )
+        val configuration = LocalConfiguration.current
+        val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        if (isLandscape) {
+            TasksScreenLandscape(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Theme.color.surface)
-            ) {
-                val selectedTasks = state.tasks[state.selectedTab] ?: emptyList()
-                if (selectedTasks.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            NoTasksSection()
-                        }
-                    }
-                } else {
-                    itemsIndexed(selectedTasks) { index, task ->
-                        SwipableTask(
-                            task = task,
-                            action = {
-                                actions.setSelectedTaskId(task.id)
-                                actions.onDeleteTaskClick()
-                            },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .clickable {
-                                    actions.onTaskClick(task.id)
-                                }
-                        )
-                    }
-                }
-            }
-
-
+                    .background(Theme.color.surface),
+                state = state,
+                actions = actions
+            )
+        } else {
+            TasksScreenContentPortrait(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.color.surface),
+                state = state,
+                actions = actions
+            )
         }
-
 
         FabButton(
             modifier = Modifier
@@ -242,5 +207,130 @@ fun TaskScreenContent(
 fun TaskScreenPreview() {
     TudeeTheme(isDarkTheme = true) {
         TaskScreen()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TasksScreenContentPortrait(
+    modifier: Modifier = Modifier,
+    state: TasksScreenState = TasksScreenState(),
+    actions: TasksScreenInteractionListener,
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(R.string.tasks),
+            style = Theme.textStyle.title.large,
+            color = Theme.color.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Theme.color.surfaceHigh)
+                .padding(vertical = 20.dp, horizontal = 16.dp)
+        )
+
+        DatePicker(onDateSelected = actions::setSelectedDate, selectedDate = state.selectedDate)
+        TabsBar(
+            startTab = state.selectedTab,
+            onTabSelected = actions::setSelectedTab,
+            tasks = state.tasks.mapValues { (_, value) -> value.size }
+        )
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.color.surface)
+        ) {
+            val selectedTasks = state.tasks[state.selectedTab] ?: emptyList()
+            if (selectedTasks.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        NoTasksSection()
+                    }
+                }
+            } else {
+                itemsIndexed(selectedTasks) { index, task ->
+                    SwipableTask(
+                        task = task,
+                        action = {
+                            actions.setSelectedTaskId(task.id)
+                            actions.onDeleteTaskClick()
+                        },
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                actions.onTaskClick(task.id)
+                            }
+                    )
+                }
+            }
+        }
+
+
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TasksScreenLandscape(
+    modifier: Modifier = Modifier,
+    state: TasksScreenState = TasksScreenState(),
+    actions: TasksScreenInteractionListener,
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        item {
+            DatePicker(onDateSelected = actions::setSelectedDate, selectedDate = state.selectedDate)
+        }
+        stickyHeader {
+            TabsBar(
+                startTab = state.selectedTab,
+                onTabSelected = actions::setSelectedTab,
+                tasks = state.tasks.mapValues { (_, value) -> value.size },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.color.surfaceHigh)
+            )
+        }
+
+        val selectedTasks = state.tasks[state.selectedTab] ?: emptyList()
+        if (selectedTasks.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NoTasksSection()
+                }
+            }
+        } else {
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+
+            itemsIndexed(selectedTasks) { index, task ->
+                SwipableTask(
+                    task = task,
+                    action = {
+                        actions.setSelectedTaskId(task.id)
+                        actions.onDeleteTaskClick()
+                    },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            actions.onTaskClick(task.id)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+            }
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+        }
     }
 }
