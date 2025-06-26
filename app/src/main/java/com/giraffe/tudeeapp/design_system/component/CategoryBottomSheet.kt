@@ -9,8 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,8 +43,6 @@ import androidx.core.net.toUri
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import com.giraffe.tudeeapp.R
-import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
-import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 import com.giraffe.tudeeapp.domain.entity.Category
@@ -67,178 +62,145 @@ fun CategoryBottomSheet(
 ) {
     val context = LocalContext.current
 
-    if (isVisible) {
-        ModalBottomSheet(
-            modifier = modifier,
-            containerColor = Theme.color.surface,
-            onDismissRequest = {
-                onVisibilityChange(false)
-            },
-        ) {
-            var categoryTitle by remember(categoryToEdit) {
-                mutableStateOf(
-                    categoryToEdit?.name ?: ""
+    var categoryTitle by remember(categoryToEdit) {
+        mutableStateOf(categoryToEdit?.name ?: "")
+    }
+    var photoUri by remember(categoryToEdit) {
+        mutableStateOf(categoryToEdit?.imageUri?.toUri())
+    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let {
+                photoUri = uri.copyImageToInternalStorage(context)
+            }
+        }
+
+    BaseBottomSheet(
+        modifier = modifier,
+        title = title,
+        isVisible = isVisible,
+        onDismissRequest = { onVisibilityChange(false) },
+        primaryButtonText = if (categoryToEdit != null) stringResource(R.string.sava) else stringResource(
+            R.string.add
+        ),
+        secondaryButtonText = stringResource(R.string.cancel),
+        isPrimaryButtonEnabled = categoryTitle.isNotBlank() && photoUri != null,
+        onPrimaryButtonClick = {
+            if (categoryToEdit != null) {
+                onEditClick(
+                    categoryToEdit.copy(
+                        name = categoryTitle,
+                        imageUri = photoUri.toString(),
+                    )
+                )
+            } else {
+                onAddClick(
+                    Category(
+                        name = categoryTitle,
+                        imageUri = photoUri.toString(),
+                        taskCount = 0,
+                        isEditable = true
+                    )
                 )
             }
-            var photoUri by remember(categoryToEdit) { mutableStateOf(categoryToEdit?.imageUri?.toUri()) }
-            val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                    uri?.let {
-                        photoUri = uri.copyImageToInternalStorage(context)
-                    }
-                }
-
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        modifier = Modifier,
-                        text = title,
-                        style = Theme.textStyle.title.large,
-                        color = Theme.color.title
-                    )
-                    if (categoryToEdit != null) {
-                        Text(
-                            modifier = Modifier
-                                .clickable(onClick = { onDeleteClick(categoryToEdit) }),
-                            text = stringResource(R.string.delete),
-                            style = Theme.textStyle.label.large,
-                            color = Theme.color.error
-                        )
-                    }
-                }
-
-                DefaultTextField(
-                    modifier = Modifier.padding(bottom = 12.dp, start = 16.dp, end = 16.dp),
-                    textValue = categoryTitle,
-                    onValueChange = {
-                        if (it.length <= 20) {
-                            categoryTitle = it
-                        }
-                    },
-                    hint = stringResource(R.string.category_title),
-                    icon = painterResource(R.drawable.categories_unselected),
-
-                )
+        },
+        onSecondaryButtonClick = { onVisibilityChange(false) },
+        titleAction = if (categoryToEdit != null) {
+            {
                 Text(
-                    modifier = Modifier.padding(bottom = 8.dp, start = 16.dp, end = 16.dp),
-                    text = stringResource(R.string.category_image),
-                    style = Theme.textStyle.title.medium,
-                    color = Theme.color.title
+                    modifier = Modifier.clickable(onClick = { onDeleteClick(categoryToEdit) }),
+                    text = stringResource(R.string.delete),
+                    style = Theme.textStyle.label.large,
+                    color = Theme.color.error
                 )
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .width(112.dp)
-                        .height(113.dp)
-                        .background(
-                            color = if (photoUri == null) Theme.color.surface else Color.Black.copy(
-                                .1f
-                            ),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .dashedBorder(
-                            color = Theme.color.stroke,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable {
-                            launcher.launch(
-                                PickVisualMediaRequest(
-                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                )
-                            )
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (photoUri == null && categoryToEdit?.imageUri == null) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(22.dp),
-                                painter = painterResource(R.drawable.add_image),
-                                contentDescription = "add image",
-                                tint = Theme.color.hint
-                            )
-                            Text(
-                                text = stringResource(R.string.upload),
-                                style = Theme.textStyle.label.medium,
-                                color = Theme.color.hint
-                            )
-                        }
-                    } else {
-                        Image(
-                            painter = rememberAsyncImagePainter(
-                                ImageRequest
-                                    .Builder(LocalContext.current)
-                                    .data(data = photoUri ?: categoryToEdit?.imageUri)
-                                    .build()
-                            ),
-                            contentDescription = "selected photo"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .background(
-                                    color = Theme.color.surfaceHigh,
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(6.dp),
-                                painter = painterResource(R.drawable.pen),
-                                contentDescription = "edit image",
-                                tint = Theme.color.secondary
-                            )
+            }
+        } else null,
+        isScrollable = false
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            DefaultTextField(
+                textValue = categoryTitle,
+                onValueChange = {
+                    if (it.length <= 20) {
+                        categoryTitle = it
+                    }
+                },
+                hint = stringResource(R.string.category_title),
+                icon = painterResource(R.drawable.categories_unselected),
+            )
 
-                        }
+            Text(
+                text = stringResource(R.string.category_image),
+                style = Theme.textStyle.title.medium,
+                color = Theme.color.title
+            )
+
+            Box(
+                modifier = Modifier
+                    .width(112.dp)
+                    .height(113.dp)
+                    .background(
+                        color = if (photoUri == null) Theme.color.surface else Color.Black.copy(.1f),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .dashedBorder(
+                        color = Theme.color.stroke,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable {
+                        launcher.launch(
+                            PickVisualMediaRequest(
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                if (photoUri == null && categoryToEdit?.imageUri == null) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(R.drawable.add_image),
+                            contentDescription = "add image",
+                            tint = Theme.color.hint
+                        )
+                        Text(
+                            text = stringResource(R.string.upload),
+                            style = Theme.textStyle.label.medium,
+                            color = Theme.color.hint
+                        )
                     }
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .background(color = Theme.color.surfaceHigh)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    PrimaryButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = if (categoryToEdit != null) stringResource(R.string.sava) else stringResource(
-                            R.string.add
+                } else {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            ImageRequest
+                                .Builder(LocalContext.current)
+                                .data(data = photoUri ?: categoryToEdit?.imageUri)
+                                .build()
                         ),
-                        isDisable = categoryTitle.isBlank() || photoUri == null
+                        contentDescription = "selected photo"
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = Theme.color.surfaceHigh,
+                                shape = RoundedCornerShape(12.dp)
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (categoryToEdit != null) {
-                            onEditClick(
-                                categoryToEdit.copy(
-                                    name = categoryTitle,
-                                    imageUri = photoUri.toString(),
-                                )
-                            )
-                        } else {
-                            onAddClick(
-                                Category(
-                                    name = categoryTitle,
-                                    imageUri = photoUri.toString(),
-                                    taskCount = 0,
-                                    isEditable = true
-                                )
-                            )
-                        }
-                    }
-                    SecondaryButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(R.string.cancel)
-                    ) {
-                        onVisibilityChange(false)
+                        Icon(
+                            modifier = Modifier.padding(6.dp),
+                            painter = painterResource(R.drawable.pen),
+                            contentDescription = "edit image",
+                            tint = Theme.color.secondary
+                        )
                     }
                 }
             }
