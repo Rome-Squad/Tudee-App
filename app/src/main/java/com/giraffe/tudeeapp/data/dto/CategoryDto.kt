@@ -2,9 +2,9 @@ package com.giraffe.tudeeapp.data.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.giraffe.tudeeapp.data.util.Constants
+import com.giraffe.tudeeapp.data.util.DatabaseConstants
 
-@Entity(tableName = Constants.CATEGORY_TABLE_NAME)
+@Entity(tableName = DatabaseConstants.CATEGORY_TABLE_NAME)
 data class CategoryDto(
     @PrimaryKey(autoGenerate = true) val uid: Long = 0L,
     val name:String,

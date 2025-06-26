@@ -176,7 +176,11 @@ private fun TaskEditorBottomSheetContent(
 
             DefaultTextField(
                 textValue = task.title,
-                onValueChange = actions::onChangeTaskTitleValue,
+                onValueChange = {
+                    if (it.length <= 30) {
+                        actions.onChangeTaskTitleValue(it)
+                    }
+                },
                 hint = stringResource(R.string.task_title),
                 icon = painterResource(R.drawable.addeditfield)
             )
@@ -185,7 +189,8 @@ private fun TaskEditorBottomSheetContent(
 
             ParagraphTextField(
                 textValue = task.description,
-                onValueChange = actions::onChangeTaskDescriptionValue,
+                onValueChange = {
+                    if (it.length <= 100) {actions.onChangeTaskDescriptionValue(it)}},
                 hint = stringResource(R.string.description)
             )
 
