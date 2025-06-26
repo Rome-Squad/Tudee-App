@@ -15,11 +15,44 @@ import kotlinx.coroutines.flow.map
 class CategoryServiceImp(
     private val categoryDao: CategoryDao
 ) : CategoriesService {
-    override fun getAllCategories(): Flow<List<Category>> {
-        return categoryDao.getAllCategories().map { list ->
-            list.toEntityList()
-        }.catch { e ->
-            throw mapExceptionToTudeeError(e)
+    override suspend fun getAllCategories(): Flow<List<Category>> {
+        if (categoryDao.getCategoriesCount() <= 0) addDefaultCategories()
+        return categoryDao.getAllCategories()
+            .map { list ->
+                list.toEntityList()
+            }.catch { e ->
+                throw mapExceptionToTudeeError(e)
+            }
+    }
+
+    private suspend fun addDefaultCategories() {
+        val basePath = "file:///android_asset/categories/"
+        listOf(
+            "Education" to basePath + "book.png",
+            "Adoration" to basePath + "quran.png",
+            "Family & friend" to basePath + "social.png",
+            "Cooking" to basePath + "chef.png",
+            "Traveling" to basePath + "plane.png",
+            "Coding" to basePath + "code.png",
+            "Fixing bugs" to basePath + "bug.png",
+            "Medical" to basePath + "hospital.png",
+            "Shopping" to basePath + "cart.png",
+            "Agriculture" to basePath + "plant.png",
+            "Entertainment" to basePath + "baseball.png",
+            "Gym" to basePath + "gym.png",
+            "Cleaning" to basePath + "brush.png",
+            "Work" to basePath + "bag.png",
+            "Event" to basePath + "cake.png",
+            "Budgeting" to basePath + "money_bag.png",
+            "Self-care" to basePath + "in_love.png",
+        ).forEach {
+            val newCategory = Category(
+                name = it.first,
+                imageUri = it.second,
+                isEditable = false,
+                taskCount = 0
+            )
+            categoryDao.createCategory(newCategory.toDto())
         }
     }
 
