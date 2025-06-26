@@ -104,7 +104,7 @@ fun CategoryItem(
 @Composable
 fun CategoryItemWithCountPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open),
+        icon = painterResource(R.drawable.user_multiple),
         categoryName = "Education",
         count = 16
     )
@@ -114,7 +114,7 @@ fun CategoryItemWithCountPreview() {
 @Composable
 fun CategoryItemWithSelectedPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open),
+        icon = painterResource(R.drawable.user_multiple),
         categoryName = "Education",
         isSelected = true
     )
