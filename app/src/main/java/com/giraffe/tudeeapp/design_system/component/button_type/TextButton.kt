@@ -1,88 +1,43 @@
 package com.giraffe.tudeeapp.design_system.component.button_type
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
 import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 
 @Composable
 fun TextButton(
-    modifier: Modifier = Modifier.
-    height(56.dp)
-        .fillMaxWidth(),
     text: String,
-    isLoading:Boolean=false,
-    isDisable:Boolean=false,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    isDisable: Boolean = false,
     onClick: () -> Unit,
 ) {
-    val content =  Theme.color.primary
-    val shape = RoundedCornerShape(100.dp)
-    val animatedWidth by animateDpAsState(
-        if (isLoading) 140.dp else Dp.Unspecified,
-        label = ""
-    )
-
-    Button(
+    BasicButton(
         onClick = onClick,
-        enabled = !isDisable,
-        shape = shape,
-        modifier = modifier
-            .widthIn(min = animatedWidth),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = content,
-            disabledContainerColor = Theme.color.disable,
-            disabledContentColor = Theme.color.stroke
-        ),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text, style = Theme.textStyle.label.large)
-            if (isLoading) {
-                Icon(painterResource(R.drawable.loading), R.string.loading.toString(), Modifier.size(24.dp))
-            }
-        }
-    }
+        modifier = modifier,
+        text = text,
+        containerColor = Color.Transparent,
+        contentColor = Theme.color.primary,
+        disabledContainerColor = Theme.color.disable,
+        disabledContentColor = Theme.color.stroke,
+        isLoading = isLoading,
+        isDisable = isDisable
+    )
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TudeeTextButtonsPreview() {
-    TudeeTheme   {
-         TextButton(
-               text = "Submit",
-               onClick = {},
-               isLoading = true,
-             isDisable = false,
-           )
-
-
-
+    TudeeTheme {
+        TextButton(
+            text = "Submit",
+            onClick = {},
+            isLoading = true
+        )
     }
 }

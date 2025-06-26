@@ -6,14 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,11 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
@@ -40,7 +35,7 @@ import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TudeeAppBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 import com.giraffe.tudeeapp.presentation.home.composable.OverViewSection
 import com.giraffe.tudeeapp.presentation.home.composable.SliderStatus
 import com.giraffe.tudeeapp.presentation.home.composable.TaskSection
@@ -50,6 +45,7 @@ import com.giraffe.tudeeapp.presentation.taskeditor.TaskEditorBottomSheet
 import com.giraffe.tudeeapp.presentation.utils.EventListener
 import com.giraffe.tudeeapp.presentation.utils.convertToArabicNumbers
 import com.giraffe.tudeeapp.presentation.utils.errorToMessage
+import com.giraffe.tudeeapp.presentation.utils.getCurrentLocalDate
 import com.giraffe.tudeeapp.presentation.utils.showErrorSnackbar
 import com.giraffe.tudeeapp.presentation.utils.showSuccessSnackbar
 import kotlinx.coroutines.launch
@@ -58,25 +54,24 @@ import org.koin.androidx.compose.koinViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
     navigateToTasksScreen: (tabIndex: Int) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val state by viewModel.homeUiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
+
     EventListener(
-        events = viewModel.events
+        events = viewModel.effect
     ) { event ->
         when (event) {
-            is HomeEvent.Error -> {
+            is HomeScreenEffect.Error -> {
                 snackBarHostState.showErrorSnackbar(context.errorToMessage(event.error))
             }
 
-            is HomeEvent.NavigateToTasksScreen -> {
+            is HomeScreenEffect.NavigateToTasksScreen -> {
                 navigateToTasksScreen(event.tabIndex)
             }
         }
@@ -84,8 +79,6 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        onThemeSwitchToggle = onThemeSwitchToggle,
-        isDarkTheme = isDarkTheme,
         actions = viewModel,
         snackBarHostState = snackBarHostState,
         showSnackBar = { message, isError ->
@@ -104,47 +97,36 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
-    state: HomeUiState,
-    isDarkTheme: Boolean = false,
-    onThemeSwitchToggle: () -> Unit = {},
+    state: HomeScreenState,
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
-    actions: HomeActions,
+    actions: HomeScreenInteractionListener,
 ) {
     val screenSize = LocalWindowInfo.current.containerSize
     Box(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
             .background(Theme.color.primary)
     ) {
-        Box(
+        Column(
             modifier = Modifier
+                .statusBarsPadding()
                 .fillMaxSize()
                 .background(Theme.color.surface)
         ) {
-
-            val statusBarHeightDp: Dp = with(LocalDensity.current) {
-                WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(127.dp + statusBarHeightDp)
-                    .background(Theme.color.primary),
+            TudeeAppBar(
+                isDarkTheme = state.isDarkTheme,
+                onThemeSwitchToggle = actions::onToggleTheme
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-            ) {
-                TudeeAppBar(
-                    isDarkTheme = isDarkTheme,
-                    onThemeSwitchToggle = onThemeSwitchToggle
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .background(Theme.color.primary)
+                        .align(Alignment.TopCenter)
                 )
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                LazyColumn {
                     item {
                         Column(
                             modifier = Modifier
@@ -161,7 +143,8 @@ fun HomeContent(
                             )
                             OverViewSection(tasksState = state)
                         }
-
+                    }
+                    item {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -209,47 +192,44 @@ fun HomeContent(
                         }
                     }
                 }
-            }
-
-            FabButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(12.dp),
-                icon = painterResource(R.drawable.add_task_icon),
-                onClick = actions::onAddTaskClick
-            )
-
-
-            if (state.isTaskDetailsVisible && state.currentTaskId != null) {
-                TaskDetailsBottomSheet(
-                    taskId = state.currentTaskId,
-                    onnDismiss = actions::onDismissTaskDetailsRequest,
-                    onEditTask = actions::onEditTaskClick
-                )
-            }
-
-            if (state.isTaskEditorVisible) {
-                TaskEditorBottomSheet(
-                    taskId = state.currentTaskId,
-                    onDismissRequest = actions::onDismissTaskEditorRequest,
+                FabButton(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
-                    onSuccess = { message ->
-                        showSnackBar(message, false)
-                    },
-                    onError = { error ->
-                        showSnackBar(error, true)
-                    }
+                        .align(Alignment.BottomEnd)
+                        .padding(12.dp),
+                    icon = painterResource(R.drawable.add_task),
+                    onClick = actions::onAddTaskClick
                 )
-            }
 
-            DefaultSnackBar(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp),
-                snackState = snackBarHostState
-            )
+                if (state.isTaskDetailsVisible && state.currentTaskId != null) {
+                    TaskDetailsBottomSheet(
+                        taskId = state.currentTaskId,
+                        onnDismiss = actions::onDismissTaskDetailsRequest,
+                        onEditTask = actions::onEditTaskClick
+                    )
+                }
+                if (state.isTaskEditorVisible) {
+                    TaskEditorBottomSheet(
+                        taskId = state.currentTaskId,
+                        onDismissRequest = actions::onDismissTaskEditorRequest,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxHeight(1 - (80.dp / screenSize.height.dp)),
+                        onSuccess = { message ->
+                            showSnackBar(message, false)
+                        },
+                        onError = { error ->
+                            showSnackBar(error, true)
+                        },
+                        selectedDate = getCurrentLocalDate()
+                    )
+                }
+            }
         }
+        DefaultSnackBar(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding(),
+            snackState = snackBarHostState
+        )
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -99,6 +100,7 @@ fun ThemeSwitch(
             .height(switchSize / 2)
             .clip(shape = CircleShape)
             .clickable { onClick() }
+            .clipToBounds()
     ) {
         AnimatedVisibility(
             visible = isDarkTheme,

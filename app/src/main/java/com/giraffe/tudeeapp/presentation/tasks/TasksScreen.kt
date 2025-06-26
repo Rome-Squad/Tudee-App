@@ -9,13 +9,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.component.AlertBottomSheet
 import com.giraffe.tudeeapp.design_system.component.DefaultSnackBar
-import com.giraffe.tudeeapp.design_system.component.HeaderContent
 import com.giraffe.tudeeapp.design_system.component.NoTasksSection
 import com.giraffe.tudeeapp.design_system.component.TabsBar
 import com.giraffe.tudeeapp.design_system.component.button_type.FabButton
@@ -62,15 +63,20 @@ fun TaskScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     EventListener(
-        events = viewModel.events
+        events = viewModel.effect
     ) {
         when (it) {
-            is TasksScreenEvent.Error -> {
+            is TasksScreenEffect.Error -> {
                 snackBarHostState.showErrorSnackbar(context.errorToMessage(it.error))
             }
 
-            TasksScreenEvent.TaskDeletedSuccess -> {
+            TasksScreenEffect.TaskDeletedSuccess -> {
                 snackBarHostState.showSuccessSnackbar(context.getString(R.string.deleted_task_successfully))
+            }
+
+            is TasksScreenEffect.OpenTaskEditor -> {
+                viewModel.setTaskEditorDate(it.selectedDate)
+                viewModel.showTaskEditor()
             }
         }
     }
@@ -97,7 +103,7 @@ fun TaskScreen(
 @Composable
 fun TaskScreenContent(
     state: TasksScreenState = TasksScreenState(),
-    actions: TasksScreenActions,
+    actions: TasksScreenInteractionListener,
     snackBarHostState: SnackbarHostState,
     showSnackBar: (String, Boolean) -> Unit = { message, isError -> },
 ) {
@@ -105,13 +111,21 @@ fun TaskScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.color.surfaceHigh)
-            .systemBarsPadding()
+            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            HeaderContent(stringResource(R.string.tasks))
+            Text(
+                text = stringResource(R.string.tasks),
+                style = Theme.textStyle.title.large,
+                color = Theme.color.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.color.surfaceHigh)
+                    .padding(vertical = 20.dp, horizontal = 16.dp)
+            )
 
             DatePicker(onDateSelected = actions::setSelectedDate)
             TabsBar(
@@ -150,7 +164,11 @@ fun TaskScreenContent(
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable {
                                     actions.onTaskClick(task.id)
-                                }
+                                },
+                            onCollapsed = {
+                                actions.setSelectedTaskId(task.id)
+                                actions.onDeleteTaskClick()
+                            }
                         )
                     }
                 }
@@ -170,12 +188,15 @@ fun TaskScreenContent(
 
         AlertBottomSheet(
             title = stringResource(R.string.delete_task),
-            imgRes = R.drawable.sure_robot,
+            subTitle = stringResource(R.string.are_you_sure_to_continue),
+            image = painterResource(R.drawable.sure_robot),
+            positiveButtonTitle = stringResource(R.string.delete),
+            negativeButtonTitle = stringResource(R.string.cancel),
+            isVisible = state.isDeleteTaskBottomSheetVisible,
             onRedBtnClick = {
                 actions.onConfirmDeleteTask(state.selectedTaskId)
             },
             onBlueBtnClick = { actions.onDismissDeleteTaskBottomSheetRequest() },
-            isVisible = state.isDeleteTaskBottomSheetVisible,
             onVisibilityChange = {
                 if (it) {
                     actions.onDeleteTaskClick()
@@ -199,6 +220,7 @@ fun TaskScreenContent(
                 taskId = state.currentTaskId,
                 onDismissRequest = actions::onDismissTaskEditorBottomSheetRequest,
                 modifier = Modifier.align(Alignment.BottomCenter),
+                selectedDate = state.taskEditorDate,
                 onSuccess = { message ->
                     showSnackBar(message, false)
                 },

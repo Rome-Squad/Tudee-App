@@ -1,5 +1,6 @@
 package com.giraffe.tudeeapp.design_system.component
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,31 +24,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.giraffe.tudeeapp.R
 import com.giraffe.tudeeapp.design_system.theme.Theme
+import com.giraffe.tudeeapp.design_system.theme.TudeeTheme
 
 @Composable
 fun DefaultTextField(
+    textValue: String,
+    hint: String,
+    icon: Painter,
     modifier: Modifier = Modifier,
-    textValue: String = stringResource(R.string.text_value),
-    onValueChange: (String) -> Unit = {},
-    hint: String = stringResource(R.string.hint),
-    iconRes: Int = R.drawable.ic_user,
     isReadOnly: Boolean = false,
+    onValueChange: (String) -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val borderColor by animateColorAsState(
+        targetValue = if (isFocused) Theme.color.primary else Theme.color.stroke
+    )
+    val iconColor by animateColorAsState(
+        targetValue = if (textValue.isBlank()) Theme.color.hint else Theme.color.body
+    )
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .border(
                 width = 1.dp,
-                color = if (isFocused) Theme.color.primary else Theme.color.stroke,
+                color = borderColor,
                 shape = RoundedCornerShape(16.dp)
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -56,16 +65,17 @@ fun DefaultTextField(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .size(24.dp),
-            painter = painterResource(iconRes),
-            contentDescription = "user icon",
-            tint = if (textValue.isBlank()) Theme.color.hint else Theme.color.body
+            painter = icon,
+            contentDescription = stringResource(R.string.user_icon),
+            tint = iconColor
         )
         Spacer(
             modifier = Modifier
-                .padding(vertical = 13.dp)
                 .fillMaxHeight()
+                .padding(vertical = 13.dp)
                 .width(1.dp)
                 .background(color = Theme.color.stroke)
+                .align(Alignment.CenterVertically)
         )
         TextField(
             readOnly = isReadOnly,
@@ -99,8 +109,14 @@ fun DefaultTextField(
 
 }
 
-@Preview(showBackground = false)
+@Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    DefaultTextField()
+    TudeeTheme {
+        DefaultTextField(
+            textValue = stringResource(R.string.text_value),
+            hint = stringResource(R.string.hint),
+            icon = painterResource(R.drawable.user),
+        )
+    }
 }

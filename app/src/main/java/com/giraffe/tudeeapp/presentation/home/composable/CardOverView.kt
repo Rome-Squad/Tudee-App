@@ -48,7 +48,7 @@ fun CardOverView(
         )
         Column(
             modifier = Modifier
-                .padding(12.dp),
+                .padding(start = 12.dp, end = 18.dp, top = 12.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(

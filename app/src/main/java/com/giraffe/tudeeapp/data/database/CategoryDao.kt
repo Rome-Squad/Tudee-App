@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.giraffe.tudeeapp.data.model.CategoryEntity
+import com.giraffe.tudeeapp.data.dto.CategoryDto
 import com.giraffe.tudeeapp.data.util.Constants.CATEGORY_TABLE_NAME
 import com.giraffe.tudeeapp.data.util.Constants.TASK_TABLE_NAME
 import kotlinx.coroutines.flow.Flow
@@ -18,16 +18,16 @@ interface CategoryDao {
         LEFT JOIN $TASK_TABLE_NAME t ON c.uid = t.categoryId
         GROUP BY c.uid
         """)
-    fun getAllCategories(): Flow<List<CategoryEntity>>
+    fun getAllCategories(): Flow<List<CategoryDto>>
 
     @Query("SELECT * FROM $CATEGORY_TABLE_NAME WHERE uid= :id")
-    suspend fun getCategoryById(id: Long): CategoryEntity
+    suspend fun getCategoryById(id: Long): CategoryDto
 
     @Insert
-    suspend fun createCategory(category: CategoryEntity): Long
+    suspend fun createCategory(category: CategoryDto): Long
 
     @Update
-    suspend fun updateCategory(category: CategoryEntity)
+    suspend fun updateCategory(category: CategoryDto)
 
     @Transaction
     suspend fun deleteCategory(categoryId: Long) {

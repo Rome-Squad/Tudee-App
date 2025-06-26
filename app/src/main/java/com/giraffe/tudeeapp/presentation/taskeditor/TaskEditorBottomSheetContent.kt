@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -44,18 +45,19 @@ import com.giraffe.tudeeapp.design_system.component.Priority
 import com.giraffe.tudeeapp.design_system.component.button_type.PrimaryButton
 import com.giraffe.tudeeapp.design_system.component.button_type.SecondaryButton
 import com.giraffe.tudeeapp.design_system.theme.Theme
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
 import com.giraffe.tudeeapp.presentation.utils.formatAsLocalizedDate
+import com.giraffe.tudeeapp.presentation.utils.toStringResource
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskEditorBottomSheetContent(
-    taskEditorUiState: TaskEditorUiState,
-    actions : TaskEditorActions,
+    taskEditorState: TaskEditorState,
+    actions: TaskEditorInteractionListener,
     isNewTask: Boolean
 ) {
 
-    val task = taskEditorUiState.task
+    val task = taskEditorState.task
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
     DatePickerDialog(
@@ -69,7 +71,7 @@ fun TaskEditorBottomSheetContent(
         }
     )
 
-    AnimatedVisibility(visible = taskEditorUiState.isLoading) {
+    AnimatedVisibility(visible = taskEditorState.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -102,7 +104,7 @@ fun TaskEditorBottomSheetContent(
                 textValue = task.title,
                 onValueChange = actions::onChangeTaskTitleValue,
                 hint = stringResource(R.string.task_title),
-                iconRes = R.drawable.addeditfield
+                icon = painterResource(R.drawable.addeditfield)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -127,7 +129,7 @@ fun TaskEditorBottomSheetContent(
                 isReadOnly = true,
                 textValue = formattedDate,
                 hint = stringResource(R.string.due_date_hint),
-                iconRes = R.drawable.calendar
+                icon = painterResource(R.drawable.calendar_plus)
             )
 
 
@@ -145,8 +147,20 @@ fun TaskEditorBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 TaskPriority.entries.reversed().forEach { priority ->
+                    val icon = when (priority) {
+                        TaskPriority.HIGH -> R.drawable.flag
+                        TaskPriority.MEDIUM -> R.drawable.alert
+                        TaskPriority.LOW -> R.drawable.trade_down_icon
+                    }
+                    val selectedBackgroundColor = when (priority) {
+                        TaskPriority.HIGH -> Theme.color.pinkAccent
+                        TaskPriority.MEDIUM -> Theme.color.yellowAccent
+                        TaskPriority.LOW -> Theme.color.greenAccent
+                    }
                     Priority(
-                        priorityType = priority,
+                        icon = painterResource(icon),
+                        selectedBackgroundColor = selectedBackgroundColor,
+                        label = priority.toStringResource(),
                         isSelected = task.taskPriority == priority,
                         modifier = Modifier
                             .clickable { actions.onChangeTaskPriorityValue(priority) }
@@ -172,7 +186,7 @@ fun TaskEditorBottomSheetContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                items(taskEditorUiState.categories) { category ->
+                items(taskEditorState.categories) { category ->
                     val painter = rememberAsyncImagePainter(model = category.imageUri)
 
                     CategoryItem(
@@ -197,9 +211,9 @@ fun TaskEditorBottomSheetContent(
         ) {
             PrimaryButton(
                 text = if (isNewTask) stringResource(R.string.add) else stringResource(R.string.save),
-                isLoading = taskEditorUiState.isLoading,
-                isDisable = !taskEditorUiState.isValidTask,
-                onClick = {if (isNewTask) actions.addTask(task) else actions.editTask(task)},
+                isLoading = taskEditorState.isLoading,
+                isDisable = !taskEditorState.isValidTask,
+                onClick = { if (isNewTask) actions.addTask(task) else actions.editTask(task) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -217,5 +231,4 @@ fun TaskEditorBottomSheetContent(
             )
         }
     }
-
 }

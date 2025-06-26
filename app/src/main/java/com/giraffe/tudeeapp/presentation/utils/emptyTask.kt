@@ -1,9 +1,9 @@
 package com.giraffe.tudeeapp.presentation.utils
 
-import com.giraffe.tudeeapp.domain.model.Category
-import com.giraffe.tudeeapp.domain.model.task.Task
-import com.giraffe.tudeeapp.domain.model.task.TaskPriority
-import com.giraffe.tudeeapp.domain.model.task.TaskStatus
+import com.giraffe.tudeeapp.domain.entity.Category
+import com.giraffe.tudeeapp.domain.entity.task.Task
+import com.giraffe.tudeeapp.domain.entity.task.TaskPriority
+import com.giraffe.tudeeapp.domain.entity.task.TaskStatus
 
 fun emptyTask() = Task(
     id = 0L,

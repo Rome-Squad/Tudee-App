@@ -20,22 +20,20 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.giraffe.tudeeapp.R
+import com.giraffe.tudeeapp.design_system.component.BottomNavigationItem
 import com.giraffe.tudeeapp.design_system.component.DefaultNavigationBar
 import com.giraffe.tudeeapp.presentation.categories.categoriesRoute
 import com.giraffe.tudeeapp.presentation.home.homeRoute
-import com.giraffe.tudeeapp.presentation.splash.onboard.onboardingRoute
-import com.giraffe.tudeeapp.presentation.splash.splashscreen.splashRoute
+import com.giraffe.tudeeapp.presentation.screen.onboard.onboardingRoute
+import com.giraffe.tudeeapp.presentation.screen.splash.splashRoute
 import com.giraffe.tudeeapp.presentation.tasks.tasksRoute
-import com.giraffe.tudeeapp.presentation.tasksbycategory.tasksByCategoryRoute
+import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.tasksByCategoryRoute
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TudeeNavGraph(
-    modifier: Modifier = Modifier,
-    onToggleTheme: () -> Unit,
-    isDarkTheme: Boolean,
-) {
+fun TudeeNavGraph(modifier: Modifier = Modifier) {
     val screensWithoutBottomNav = listOf(
         Screen.SplashScreen.route,
         Screen.OnboardingScreen.route,
@@ -51,7 +49,6 @@ fun TudeeNavGraph(
         targetValue = if (showBottomNav) 74.dp else 0.dp,
         animationSpec = tween(animationTime)
     )
-
     Scaffold(
         modifier = Modifier
             .navigationBarsPadding(),
@@ -69,6 +66,23 @@ fun TudeeNavGraph(
                 DefaultNavigationBar(
                     modifier = Modifier.height(74.dp),
                     navController = navController,
+                    items = listOf(
+                        BottomNavigationItem(
+                            route = Screen.HomeScreen.route,
+                            selectedIcon = R.drawable.home_selected,
+                            unselectedIcon = R.drawable.home_unselected
+                        ),
+                        BottomNavigationItem(
+                            route = "${Screen.TaskScreen.route}/${0}",
+                            selectedIcon = R.drawable.task_selected,
+                            unselectedIcon = R.drawable.tasks_unselected
+                        ),
+                        BottomNavigationItem(
+                            route = Screen.CategoriesScreen.route,
+                            selectedIcon = R.drawable.categories_selected,
+                            unselectedIcon = R.drawable.categories_unselected
+                        )
+                    )
                 )
             }
         },
@@ -80,11 +94,7 @@ fun TudeeNavGraph(
         ) {
             splashRoute(navController)
             onboardingRoute(navController)
-            homeRoute(
-                navController = navController,
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme
-            )
+            homeRoute(navController)
             tasksRoute(navController)
             categoriesRoute(navController)
             tasksByCategoryRoute(navController)
