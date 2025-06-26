@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -79,7 +81,10 @@ fun CategoryBottomSheet(
                 onVisibilityChange(false)
             },
         ) {
-            Column {
+            Column (
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ){
                 HeaderSection(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,13 +111,16 @@ fun CategoryBottomSheet(
                     style = Theme.textStyle.title.medium,
                     color = Theme.color.title
                 )
-                ImageSection(modifier = Modifier.clickable {
-                    launcher.launch(
-                        PickVisualMediaRequest(
-                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                ImageSection(
+                    modifier = Modifier.clickable {
+                        launcher.launch(
+                            PickVisualMediaRequest(
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
                         )
-                    )
-                }, imageUri = currentImageUri)
+                    },
+                    imageUri = currentImageUri
+                )
                 Column(
                     modifier = Modifier
                         .padding(top = 24.dp)
