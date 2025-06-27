@@ -107,14 +107,7 @@ fun CategoriesContent(
             ) {
                 items(state.categories.size) { index ->
                     CategoryItem(
-                        icon = rememberAsyncImagePainter(
-                            ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(data = state.categories[index].imageUri)
-                                .build()
-                        ),
-                        categoryName = state.categories[index].name,
-                        count = state.categories[index].taskCount,
+                        category= state.categories[index],
                         onClick = {
                             actions.selectCategory(state.categories[index].id)
                         }
