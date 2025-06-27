@@ -135,11 +135,12 @@ fun CategoriesContent(
             isVisible = state.isBottomSheetVisible,
             title = stringResource(R.string.add_new_category),
             onVisibilityChange = actions::setBottomSheetVisibility,
-            onAddClick = actions::addCategory,
+            onConfirm = actions::onAddNewCategory
         )
         DefaultSnackBar(
             modifier = Modifier.align(Alignment.TopCenter),
-            snackState = snackState)
+            snackState = snackState
+        )
     }
 
 }

@@ -6,7 +6,8 @@ import com.giraffe.tudeeapp.presentation.base.BaseViewModel
 
 class CategoryViewModel(
     private val categoriesService: CategoriesService,
-) : BaseViewModel<CategoriesScreenState, CategoriesScreenEffect>(CategoriesScreenState()), CategoriesScreenInteractionListener {
+) : BaseViewModel<CategoriesScreenState, CategoriesScreenEffect>(CategoriesScreenState()),
+    CategoriesScreenInteractionListener {
 
     init {
         getAllCategories()
@@ -44,12 +45,18 @@ class CategoryViewModel(
         updateState { it.copy(isBottomSheetVisible = isVisible) }
     }
 
-    override fun addCategory(category: Category) {
+    override fun onAddNewCategory(title: String, imgUri: String) {
         safeExecute(
             onError = ::onAddCategoryError,
             onSuccess = { onAddCategorySuccess() },
         ) {
-            categoriesService.createCategory(category)
+            val newCategory = Category(
+                name = title,
+                imageUri = imgUri,
+                isEditable = true,
+                taskCount = 0
+            )
+            categoriesService.createCategory(newCategory)
         }
     }
 

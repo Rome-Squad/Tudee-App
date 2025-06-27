@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,7 +52,6 @@ fun CategoryItem(
                     modifier = Modifier
                         .padding(23.dp)
                         .size(32.dp),
-                    contentScale = ContentScale.Crop
                 )
             }
             if (isSelected) {
@@ -104,7 +102,7 @@ fun CategoryItem(
 @Composable
 fun CategoryItemWithCountPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open),
+        icon = painterResource(R.drawable.user_multiple),
         categoryName = "Education",
         count = 16
     )
@@ -114,7 +112,7 @@ fun CategoryItemWithCountPreview() {
 @Composable
 fun CategoryItemWithSelectedPreview() {
     CategoryItem(
-        icon = painterResource(R.drawable.book_open),
+        icon = painterResource(R.drawable.user_multiple),
         categoryName = "Education",
         isSelected = true
     )

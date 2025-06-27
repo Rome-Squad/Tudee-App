@@ -40,4 +40,7 @@ interface CategoryDao {
 
     @Query("DELETE From $TASK_TABLE_NAME WHERE categoryId=:categoryId")
     suspend fun deleteTasksByCategory(categoryId: Long)
+
+    @Query("SELECT COUNT(*) FROM $CATEGORY_TABLE_NAME")
+    suspend fun getCategoriesCount(): Int
 }

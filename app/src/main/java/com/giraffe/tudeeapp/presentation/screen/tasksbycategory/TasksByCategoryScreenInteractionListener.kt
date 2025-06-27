@@ -7,6 +7,6 @@ interface TasksByCategoryScreenInteractionListener {
     fun setAlertBottomSheetVisibility(isVisible: Boolean)
     fun setBottomSheetVisibility(isVisible: Boolean)
     fun selectTab(tab: TaskStatus)
-    fun editCategory(category: Category)
     fun deleteCategory(category: Category)
+    fun onSaveClick(title: String, imageUri: String)
 }

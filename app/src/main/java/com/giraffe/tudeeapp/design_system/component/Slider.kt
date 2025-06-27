@@ -103,7 +103,7 @@ fun SliderPreview() {
                 image = painterResource(R.drawable.tudee_slider_image),
                 title = stringResource(R.string.nothing_on_your_list),
                 subtitle = stringResource(R.string.slider_subtitle_for_empty_tasks),
-                status = painterResource(R.drawable.in_love),
+                status = painterResource(R.drawable.sure_robot),
             )
             Spacer(modifier = Modifier.height(20.dp))
         }

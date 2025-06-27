@@ -14,12 +14,12 @@ import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryE
 import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.GetCategoryError
 import com.giraffe.tudeeapp.presentation.screen.tasksbycategory.TasksByCategoryEffect.GetTasksError
 
-
 class TasksByCategoryViewModel(
     private val tasksService: TasksService,
     private val categoriesService: CategoriesService,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel<TasksByCategoryScreenState, TasksByCategoryEffect>(TasksByCategoryScreenState()), TasksByCategoryScreenInteractionListener {
+) : BaseViewModel<TasksByCategoryScreenState, TasksByCategoryEffect>(TasksByCategoryScreenState()),
+    TasksByCategoryScreenInteractionListener {
 
     init {
         getCategoryById(CategoriesArgs(savedStateHandle = savedStateHandle).categoryId)
@@ -40,9 +40,7 @@ class TasksByCategoryViewModel(
 
     private fun onGetCategorySuccess(category: Category) {
         updateState { state ->
-            state.copy(
-                selectedCategory = category,
-            )
+            state.copy(selectedCategory = category)
         }
         getTasks(category)
     }
@@ -79,12 +77,17 @@ class TasksByCategoryViewModel(
         updateState { it.copy(isBottomSheetVisible = isVisible) }
     }
 
-    override fun editCategory(category: Category) {
-        safeExecute(
-            onError = ::onEditCategoryError,
-            onSuccess = { onEditCategorySuccess(category) }
-        ) {
-            categoriesService.updateCategory(category)
+    override fun onSaveClick(title: String, imageUri: String) {
+        state.value.selectedCategory?.copy(
+            name = title,
+            imageUri = imageUri
+        )?.let { category ->
+            safeExecute(
+                onError = ::onEditCategoryError,
+                onSuccess = { onEditCategorySuccess(category) }
+            ) {
+                categoriesService.updateCategory(category)
+            }
         }
     }
 

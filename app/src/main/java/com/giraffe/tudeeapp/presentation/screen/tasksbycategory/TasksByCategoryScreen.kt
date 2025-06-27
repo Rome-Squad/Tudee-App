@@ -120,7 +120,7 @@ fun TasksByCategoryContent(
                 onTabSelected = actions::selectTab
             )
             if (state.tasks[state.selectedTab].isNullOrEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     NoTasksSection()
                 }
             } else {
@@ -141,18 +141,20 @@ fun TasksByCategoryContent(
             modifier = Modifier.align(Alignment.TopCenter),
             snackState = snackState,
         )
-        CategoryBottomSheet(
-            title = stringResource(R.string.edit_category),
-            isVisible = state.isBottomSheetVisible,
-            onVisibilityChange = actions::setBottomSheetVisibility,
-            categoryToEdit = state.selectedCategory,
-            onEditClick = actions::editCategory,
-            onDeleteClick = { category ->
-                actions.setAlertBottomSheetVisibility(true)
-            }
-        )
+        state.selectedCategory?.let {
+            CategoryBottomSheet(
+                title = stringResource(R.string.edit_category),
+                isVisible = state.isBottomSheetVisible,
+                onVisibilityChange = actions::setBottomSheetVisibility,
+                categoryTitle = state.selectedCategory.name,
+                categoryImageUri = state.selectedCategory.imageUri,
+                onDelete = { actions.setAlertBottomSheetVisibility(true) },
+                onConfirm = actions::onSaveClick
+            )
+        }
+
         AlertBottomSheet(
-            title =  stringResource(R.string.delete_category),
+            title = stringResource(R.string.delete_category),
             subTitle = stringResource(R.string.are_you_sure_to_continue),
             image = painterResource(R.drawable.sure_robot),
             positiveButtonTitle = stringResource(R.string.delete),
