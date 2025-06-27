@@ -253,16 +253,12 @@ private fun TaskEditorBottomSheetContent(
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             items(taskEditorState.categories) { category ->
-                val painter = rememberAsyncImagePainter(model = category.imageUri)
-
                 CategoryItem(
-                    icon = painter,
-                    categoryName = category.name,
                     isSelected = task.category.id == category.id,
-                    count = 0,
                     isShowCount = false,
                     onClick = { actions.onChangeTaskCategoryValue(category.id) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    category = category
                 )
             }
         }
