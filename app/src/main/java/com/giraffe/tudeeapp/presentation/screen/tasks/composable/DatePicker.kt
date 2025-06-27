@@ -89,11 +89,9 @@ fun DatePicker(
             monthYearLabel = formattedDate,
             onPreviousClick = {
                 onDateSelected(selectedDate.minus(DatePeriod(months = 1)))
-                onDateSelected(selectedDate)
             },
             onNextClick = {
                 onDateSelected(selectedDate.plus(DatePeriod(months = 1)))
-                onDateSelected(selectedDate)
             },
             onMonthClick = { isDialogVisible = true }
         )
