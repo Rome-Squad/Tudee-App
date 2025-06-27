@@ -109,7 +109,6 @@ fun DatePicker(
                     isSelected = dayData.date == selectedDate,
                     onClick = {
                         onDateSelected(dayData.date)
-                        onDateSelected(selectedDate)
                     }
                 )
             }
@@ -131,7 +130,6 @@ fun DatePicker(
         selectedDate = selectedDate,
         onDateSelected = {
             onDateSelected(LocalDate(it.year, it.monthNumber, it.dayOfMonth))
-            onDateSelected(it)
         }
     )
 }
