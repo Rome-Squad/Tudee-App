@@ -1,4 +1,4 @@
-# 🌤 Tudee – Jetpack Compose Task MAnagement App
+# 🌤 Tudee – Jetpack Compose Task Management App
 
 As a Team, our task is to develop a personal task management app for Android.
 
